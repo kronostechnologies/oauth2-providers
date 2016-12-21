@@ -9,6 +9,7 @@
          bootstrap="./tests/bootstrap.php"
          verbose="true"
 >
+    
     <testsuites>
         <testsuite name="Oauth2-Providers">
             <directory>./tests/Kronos/Tests/Oauth2Providers</directory>
