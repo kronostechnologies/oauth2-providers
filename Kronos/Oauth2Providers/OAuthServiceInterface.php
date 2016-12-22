@@ -2,6 +2,7 @@
 namespace Kronos\Oauth2Providers;
 
 
+use Kronos\Oauth2Providers\Exceptions\InvalidRefreshTokenException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 
@@ -20,6 +21,7 @@ interface OAuthServiceInterface {
 
 	/**
 	 * @param string $refresh_token
+	 * @throws InvalidRefreshTokenException
 	 * @return AccessToken
 	 */
 	public function retrieveAccessToken($refresh_token);
