@@ -2,12 +2,10 @@
 
 namespace Kronos\OAuth2Providers\Exceptions;
 
-use Exception;
+use RuntimeException;
 
-class InvalidRefreshTokenException extends Exception {
+class InvalidRefreshTokenException extends RuntimeException {
 	public function __construct($refreshToken) {
-		parent::__construct("Invalid refresh token.");
+		parent::__construct("Invalid refresh token. $refreshToken");
 	}
-
-
 }
