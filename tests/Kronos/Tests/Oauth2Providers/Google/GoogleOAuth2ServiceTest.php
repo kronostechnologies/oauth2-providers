@@ -86,13 +86,13 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 		$this->assertContains(self::A_CUSTOME_OPTION_NAME.'='.self::A_CUSTOME_OPTION_VALUE,$url);
 	}
 
-	public function test_authorizationCode_getAccessTokenByAuthorizationcode_ShouldStoreTokenReceived(){
+	public function test_authorizationCode_getAccessTokenByAuthorizationCode_ShouldStoreTokenReceived(){
 
 		$this->accessTokenStorage
 			->expects(self::once())
 			->method('storeAccessToken');
 
-		$this->googleOAuth2Service->getAccessTokenByAuthorizationcode(self::A_CODE);
+		$this->googleOAuth2Service->getAccessTokenByAuthorizationCode(self::A_CODE);
 	}
 
 	public function test_ARefreshToken_retrieveAccessToken_ShouldReturnAToken(){

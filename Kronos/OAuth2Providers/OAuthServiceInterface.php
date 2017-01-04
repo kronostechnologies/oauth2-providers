@@ -17,7 +17,7 @@ interface OAuthServiceInterface {
 	 * @param string $code
 	 * @return AccessToken
 	 */
-	public function getAccessTokenByAuthorizationcode($code);
+	public function getAccessTokenByAuthorizationCode($code);
 
 	/**
 	 * @param string $refresh_token

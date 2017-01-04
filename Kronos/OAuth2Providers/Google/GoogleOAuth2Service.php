@@ -73,7 +73,7 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface {
 	 * @param string $code
 	 * @return AccessToken
 	 */
-	public function getAccessTokenByAuthorizationcode($code) {
+	public function getAccessTokenByAuthorizationCode($code) {
 		$token = $this->getAccessToken('authorization_code', [
 			'code' => $code
 		]);
