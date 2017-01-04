@@ -97,7 +97,7 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface {
 			return $token;
 		}
 
-		$token = $this->getNewTokenByRefreshToken($refresh_token);
+		$token = $this->getNewAccessTokenByRefreshToken($refresh_token);
 
 		return $token;
 	}
@@ -114,7 +114,7 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface {
 	 * @param string $refresh_token
 	 * @return AccessToken
 	 */
-	protected function getNewTokenByRefreshToken($refresh_token){
+	protected function getNewAccessTokenByRefreshToken($refresh_token){
 		$token = $this->getAccessToken('refresh_token', [
 			'refresh_token' => $refresh_token
 		]);
