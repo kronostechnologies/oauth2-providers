@@ -1,8 +1,8 @@
 <?php
-namespace Kronos\Oauth2Providers;
+namespace Kronos\OAuth2Providers;
 
 
-use Kronos\Oauth2Providers\Exceptions\InvalidRefreshTokenException;
+use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 
@@ -11,7 +11,7 @@ interface OAuthServiceInterface {
 	 * @param AccessToken $access_token
 	 * @return ResourceOwnerInterface
 	 */
-	function getResourceOwner(AccessToken $access_token);
+	public function getResourceOwner(AccessToken $access_token);
 
 	/**
 	 * @param string $code
@@ -30,4 +30,10 @@ interface OAuthServiceInterface {
 	 * @return string url for hand shake
 	 */
 	public function getAuthorizationUrl();
+
+	/**
+	 * @param string $state
+	 * @return bool
+	 */
+	public function validateSate($state);
 }

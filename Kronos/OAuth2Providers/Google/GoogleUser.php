@@ -6,7 +6,7 @@
  * Time: 10:46 AM
  */
 
-namespace Kronos\Oauth2Providers\Google;
+namespace Kronos\OAuth2Providers\Google;
 
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;

@@ -9,12 +9,12 @@
          beStrictAboutTodoAnnotatedTests="true"
          verbose="true">
     <testsuite name="Oauth2-Providers">
-        <directory suffix="Test.php">./tests/Kronos/Tests/Oauth2Providers</directory>
+        <directory suffix="Test.php">./tests/Kronos/Tests/OAuth2Providers</directory>
     </testsuite>
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">Kronos/Oauth2Providers</directory>
+            <directory suffix=".php">Kronos/OAuth2Providers</directory>
         </whitelist>
     </filter>
 </phpunit>

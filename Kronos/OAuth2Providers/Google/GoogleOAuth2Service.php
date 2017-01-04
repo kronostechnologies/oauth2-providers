@@ -1,14 +1,14 @@
 <?php
 
-namespace Kronos\Oauth2Providers\Google;
+namespace Kronos\OAuth2Providers\Google;
 
-use Kronos\Oauth2Providers\Exceptions\InvalidRefreshTokenException;
-use Kronos\Oauth2Providers\OAuthServiceInterface;
-use Kronos\Oauth2Providers\Storage\AccessTokenStorageInterface;
+use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
+use Kronos\OAuth2Providers\OAuthServiceInterface;
+use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Token\AccessToken;
 
-class GoogleOauth2Service extends Google  implements OAuthServiceInterface {
+class GoogleOAuth2Service extends Google  implements OAuthServiceInterface {
 
 	const USERINFO_EMAIL =  "https://www.googleapis.com/auth/userinfo.email";
 	const USERINFO_PROFILE = "https://www.googleapis.com/auth/userinfo.profile";
@@ -62,6 +62,7 @@ class GoogleOauth2Service extends Google  implements OAuthServiceInterface {
 	 * @return string
 	 */
 	public function getAuthorizationUrl(array $options = []) {
+		$options['state'] = $this->getSessionState();
 
 		return parent::getAuthorizationUrl(
 			array_merge($this->defaultAuthorizationUrlOptions,$options)
@@ -132,5 +133,35 @@ class GoogleOauth2Service extends Google  implements OAuthServiceInterface {
 		return new GoogleUser($response);
 	}
 
+	/**
+	 * @return string
+	 */
+	protected function getSessionState(){
+		$session_id = session_id();
+
+		$generator = $this
+			->getRandomFactory()
+			->getMediumStrengthGenerator();
+
+		$salt = $generator->generateString(8, RandomGenerator::CHAR_ALNUM);
+
+		$state = $salt . '_'. sha1($session_id . $salt);
+
+		return $state;
+	}
+
+	/**
+	 * @param string $state
+	 * @return bool
+	 */
+	public function validateSate($state){
+		$session_id = session_id();
+		list($salt, $hash) = explode('_', $state);
+		if($hash == sha1($session_id . $salt)){
+			return true;
+		}
+		return false;
+
+	}
 
 }

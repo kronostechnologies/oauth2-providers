@@ -1,6 +1,6 @@
 <?php
 
-namespace Kronos\Oauth2Providers\Storage;
+namespace Kronos\OAuth2Providers\Storage;
 
 /**
  * @copyright Copyright (c) Maxime Demers <mdemers@kronostechnologies.com>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Kronos\Oauth2Providers\Exceptions;
+namespace Kronos\OAuth2Providers\Exceptions;
 
 use Exception;
 
