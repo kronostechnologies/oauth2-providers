@@ -12,7 +12,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Kronos\\Oauth2Providers\\": "Kronos/Oauth2Providers"
+      "Kronos\\OAuth2Providers\\": "Kronos/OAuth2Providers"
     }
   },
   "require": {
