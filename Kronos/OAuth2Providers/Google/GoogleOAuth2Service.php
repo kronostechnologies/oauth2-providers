@@ -7,6 +7,7 @@ use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Token\AccessToken;
+use RandomLib\Generator as RandomGenerator;
 
 class GoogleOAuth2Service extends Google  implements OAuthServiceInterface {
 
@@ -26,6 +27,7 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface {
 	 * @param string $clientSecret
 	 * @param string $redirectUri
 	 * @param AccessTokenStorageInterface $accessTokenStore
+	 * @param array $collaborators
 	 */
 	public function __construct($clientId, $clientSecret, $redirectUri, AccessTokenStorageInterface $accessTokenStore,array $collaborators = []) {
 
