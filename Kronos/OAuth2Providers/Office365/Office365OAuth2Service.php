@@ -19,7 +19,7 @@ class Office365OAuth2Service extends Azure implements OAuthServiceInterface {
 	/**
 	 * @var string[]
 	 */
-	protected $defaultAuthorizationUrlOptions = ['approval_prompt'=>'force'];
+	protected $defaultAuthorizationUrlOptions = ['prompt'=>'login'];
 
 	/**
 	 * @param string $clientId
