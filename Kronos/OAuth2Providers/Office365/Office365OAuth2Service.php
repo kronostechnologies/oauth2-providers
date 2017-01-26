@@ -121,6 +121,16 @@ class Office365OAuth2Service extends Azure implements OAuthServiceInterface {
 	}
 
 	/**
+	 * @param array $response
+	 * @param AccessToken $token
+	 * @return GoogleUser
+	 */
+	protected function createResourceOwner(array $response, AccessToken $token) {
+		\Kronos\Common\Debug::Debug($response);
+		return new Office365User($response);
+	}
+
+	/**
 	 * @return string
 	 */
 	protected function getSessionState(){
