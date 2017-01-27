@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mdemers
- * Date: 2017-01-26
- * Time: 9:38 AM
- */
 
 namespace Kronos\OAuth2Providers\Office365;
 
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-use TheNetworg\OAuth2\Client\Provider\AzureResourceOwner;
-
-class Office365User extends AzureResourceOwner {
+class Office365User implements ResourceOwnerInterface  {
 
 	/**
 	 * @var array
