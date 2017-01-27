@@ -136,7 +136,7 @@ class Office365OAuth2Service extends Azure implements OAuthServiceInterface {
 	/**
 	 * @param array $response
 	 * @param AccessToken $token
-	 * @return GoogleUser
+	 * @return Office365User
 	 */
 	protected function createResourceOwner(array $response, AccessToken $token) {
 		return new Office365User($response);

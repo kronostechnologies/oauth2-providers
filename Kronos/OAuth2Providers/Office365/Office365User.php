@@ -28,7 +28,7 @@ class Office365User extends AzureResourceOwner {
 
 	public function getId()
 	{
-		return $this->response['id'];
+		return $this->response['objectId'];
 	}
 
 	/**
@@ -38,27 +38,7 @@ class Office365User extends AzureResourceOwner {
 	 */
 	public function getName()
 	{
-		return $this->response['name'];
-	}
-
-	/**
-	 * Get perferred first name.
-	 *
-	 * @return string
-	 */
-	public function getFirstName()
-	{
-		return $this->response['givenName'];
-	}
-
-	/**
-	 * Get perferred last name.
-	 *
-	 * @return string
-	 */
-	public function getLastName()
-	{
-		return $this->response['familyName'];
+		return $this->response['givenName'] != '' ? $this->response['givenName'] : $this->response['displayName'];
 	}
 
 	/**
@@ -68,17 +48,7 @@ class Office365User extends AzureResourceOwner {
 	 */
 	public function getEmail()
 	{
-		return $this->response['email'];
-	}
-
-	/**
-	 * Get avatar image URL.
-	 *
-	 * @return string|null
-	 */
-	public function getAvatar()
-	{
-		return $this->response['picture']['url'];
+		return $this->response['mail'];
 	}
 
 	/**
