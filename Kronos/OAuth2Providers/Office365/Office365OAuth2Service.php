@@ -6,13 +6,10 @@ use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Token\AccessToken;
+use TheNetworg\OAuth2\Client\Provider\Azure;
 use RandomLib\Generator as RandomGenerator;
-use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
-class Office365OAuth2Service extends Microsoft implements OAuthServiceInterface {
-	const IMAP = 'wl.imap';
-	const OFFLINE_ACCESS = 'wl.offline_access';
-	const USER_BASIC = 'wl.basic';
+class Office365OAuth2Service extends Azure implements OAuthServiceInterface {
 
 	/**
 	 * @var AccessTokenStorageInterface
@@ -56,24 +53,25 @@ class Office365OAuth2Service extends Microsoft implements OAuthServiceInterface 
 	}
 
 	/**
+	 * @return string
+	 */
+	protected function getDefaultRessource(){
+		return 'https://graph.windows.net';
+	}
+
+	/**
 	 * @param string $code
 	 * @return AccessToken
 	 */
 	public function getAccessTokenByAuthorizationCode($code) {
 		$token = $this->getAccessToken('authorization_code', [
 			'code' => $code,
+			'resource' => $this->getDefaultRessource(),
 		]);
 
 		$this->accessTokenStore->storeAccessToken($token);
 
 		return $token;
-	}
-
-	/**
-	 * @return string[]
-	 */
-	protected function getDefaultScopes() {
-		return array_merge(parent::getDefaultScopes(),[self::IMAP,self::OFFLINE_ACCESS,self::USER_BASIC]);
 	}
 
 	/**
@@ -120,6 +118,28 @@ class Office365OAuth2Service extends Microsoft implements OAuthServiceInterface 
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Requests resource owner details.
+	 *
+	 * @param  AccessToken $token
+	 * @return mixed
+	 */
+	public function fetchResourceOwnerDetails(AccessToken $token)
+	{
+		$response = $this->get('me',$token);
+
+		return $response;
+	}
+
+	/**
+	 * @param array $response
+	 * @param AccessToken $token
+	 * @return Office365User
+	 */
+	protected function createResourceOwner(array $response, AccessToken $token) {
+		return new Office365User($response);
 	}
 
 	/**
