@@ -12,6 +12,7 @@ use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 class Office365OAuth2Service extends Microsoft implements OAuthServiceInterface {
 	const IMAP = 'wl.imap';
 	const OFFLINE_ACCESS = 'wl.offline_access';
+	const USER_BASIC = 'wl.basic';
 
 	/**
 	 * @var AccessTokenStorageInterface
@@ -72,7 +73,7 @@ class Office365OAuth2Service extends Microsoft implements OAuthServiceInterface 
 	 * @return string[]
 	 */
 	protected function getDefaultScopes() {
-		return array_merge(parent::getDefaultScopes(),[self::IMAP,self::OFFLINE_ACCESS]);
+		return array_merge(parent::getDefaultScopes(),[self::IMAP,self::OFFLINE_ACCESS,self::USER_BASIC]);
 	}
 
 	/**
