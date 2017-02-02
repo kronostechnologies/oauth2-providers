@@ -1,6 +1,6 @@
 <?php
 
-namespace Kronos\OAuth2Providers\Google;
+namespace Kronos\OAuth2Providers\Outlook;
 
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
@@ -35,8 +35,7 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface {
 		parent::__construct([
 			'clientId'          => $clientId,
 			'clientSecret'      => $clientSecret,
-			'redirectUri'       => $redirectUri,
-			'accessType'        => 'offline',
+			'redirectUri'       => $redirectUri
 		],$collaborators);
 
 		$this->accessTokenStore = $accessTokenStore;
