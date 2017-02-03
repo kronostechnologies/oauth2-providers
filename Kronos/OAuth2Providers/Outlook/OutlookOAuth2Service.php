@@ -16,6 +16,8 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface {
 	const SCOPE_IMAP =  "wl.imap";
 	const OFFLINE_ACCESS = 'wl.offline_access';
 
+	const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
+
 	protected $defaultAuthorizationUrlOptions = ['display'=>'popup'];
 
 	/**
