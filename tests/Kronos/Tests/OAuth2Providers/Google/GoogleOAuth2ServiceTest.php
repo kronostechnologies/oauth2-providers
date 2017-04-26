@@ -80,6 +80,12 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 		$this->assertContains('approval_prompt=force',$url);
 	}
 
+	public function test_askingForAuthorizationUrl_getAuthorizationUrl_ShouldContainsStateParameterWithValidSalt(){
+		$url = $this->googleOAuth2Service->getAuthorizationUrl();
+
+		$this->assertRegExp('/state=[a-z0-9]{8}_[a-z0-9]+/',$url);
+	}
+
 	public function test_askingForAuthorizationUrlWithCustomOptions_getAuthorizationUrl_ShouldContainsOptionsPassedInParameters(){
 		$url = $this->googleOAuth2Service->getAuthorizationUrl([self::A_CUSTOME_OPTION_NAME=>self::A_CUSTOME_OPTION_VALUE]);
 
@@ -152,6 +158,5 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 
 		$this->googleOAuth2Service->retrieveAccessToken(self::A_REFRESH_TOKEN);
 	}
-
 
 }

@@ -7,7 +7,6 @@ use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use TheNetworg\OAuth2\Client\Provider\Azure;
-use RandomLib\Generator as RandomGenerator;
 
 class Office365OAuth2Service extends Azure implements OAuthServiceInterface {
 
@@ -147,15 +146,8 @@ class Office365OAuth2Service extends Azure implements OAuthServiceInterface {
 	 */
 	protected function getSessionState(){
 		$session_id = session_id();
-
-		$generator = $this
-			->getRandomFactory()
-			->getMediumStrengthGenerator();
-
-		$salt = $generator->generateString(8, RandomGenerator::CHAR_ALNUM);
-
+		$salt = bin2hex(random_bytes(4));
 		$state = $salt . '_'. sha1($session_id . $salt);
-
 		return $state;
 	}
 }
