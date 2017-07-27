@@ -2,9 +2,7 @@
 
 namespace Kronos\OAuth2Providers\Auth0;
 
-use Kronos\Common\Login\Exception;
 use Kronos\Common\Route\Request;
-use Kronos\Login\Application;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
 class Auth0Service {
@@ -14,20 +12,8 @@ class Auth0Service {
 	 */
 	protected $_provider;
 
-	public function __construct($client_name = '', Auth0 $provider = null) {
-		$this->_provider = $provider ? $provider : $this->_createProvider($client_name);
-	}
-
-	protected function _createProvider($client_name = '', Application $application = null) {
-		$app_instance = $application ? $application : Application::getInstance();
-		$app_instance->setState($app_instance->getSessionStore()->getApplicationState());
-		$client_options = $app_instance->getOption('auth0', 'clients', $client_name);
-
-		if(!$client_options) {
-			throw new Exception('Invalid Auth0 client name');
-		}
-
-		return new Auth0($client_options);
+	public function __construct($client_options = [], Auth0 $provider = null) {
+		$this->_provider = $provider ? $provider : new Auth0($client_options);
 	}
 
 	public function handleRequest(Request $request) {
