@@ -98,6 +98,17 @@ class Auth0 extends AbstractProvider {
 	}
 
 	/**
+	 * Requests an access token using an 'authorization_code' grant.
+	 * @param string $authorization_code
+	 * @return AccessToken
+	 */
+	public function getAccessTokenFromAuthorizationCode($authorization_code) {
+		return $this->getAccessToken('authorization_code', [
+			'code' => $authorization_code
+		]);
+	}
+
+	/**
 	 * Checks a provider response for errors.
 	 *
 	 * @throws IdentityProviderException

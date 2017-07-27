@@ -2,7 +2,6 @@
 
 namespace Kronos\OAuth2Providers\Auth0;
 
-use Kronos\Common\Debug;
 use Kronos\Common\Login\Exception;
 use Kronos\Common\Route\Request;
 use Kronos\Login\Application;
@@ -13,21 +12,16 @@ class Auth0Service {
 	/**
 	 * @var Auth0
 	 */
-	private $_provider;
+	protected $_provider;
 
-	public function __construct($client_name) {
-		Debug::Debug('__construct');
-		$this->_provider = $this->_createProvider($client_name);
+	public function __construct($client_name = '', Auth0 $provider = null) {
+		$this->_provider = $provider ? $provider : $this->_createProvider($client_name);
 	}
 
-	private function _createProvider($client_name) {
-		Debug::Debug('_createProvider');
-		Application::getInstance()->setState(Application::getInstance()->getSessionStore()->getApplicationState());
-		Debug::Debug('Application instance state set');
-		$client_options = Application::getInstance()->getOption('auth0', 'clients', $client_name);
-
-		Debug::Debug('$client_options');
-		Debug::Debug($client_options);
+	protected function _createProvider($client_name = '', Application $application = null) {
+		$app_instance = $application ? $application : Application::getInstance();
+		$app_instance->setState($app_instance->getSessionStore()->getApplicationState());
+		$client_options = $app_instance->getOption('auth0', 'clients', $client_name);
 
 		if(!$client_options) {
 			throw new Exception('Invalid Auth0 client name');
@@ -36,13 +30,11 @@ class Auth0Service {
 		return new Auth0($client_options);
 	}
 
-	public function authorize(Request $request){
+	public function handleRequest(Request $request) {
 		$get = $request->getGetData();
 
 		// If we don't have an authorization code then get one
 		if(!isset($get['code'])) {
-			Debug::Debug('no code, -> redirect');
-
 			// Fetch the authorization URL from the provider; this returns the
 			// urlAuthorize option and generates and applies any necessary parameters
 			// (e.g. state).
@@ -56,24 +48,17 @@ class Auth0Service {
 			exit;
 		}
 		// Check given state against previously stored one to mitigate CSRF attack
-		elseif(empty($get['state']) || (isset($_SESSION['oauth2state']) && $get['state'] !== $_SESSION['oauth2state'])){
-			Debug::Debug('code, -> invalid state');
+		elseif(empty($get['state']) || (isset($_SESSION['oauth2state']) && $get['state'] !== $_SESSION['oauth2state'])) {
 			if(isset($_SESSION['oauth2state'])) {
 				unset($_SESSION['oauth2state']);
 			}
 
-			exit('Invalid state');
-		}else{
-			Debug::Debug('code, -> getting token');
+			exit('Invalid Auth0 state');
+		}
+		else {
 			try {
 				// Try to get an access token using the authorization code grant.
-				$accessToken = $this->_provider->getAccessToken('authorization_code', [
-					'code' => $get['code']
-				]);
-
-				// We have an access token, which we may use in authenticated
-				// requests against the service provider's API.
-				Debug::Debug('Access Token: ' . $accessToken->getToken());
+				$accessToken = $this->_provider->getAccessTokenFromAuthorizationCode($get['code']);
 
 				// Using the access token, we may look up details about the
 				// resource owner.
