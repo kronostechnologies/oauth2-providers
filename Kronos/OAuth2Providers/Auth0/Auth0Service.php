@@ -16,11 +16,14 @@ class Auth0Service {
 	private $_provider;
 
 	public function __construct($client_name) {
+		Debug::Debug('__construct');
 		$this->_provider = $this->_createProvider($client_name);
 	}
 
 	private function _createProvider($client_name) {
+		Debug::Debug('_createProvider');
 		Application::getInstance()->setState(Application::getInstance()->getSessionStore()->getApplicationState());
+		Debug::Debug('Application instance state set');
 		$client_options = Application::getInstance()->getOption('auth0', 'clients', $client_name);
 
 		Debug::Debug('$client_options');
