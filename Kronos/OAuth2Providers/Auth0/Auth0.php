@@ -109,6 +109,18 @@ class Auth0 extends AbstractProvider {
 	}
 
 	/**
+	 * Generates a resource owner object from a successful resource owner
+	 * details request.
+	 *
+	 * @param  array $response
+	 * @param  AccessToken $token
+	 * @return ResourceOwnerInterface
+	 */
+	protected function createResourceOwner(array $response, AccessToken $token) {
+		return new Auth0User($response);
+	}
+
+	/**
 	 * Checks a provider response for errors.
 	 *
 	 * @throws IdentityProviderException
@@ -131,14 +143,44 @@ class Auth0 extends AbstractProvider {
 	}
 
 	/**
-	 * Generates a resource owner object from a successful resource owner
-	 * details request.
+	 * Hack, returns sessionState, as per other providers.
 	 *
-	 * @param  array $response
-	 * @param  AccessToken $token
-	 * @return ResourceOwnerInterface
+	 * @param  int $length not used
+	 * @return string
 	 */
-	protected function createResourceOwner(array $response, AccessToken $token) {
-		return new Auth0User($response);
+	protected function getRandomState($length = 32) {
+		return $this->getSessionState();
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getSessionState() {
+		if(isset($this->state)) {
+			return $this->state;
+		}
+
+		$session_id = session_id();
+		$salt = bin2hex(random_bytes(4));
+		$state = $salt . '_' . sha1($session_id . $salt);
+
+		$this->state = $state;
+
+		return $this->state;
+	}
+
+	/**
+	 * @param string $state
+	 * @return bool
+	 */
+	public function validateSate($state) {
+		$session_id = session_id();
+		list($salt, $hash) = explode('_', $state);
+
+		if($hash == sha1($session_id . $salt)) {
+			return true;
+		}
+
+		return false;
 	}
 }
