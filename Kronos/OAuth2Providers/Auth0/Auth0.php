@@ -9,7 +9,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class Auth0 extends AbstractProvider {
+class Auth0 extends AbstractProvider implements Kronos\OAuth2Providers\OAuthServiceInterface {
 
 	use BearerAuthorizationTrait;
 
@@ -102,7 +102,7 @@ class Auth0 extends AbstractProvider {
 	 * @param string $authorization_code
 	 * @return AccessToken
 	 */
-	public function getAccessTokenFromAuthorizationCode($authorization_code) {
+	public function getAccessTokenByAuthorizationCode($authorization_code) {
 		return $this->getAccessToken('authorization_code', [
 			'code' => $authorization_code
 		]);
