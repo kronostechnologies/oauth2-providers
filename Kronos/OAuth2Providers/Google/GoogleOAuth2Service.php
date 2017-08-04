@@ -3,12 +3,13 @@
 namespace Kronos\OAuth2Providers\Google;
 
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
+use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Token\AccessToken;
 
-class GoogleOAuth2Service extends Google  implements OAuthServiceInterface {
+class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAuthRefreshableInterface {
 
 	const USERINFO_EMAIL =  "https://www.googleapis.com/auth/userinfo.email";
 	const USERINFO_PROFILE = "https://www.googleapis.com/auth/userinfo.profile";

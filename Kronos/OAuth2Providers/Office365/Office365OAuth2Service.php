@@ -3,12 +3,13 @@
 namespace Kronos\OAuth2Providers\Office365;
 
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
+use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use TheNetworg\OAuth2\Client\Provider\Azure;
 
-class Office365OAuth2Service extends Azure implements OAuthServiceInterface {
+class Office365OAuth2Service extends Azure implements OAuthServiceInterface, OAuthRefreshableInterface {
 
 	/**
 	 * @var AccessTokenStorageInterface

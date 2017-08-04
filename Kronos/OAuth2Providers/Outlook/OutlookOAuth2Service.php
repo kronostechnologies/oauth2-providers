@@ -3,12 +3,13 @@
 namespace Kronos\OAuth2Providers\Outlook;
 
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
+use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
-class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface {
+class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, OAuthRefreshableInterface {
 
 	const SCOPE_EMAIL =  "wl.emails";
 	const SCOPE_BASIC_PROFILE = "wl.basic";
