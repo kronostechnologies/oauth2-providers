@@ -1,4 +1,6 @@
 <?php
+namespace Kronos\OAuth2Providers\Basic;
+
 use Kronos\OAuth2Providers\OAuthServiceInterface;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
