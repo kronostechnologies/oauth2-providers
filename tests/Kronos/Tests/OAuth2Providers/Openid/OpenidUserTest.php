@@ -1,6 +1,5 @@
 <?php
 
-use Kronos\OAuth2Providers\Openid\GenericOpenidProvider;
 use Kronos\OAuth2Providers\Openid\IdToken;
 use Kronos\OAuth2Providers\Openid\OpenidUser;
 
@@ -15,11 +14,6 @@ class OpenidUserTest extends PHPUnit_Framework_TestCase {
 		'iat' => 1444693445];
 
 	/**
-	 * @var PHPUnit_Framework_MockObject_MockObject|GenericOpenidProvider
-	 */
-	private $provider;
-
-	/**
 	 * @var PHPUnit_Framework_MockObject_MockObject|IdToken
 	 */
 	private $id_token;
@@ -30,17 +24,12 @@ class OpenidUserTest extends PHPUnit_Framework_TestCase {
 	private $openidUser;
 
 	public function setUp() {
-		$this->provider = $this->getMockBuilder(GenericOpenidProvider::class)
-			->disableOriginalConstructor()
-			->setMethods(['getJwtVerificationKeys'])
-			->getMock();
-
 		$this->id_token = $this->getMockBuilder(IdToken::class)
 			->disableOriginalConstructor()
 			->setMethods(['parseIdToken', 'validateIdToken', 'getUserId', 'getClaims'])
 			->getMock();
 
-		$this->openidUser = new \Kronos\OAuth2Providers\Openid\OpenidUser($this->id_token);
+		$this->openidUser = new OpenidUser($this->id_token);
 	}
 
 	public function test_Id_getId_ShouldReturnId() {
@@ -51,7 +40,7 @@ class OpenidUserTest extends PHPUnit_Framework_TestCase {
 		$expected = self::A_USER_ID;
 		$actual = $this->openidUser->getId();
 
-		self::assertEquals($expected, $actual);
+		$this->assertEquals($expected, $actual);
 	}
 
 	public function test_Id_toArray_ShouldReturnClaimsArray() {
@@ -62,6 +51,6 @@ class OpenidUserTest extends PHPUnit_Framework_TestCase {
 		$expected = self::A_CLAIMS_ARRAY;
 		$actual = $this->openidUser->toArray();
 
-		self::assertEquals($expected, $actual);
+		$this->assertEquals($expected, $actual);
 	}
 }
