@@ -21,7 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use TheNetworg\OAuth2\Client\Grant\JwtBearer;
 use UnexpectedValueException;
 
-class GenericOpenIdProvider implements OpenidServiceInterface {
+class GenericOpenidProvider implements OpenidServiceInterface {
 
 	use ArrayAccessorTrait;
 	use QueryBuilderTrait;
@@ -707,10 +707,10 @@ class GenericOpenIdProvider implements OpenidServiceInterface {
 	 * additional context.
 	 *
 	 * @param  array $response
-	 * @param GenericOpenIdProvider $provider
+	 * @param GenericOpenidProvider $provider
 	 * @return IdToken
 	 */
-	protected function createIdToken(array $response, GenericOpenIdProvider $provider) {
+	protected function createIdToken(array $response, GenericOpenidProvider $provider) {
 		return new IdToken($response, $provider);
 	}
 
@@ -721,7 +721,7 @@ class GenericOpenIdProvider implements OpenidServiceInterface {
 	 * @return ResourceOwnerInterface
 	 */
 	protected function createResourceOwner(IdToken $token) {
-		return new OpenIdUser($token);
+		return new OpenidUser($token);
 	}
 
 	/**

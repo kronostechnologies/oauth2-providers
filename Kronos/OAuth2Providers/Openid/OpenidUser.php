@@ -4,7 +4,7 @@ namespace Kronos\OAuth2Providers\Openid;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-class OpenIdUser implements ResourceOwnerInterface {
+class OpenidUser implements ResourceOwnerInterface {
 
 	/**
 	 * @var IdToken

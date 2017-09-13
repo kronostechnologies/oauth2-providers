@@ -29,9 +29,9 @@ class IdToken implements JsonSerializable {
 	 *
 	 * @param array $options An array of options returned by the service provider
 	 *     in the id token request. The `id_token` option is required.
-	 * @param GenericOpenIdProvider $provider
+	 * @param GenericOpenidProvider $provider
 	 */
-	public function __construct(array $options = [], GenericOpenIdProvider $provider) {
+	public function __construct(array $options = [], GenericOpenidProvider $provider) {
 		if(empty($options['id_token'])) {
 			throw new InvalidArgumentException('Required option not passed: "id_token"');
 		}
@@ -103,9 +103,9 @@ class IdToken implements JsonSerializable {
 	/**
 	 * Validates this token using a provider.
 	 *
-	 * @param GenericOpenIdProvider $provider
+	 * @param GenericOpenidProvider $provider
 	 */
-	protected function validateIdToken(GenericOpenIdProvider $provider) {
+	protected function validateIdToken(GenericOpenidProvider $provider) {
 
 		if(!$provider->validateNonce($this->idTokenClaims['nonce'])) {
 			throw new RuntimeException("The nonce is invalid!");
