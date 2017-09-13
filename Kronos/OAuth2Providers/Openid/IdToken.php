@@ -42,7 +42,7 @@ class IdToken implements JsonSerializable {
 		$keys = $provider->getJwtVerificationKeys();
 
 		$this->idTokenClaims = $this->parseIdToken($this->idToken, $keys);
-
+var_dump($this->idTokenClaims);
 		$this->validateIdToken($provider);
 	}
 
@@ -85,9 +85,11 @@ class IdToken implements JsonSerializable {
 
 		try {
 			$tks = explode('.', $id_token);
+			//var_dump($tks);
 			// Check if the id_token contains signature
 			if(count($tks) == 3 && !empty($tks[2])) {
 				$idTokenClaims = (array)JWT::decode($this->idToken, $keys, ['RS256']);
+				var_dump($idTokenClaims);
 			}
 			else {
 				throw new RuntimeException("Unsigned id_token");
@@ -113,10 +115,10 @@ class IdToken implements JsonSerializable {
 		if($provider->getClientId() != $this->idTokenClaims['aud']) {
 			throw new RuntimeException("The audience is invalid!");
 		}
-		if($this->idTokenClaims['nbf'] > time() || $this->idTokenClaims['exp'] < time()) {
+/*		if($this->idTokenClaims['nbf'] > time() || $this->idTokenClaims['exp'] < time()) {
 			// Additional validation is being performed in firebase/JWT itself
 			throw new RuntimeException("The id_token is invalid!");
-		}
+		}*/
 		$tenant = $provider->getOpenidConfiguration();
 		if($this->idTokenClaims['iss'] != $tenant['issuer']) {
 			throw new RuntimeException("Invalid token issuer!");
