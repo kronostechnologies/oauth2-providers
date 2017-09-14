@@ -5,80 +5,178 @@ use Kronos\OAuth2Providers\Openid\IdToken;
 
 class IdTokenTest extends PHPUnit_Framework_TestCase {
 
+	const VALID_JWT_KEYS = ['keys' => '123456'];
+	const USER_ID = '107963962148033347052';
+	const PARSED_CLAIMS = [
+		'azp' => '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com',
+		'aud' => '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com',
+		'sub' => '107963962148033347052',
+		'at_hash' => 'Yv0WXK12-Ov59muE0pUzqw',
+		'nonce' => '6664b3eb64d51bb14201580a6d26133d73d3a9665fdc5bc835becb67ebb41dac_0cc53e6f653397930fde563275f42868fc0f9978',
+		'iss' => 'https://accounts.google.com',
+		'iat' => 1505328697,
+		'exp' => 1505332297
+	];
+	const OPENID_CONFIGURATION = ['issuer' => 'https://accounts.google.com'];
+	const VALID_CLIENT_ID = '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com';
+	const INVALID_CLIENT_ID = '';
 	const VALID_OPTIONS = ['id_token' => 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2ZGNiYTBjMWE2Mjk2M2Y4ZDA2OWFiNDg2YWY5MzFiMDAzNjAwNGEifQ.eyJhenAiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDc5NjM5NjIxNDgwMzMzNDcwNTIiLCJhdF9oYXNoIjoiWXYwV1hLMTItT3Y1OW11RTBwVXpxdyIsIm5vbmNlIjoiNjY2NGIzZWI2NGQ1MWJiMTQyMDE1ODBhNmQyNjEzM2Q3M2QzYTk2NjVmZGM1YmM4MzViZWNiNjdlYmI0MWRhY18wY2M1M2U2ZjY1MzM5NzkzMGZkZTU2MzI3NWY0Mjg2OGZjMGY5OTc4IiwiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwiaWF0IjoxNTA1MzI4Njk3LCJleHAiOjE1MDUzMzIyOTd9.piVQuDW0lK1SXSmUylLkdcHxLwE7IL5BpIboAv4i6O1qIe9KUcJFIE2YCUCQIAw1xnosr0o-KQ_m-9UDG401WUI4t8tO-IRhpufYvfwhNYexTclhD3b4TZQUATmhe0mxfZiYWWjnZhO-crG5kc1l9iDFO8Yu7UefpHIbjCVWtkC7UEOJXlzsKizTsU3FuseRMCOMD1PNEhS5iOILLce-O0VzdTtUSLvnUp15nEvHaXPLvLqbhGGCfabqfVEF1QuQ_APEp3WBhVgvhOy5aD0n0k7CS4yIz8NE-m9tzuMGkY8ujZAQDk_zV5nLx4ZdsdUMbBVMJxEabHVg0WdbKfBGPg'];
 	const INVALID_OPTIONS = ['id_token' => 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2ZGNiYTBjMWE2Mjk2M2Y4ZDA2OWFiNDg2YWY5MzFiMDAzNjAwNGEifQ.eyJhenAiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDc5NjM5NjIxNDgwMzMzNDcwNTIiLCJhdF9oYXNoIjoiWXYwV1hLMTItT3Y1OW11RTBwVXpxdyIsIm5vbmNlIjoiNjY2NGIzZWI2NGQ1MWJiMTQyMDE1ODBhNmQyNjEzM2Q3M2QzYTk2NjVmZGM1YmM4MzViZWNiNjdlYmI0MWRhY18wY2M1M2U2ZjY1MzM5NzkzMGZkZTU2MzI3NWY0Mjg2OGZjMGY5OTc4IiwiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwiaWF0IjoxNTA1MzI4Njk3LCJleHAiOjE1MDUzMzIyOTd9'];
 
 	/**
-	 * @var IdToken
+	 * @var IdToken|TestableIdToken
 	 */
 	private $id_token;
 
+	/**
+	 * @var PHPUnit_Framework_MockObject_MockObject|GenericOpenidProvider
+	 */
 	private $provider;
 
 	public function setUp() {
-		$this->provider = new MockGenericOpenidProvider();
+		$this->provider = $this->getMockBuilder(GenericOpenidProvider::class)
+			->setMethods(['getJwtVerificationKeys', 'validateNonce', 'getClientId', 'getOpenidConfiguration'])
+			->getMock();
+
+		$this->provider->method('getJwtVerificationKeys')
+			->willReturn(self::VALID_JWT_KEYS);
 	}
 
 	public function test_NoIdTokenOption_New_ShouldThrow() {
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Required option not passed: "id_token"');
 
-		$token = new IdToken([], $this->provider);
+		$this->id_token = new TestableIdToken([], $this->provider);
 	}
 
 	public function test_InvalidIdTokenOption_New_ShouldThrow() {
-		$this->expectException(RuntimeException::class);
-		$this->expectExceptionMessage("Unable to parse the id_token!");
+		$this->provider->expects($this->once())
+			->method('getJwtVerificationKeys');
 
-		$token = new IdToken(self::INVALID_OPTIONS, $this->provider);
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage('Unable to parse the id_token!');
+
+		$this->id_token = new IdToken(self::INVALID_OPTIONS, $this->provider);
 	}
 
-	public function test_InvalidKeys_New_ShouldThrow() {
-		$this->expectException(RuntimeException::class);
-		$this->expectExceptionMessage("Unable to parse the id_token!");
+	public function test_InvalidNonce_validateIdToken_ShouldThrow() {
+		$this->provider->expects($this->once())
+			->method('getJwtVerificationKeys');
+		$this->provider->expects($this->once())
+			->method('validateNonce')
+			->willReturn(false);
 
-		$token = new IdToken(self::VALID_OPTIONS, $this->provider);
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage('The nonce is invalid!');
+
+		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token->emptyNonce();
+		$this->id_token->validate($this->provider);
+	}
+
+	public function test_InvalidAudience_validateIdToken_ShouldThrow(){
+		$this->provider->expects($this->once())
+			->method('getJwtVerificationKeys');
+		$this->provider->expects($this->once())
+			->method('validateNonce')
+			->willReturn(true);
+		$this->provider->expects($this->once())
+			->method('getClientId')
+			->willReturn(self::INVALID_CLIENT_ID);
+
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage('The audience is invalid!');
+
+		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token->validate($this->provider);
+	}
+
+	public function test_InvalidIssuer_validateIdToken_ShouldThrow(){
+		$this->provider->expects($this->once())
+			->method('getJwtVerificationKeys');
+		$this->provider->expects($this->once())
+			->method('validateNonce')
+			->willReturn(true);
+		$this->provider->expects($this->once())
+			->method('getClientId')
+			->willReturn(self::VALID_CLIENT_ID);
+
+		$invalid_openid_config = self::OPENID_CONFIGURATION;
+		$invalid_openid_config['issuer'] = '';
+		$this->provider->expects($this->once())
+			->method('getOpenidConfiguration')
+			->willReturn($invalid_openid_config);
+
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage('Invalid token issuer!');
+
+		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token->validate($this->provider);
+	}
+
+	public function test_ValidIdToken_getClaims_ShouldReturnParsedClaims(){
+		$this->provider->expects($this->once())
+			->method('getJwtVerificationKeys');
+
+		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+
+		$expected = self::PARSED_CLAIMS;
+		$actual = $this->id_token->getClaims();
+
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function test_ValidIdToken_getUserId_ShouldReturnUserId(){
+		$this->provider->expects($this->once())
+			->method('getJwtVerificationKeys');
+
+		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+
+		$expected = self::USER_ID;
+		$actual = $this->id_token->getUserId();
+
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function test_ValidIdToken_getIdToken_ShouldReturnIdToken(){
+		$this->provider->expects($this->once())
+			->method('getJwtVerificationKeys');
+
+		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+
+		$expected = self::VALID_OPTIONS['id_token'];
+		$actual = $this->id_token->getIdToken();
+
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function test_ValidIdToken_jsonSerialize_ShouldReturnParsedClaims(){
+		$this->provider->expects($this->once())
+			->method('getJwtVerificationKeys');
+
+		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+
+		$expected = self::PARSED_CLAIMS;
+		$actual = $this->id_token->jsonSerialize();
+
+		$this->assertEquals($expected, $actual);
 	}
 }
 
-class MockGenericOpenidProvider extends GenericOpenidProvider {
+class TestableIdToken extends IdToken {
 
-	public function getJwtVerificationKeys() {
-		return ['288c8449ce6038da2beca551dd5b7fe1a8a603a2' => '-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlQ8I4NKbTgTCXSsDWTPP
-l4W7DWkj201Se7G45NXe4l9dQ09WZ767FOcSfeVR+HQrCKU0MwA2CW78MGtWhSep
-wgkjGSXcFg15X9Q8RVxbptN0zXku2TVubjlh+Ff714cmNxSqJwylnBXfdSYzGLYw
-ZDdmnngGPC8/WNOrdTKHlHG5wH9wMRdzBNC1CD2lndZD16X6PMdIBwBp7/qxmRp0
-VIVaBe7AHx4iOvY8t6ITjueU0JfAKAwptfqIUCpzcnKYLuvt/Yb4JI5f3XB3wLws
-EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg
-8wIDAQAB
-		-----END PUBLIC KEY-----',
-			'06dcba0c1a62963f8d069ab486af931b0036004a' => '-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1ZJ0vMEk1zqDvxd2Rq2C
-zbRnR/BXS/QhCnVCVsMl4vJAPjeavccCkLxK/alM5uu+QFHwBtafdJJS1poATPWe
-7Rmvo94TuUz0cHoSW38JfmhEqypZ+SbSNNA903dX2dxpZZOPLpbw34un6txSue8X
-Qo+VHuSge5X0PYI03H3aOA0yKoc5RzeINmJbsys09vHIKHywGayn0CMO80L0iCNM
-CHwGa3PiQLDO6k1Ob99ldBLUOvSw3ymJoIuvVftq+wDpkwZ1p/ouPCfPB7lA5uJT
-srjpRv3Uj6+PVL4yIF8RrCO48Afw2LbaNluwTucFF5PHDB/hXvVqThIvKjP/t2zS
-+QIDAQAB
------END PUBLIC KEY-----',
-			'303b2855a91438570ca72850491741e96bd99ef8' => '-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxjHhLN2489+vNqJrOTWb
-NS+f1H810owFC+bZii1eAZ3UfAnB92V9lPsU/x9IKSLCLrsGIMfVG9Zs+m+7g8xG
-Q/tUrCnHZF0CWgGt14LV53caoSIh7jXSz18zsTMIF0U5Fn1y4gARAp2KHh9qnuK9
-Nd5dnvZ9MC2vkknDkGjv8/9pKpo+SRjiFp+U+rprpcbwR/lRw2/Kk8IIZY7MLiDn
-kfTxAnPOJz7KNezpUPElzO9efyd1E7vjbXrHvu2BybMdNfqSGu3Mmx23LzFL3pfC
-sjTycgxQACSlAS3DVxeQWygbOyz27wYo1F1P7nsKk0p+Gjfk/izQhuOz4Z73MHdr
-LQIDAQAB
------END PUBLIC KEY-----'
-		];
+	public function parseIdToken($id_token, $keys) {
+		return IdTokenTest::PARSED_CLAIMS;
 	}
 
-	public function validateNonce($nonce) {
-		return true;
+	public function validate(GenericOpenidProvider $provider) {
+		parent::validateIdToken($provider);
 	}
 
-	public function getClientId(){
-		return '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com';
+	protected function validateIdToken(GenericOpenidProvider $provider) {
+	}
+
+	public function emptyNonce(){
+		$this->idTokenClaims['nonce'] = '';
 	}
 }
