@@ -19,29 +19,54 @@ class Office365User implements ResourceOwnerInterface  {
 		$this->response = $response;
 	}
 
+	/**
+	 * (oid) The immutable identifier for an object in the Microsoft identity system, in this case, a user account.
+	 * @return string
+	 */
 	public function getId()
 	{
-		return $this->response['objectId'];
+		return $this->response['oid'];
 	}
 
 	/**
-	 * Get perferred display name.
+	 * (tid) A GUID that represents the Azure AD tenant that the user is from. For work and school accounts, the GUID is the immutable tenant ID of the organization that the user belongs to.
+	 */
+	public function getTenantId()
+	{
+		$this->response['tid'];
+	}
+
+	/**
+	 * The name claim provides a human-readable value that identifies the subject of the token.
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getName()
 	{
-		return $this->response['givenName'] != '' ? $this->response['givenName'] : $this->response['displayName'];
+		return $this->response['name'];
 	}
 
 	/**
-	 * Get email address.
+	 * @return string|null
+	 */
+	public function getFirstName()
+	{
+		return $this->response['given_name'];
+	}
+
+	public function getLastName()
+	{
+		return $this->response['family_name'];
+	}
+
+	/**
+	 * (upn) Get email address.
 	 *
 	 * @return string|null
 	 */
 	public function getEmail()
 	{
-		return $this->response['mail'];
+		return $this->response['upn'];
 	}
 
 	/**
