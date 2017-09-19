@@ -711,6 +711,10 @@ class TestableGenericOpenidProvider extends GenericOpenidProvider {
 		return $this->nonce;
 	}
 
+	public function getState() {
+		return $this->state;
+	}
+
 	protected function createIdToken(array $response, GenericOpenidProvider $provider) {
 		return new IdTokenStub($response, $provider);
 	}

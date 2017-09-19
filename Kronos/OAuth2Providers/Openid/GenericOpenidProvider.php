@@ -883,27 +883,12 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	}
 
 	/**
-	 * Returns the current value of the state parameter.
-	 *
-	 * This can be accessed by the redirect handler during authorization.
-	 *
-	 * @return string
-	 */
-	public function getState() {
-		return $this->state;
-	}
-
-	/**
 	 * Returns the current value of the state parameter if set.
 	 * Otherwise creates, sets and returns a new one.
 	 *
 	 * @return string
 	 */
 	protected function getSessionState() {
-		if(isset($this->state)) {
-			return $this->state;
-		}
-
 		$this->state = $this->getSessionBasedRandomString(4);
 
 		return $this->state;
