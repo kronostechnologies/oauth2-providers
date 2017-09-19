@@ -18,7 +18,6 @@ use phpseclib\Crypt\RSA;
 use phpseclib\Math\BigInteger;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use TheNetworg\OAuth2\Client\Grant\JwtBearer;
 use UnexpectedValueException;
 
 class GenericOpenidProvider implements OpenidServiceInterface {
@@ -234,7 +233,12 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return string
 	 */
 	public function getBaseAuthorizationUrl() {
-		return $this->openidConfiguration['authorization_endpoint'];
+		$baseAuthUrl = '';
+		if(!empty($this->openidConfiguration['authorization_endpoint'])){
+			$baseAuthUrl = $this->openidConfiguration['authorization_endpoint'];
+		}
+
+		return $baseAuthUrl;
 	}
 
 	/**
@@ -245,7 +249,12 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return string
 	 */
 	public function getBaseIdTokenUrl() {
-		return $this->openidConfiguration['token_endpoint'];
+		$baseTokenUrl = '';
+		if(!empty($this->openidConfiguration['token_endpoint'])){
+			$baseTokenUrl = $this->openidConfiguration['token_endpoint'];
+		}
+
+		return $baseTokenUrl;
 	}
 
 	/**
@@ -782,13 +791,15 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	public function getJwtVerificationKeys() {
 		$factory = $this->getRequestFactory();
 		$url = $this->getVerificationKeysUrl();
-		$request = $factory->getRequestWithOptions('get', $url, []);
+		$request = $factory->getRequestWithOptions(self::METHOD_GET, $url, []);
 		$response = $this->getParsedResponse($request);
 
 		$keys = [];
 
-		foreach($response['keys'] as $i => $keyinfo) {
-			$keys[$keyinfo['kid']] = $this->decodeKey($keyinfo);
+		if(!empty($response['keys'])){
+			foreach($response['keys'] as $i => $keyinfo) {
+				$keys[$keyinfo['kid']] = $this->decodeKey($keyinfo);
+			}
 		}
 
 		return $keys;
@@ -821,7 +832,12 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return string
 	 */
 	public function getVerificationKeysUrl() {
-		return $this->openidConfiguration['jwks_uri'];
+		$keysUrl = '';
+		if(!empty($this->openidConfiguration['jwks_uri'])){
+			$keysUrl = $this->openidConfiguration['jwks_uri'];
+		}
+
+		return $keysUrl;
 	}
 
 	/**
@@ -950,13 +966,6 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return bool
 	 */
 	public function validateNonce($nonce) {
-		$session_id = session_id();
-		list($salt, $hash) = explode('_', $nonce);
-
-		if($hash == sha1($session_id . $salt)) {
-			return true;
-		}
-
-		return false;
+		return $this->validateSessionBasedRandomString($nonce);
 	}
 }

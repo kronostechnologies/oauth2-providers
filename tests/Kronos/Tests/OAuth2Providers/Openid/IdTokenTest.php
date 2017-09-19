@@ -167,6 +167,15 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals($expected, $actual);
 	}
+
+	public function test_ValidIdToken___toString_ShouldReturnIdTokenKey(){
+		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+
+		$expected = self::VALID_OPTIONS['id_token'];
+		$actual = (string) $this->id_token;
+
+		$this->assertEquals($expected, $actual);
+	}
 }
 
 class TestableIdToken extends IdToken {

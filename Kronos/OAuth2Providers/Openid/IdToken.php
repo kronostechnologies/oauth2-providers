@@ -74,6 +74,16 @@ class IdToken implements JsonSerializable {
 	}
 
 	/**
+	 * Returns this token' key.
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return (string) $this->getIdToken();
+	}
+
+	/**
 	 * Returns the array of claims parsed from a raw JWT id token.
 	 *
 	 * @param $id_token
