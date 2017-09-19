@@ -93,7 +93,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 
 
 	/**
-	 * Constructs an OAuth 2.0 service provider.
+	 * Constructs an Openid Connect service provider.
 	 *
 	 * @param array $options An array of options to set on this provider.
 	 *     Options include `clientId`, `clientSecret`, `redirectUri`, and `openidConfigurationUrl`.
@@ -130,7 +130,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 		}
 		$this->setHttpClient($collaborators['httpClient']);
 
-		if(!empty($this->openidConfigurationUrl)) {
+		if(empty($this->openidConfiguration) && !empty($this->openidConfigurationUrl)) {
 			$this->setOpenidConfiguration();
 		}
 	}

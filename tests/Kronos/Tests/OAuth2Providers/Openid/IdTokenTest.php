@@ -1,7 +1,13 @@
 <?php
 
+namespace Kronos\Tests\OAuth2Providers\Openid;
+
+use InvalidArgumentException;
 use Kronos\OAuth2Providers\Openid\GenericOpenidProvider;
 use Kronos\OAuth2Providers\Openid\IdToken;
+use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 class IdTokenTest extends PHPUnit_Framework_TestCase {
 

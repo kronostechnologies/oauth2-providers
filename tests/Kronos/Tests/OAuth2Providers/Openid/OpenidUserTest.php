@@ -1,7 +1,11 @@
 <?php
 
+namespace Kronos\Tests\OAuth2Providers\Openid;
+
 use Kronos\OAuth2Providers\Openid\IdToken;
 use Kronos\OAuth2Providers\Openid\OpenidUser;
+use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit_Framework_TestCase;
 
 class OpenidUserTest extends PHPUnit_Framework_TestCase {
 
