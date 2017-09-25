@@ -7,9 +7,9 @@ use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Token\AccessToken;
-use TheNetworg\OAuth2\Client\Provider\Azure;
+use EightyOneSquare\OAuth2\Client\Provider\MicrosoftGraph;
 
-class Office365OAuth2Service extends Azure implements OAuthServiceInterface, OAuthRefreshableInterface {
+class Office365OAuth2Service extends MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface {
 
 	/**
 	 * @var AccessTokenStorageInterface
@@ -56,7 +56,7 @@ class Office365OAuth2Service extends Azure implements OAuthServiceInterface, OAu
 	 * @return string
 	 */
 	protected function getDefaultRessource(){
-		return 'https://graph.windows.net';
+		return 'https://graph.microsoft.com';
 	}
 
 	/**
