@@ -15,11 +15,17 @@
       "Kronos\\OAuth2Providers\\": "Kronos/OAuth2Providers"
     }
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:kronostechnologies/oauth2-microsoft-graph.git"
+    }
+  ],
   "require": {
     "php": "^5.6",
     "league/oauth2-client": "^2.2",
     "league/oauth2-google":"^2.0",
-    "stevenmaguire/oauth2-microsoft" : "^2.0",
+    "kronostechnologies/oauth2-microsoft-graph": "dev-master",
     "phpseclib/phpseclib": "^2.0",
     "firebase/php-jwt": "^4.0"
   },
