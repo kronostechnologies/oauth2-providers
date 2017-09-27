@@ -15,8 +15,8 @@ class IdTokenFactory {
 	protected $idTokenValidator;
 
 	public function __construct(IdTokenParser $idTokenParser = null, IdTokenValidator $idTokenValidator = null) {
-		$this->idTokenParser = empty($idTokenParser) ? new IdTokenParser() : $idTokenParser;
-		$this->idTokenValidator = empty($idTokenValidator) ? new IdTokenValidator() : $idTokenValidator;
+		$this->idTokenParser = $idTokenParser ?: new IdTokenParser();
+		$this->idTokenValidator = $idTokenValidator ?: new IdTokenValidator();
 	}
 
 	public function createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey = null) {

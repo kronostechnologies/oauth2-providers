@@ -21,7 +21,7 @@ class IdTokenParser {
 			$tks = explode('.', $idTokenString);
 
 			if(count($tks) == 3 && !empty($tks[2])) {
-				$idTokenClaims = (array)JWT::decode($idTokenString, $keys, ['RS256']);
+				$idTokenClaims = $this->decodeJWT($idTokenClaims, $keys);
 			}
 			else {
 				throw new RuntimeException("Unsigned id_token");
@@ -32,5 +32,9 @@ class IdTokenParser {
 		}
 
 		return $idTokenClaims;
+	}
+
+	protected function decodeJWT($idTokenString, $keys){
+		return (array)JWT::decode($idTokenString, $keys, ['RS256']);
 	}
 }

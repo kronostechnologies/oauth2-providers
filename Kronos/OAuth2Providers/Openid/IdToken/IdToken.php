@@ -43,7 +43,7 @@ class IdToken implements JsonSerializable {
 	 * @return mixed
 	 */
 	public function getUserId() {
-		return $this->idTokenClaims[$this->userIdKey];
+		return isset($this->idTokenClaims[$this->userIdKey]) ? $this->idTokenClaims[$this->userIdKey] : null;
 	}
 
 	/**

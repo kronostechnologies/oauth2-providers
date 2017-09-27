@@ -2,7 +2,7 @@
 
 namespace Kronos\OAuth2Providers;
 
-use Kronos\OAuth2Providers\Openid\IdToken;
+use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
 
 interface OpenidServiceInterface {
 
