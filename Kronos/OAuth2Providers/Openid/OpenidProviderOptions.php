@@ -12,7 +12,7 @@ class OpenidProviderOptions {
 
 	protected $openidConfigurationUrl;
 
-	public function __construct($options) {
+	public function __construct(array $options) {
 		$this->clientId = $options['clientId'];
 		$this->clientSecret = $options['clientSecret'];
 		$this->redirectUri = $options['redirectUri'];

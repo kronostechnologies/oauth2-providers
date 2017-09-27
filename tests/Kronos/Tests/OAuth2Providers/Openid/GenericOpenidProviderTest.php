@@ -303,14 +303,14 @@ LQIDAQAB\r
 
 	public function test_ValidOptions_getBaseAuthorizationUrl_ShouldReturnAuthorizeEndpoint() {
 		$expected = self::OPENID_CONFIG_ARRAY['authorization_endpoint'];
-		$actual = $this->provider->getBaseAuthorizationUrl();
+		$actual = $this->provider->getAuthorizationEndpoint();
 
 		$this->assertEquals($expected, $actual);
 	}
 
 	public function test_ValidOptions_getBaseIdTokenUrl_ShouldReturnTokenEndpoint() {
 		$expected = self::OPENID_CONFIG_ARRAY['token_endpoint'];
-		$actual = $this->provider->getBaseIdTokenUrl();
+		$actual = $this->provider->getTokenEndpoint();
 
 		$this->assertEquals($expected, $actual);
 	}

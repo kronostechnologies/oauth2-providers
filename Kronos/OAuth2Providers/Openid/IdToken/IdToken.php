@@ -22,7 +22,7 @@ class IdToken implements JsonSerializable {
 	 * @param array $idTokenClaims
 	 * @param string $userIdKey
 	 */
-	public function __construct(array $idTokenClaims, $userIdKey) {
+	public function __construct(array $idTokenClaims, $userIdKey = 'sub') {
 
 		$this->idTokenClaims = $idTokenClaims;
 		$this->userIdKey = $userIdKey;

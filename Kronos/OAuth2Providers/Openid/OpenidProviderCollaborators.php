@@ -4,6 +4,7 @@ namespace Kronos\OAuth2Providers\Openid;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
+use Kronos\OAuth2Providers\SessionBasedHashService;
 use League\OAuth2\Client\Grant\GrantFactory;
 use League\OAuth2\Client\Tool\RequestFactory;
 
@@ -24,11 +25,17 @@ class OpenidProviderCollaborators {
 	 */
 	protected $httpClient;
 
+	/**
+	 * @var SessionBasedHashService
+	 */
+	protected $hashService;
 
-	public function __construct(GrantFactory $grantFactory = null, RequestFactory $requestFactory = null, HttpClient $httpClient = null) {
+
+	public function __construct(GrantFactory $grantFactory = null, RequestFactory $requestFactory = null, HttpClient $httpClient = null, SessionBasedHashService $hashService = null) {
 		$this->grantFactory = $grantFactory ?: new GrantFactory();
 		$this->requestFactory = $requestFactory ?: new RequestFactory();
 		$this->httpClient = $httpClient ?: new HttpClient();
+		$this->hashService = $hashService ?: new SessionBasedHashService();
 	}
 
 	/**
@@ -50,5 +57,12 @@ class OpenidProviderCollaborators {
 	 */
 	public function getHttpClient() {
 		return $this->httpClient;
+	}
+
+	/**
+	 * @return SessionBasedHashService
+	 */
+	public function getHashService() {
+		return $this->hashService;
 	}
 }

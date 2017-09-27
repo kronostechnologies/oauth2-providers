@@ -2,8 +2,6 @@
 
 namespace Kronos\OAuth2Providers\Openid\IdToken;
 
-use InvalidArgumentException;
-
 class IdTokenFactory {
 
 	/**
@@ -21,7 +19,7 @@ class IdTokenFactory {
 		$this->idTokenValidator = empty($idTokenValidator) ? new IdTokenValidator() : $idTokenValidator;
 	}
 
-	public function createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey) {
+	public function createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey = null) {
 		$idTokenClaims = $this->idTokenParser->parseIdToken($idTokenString, $keys);
 		$this->idTokenValidator->validateIdTokenClaims($idTokenClaims, $clientId, $issuer, $nonce);
 
