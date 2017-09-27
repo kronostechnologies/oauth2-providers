@@ -8,8 +8,7 @@ use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use Kronos\OAuth2Providers\Openid\GenericOpenidProvider;
-use Kronos\OAuth2Providers\Openid\IdToken;
-use Kronos\OAuth2Providers\Openid\OpenidUser;
+use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
 use League\OAuth2\Client\Grant\Exception\InvalidGrantException;
 use League\OAuth2\Client\Grant\GrantFactory;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -111,7 +110,7 @@ VIVaBe7AHx4iOvY8t6ITjueU0JfAKAwptfqIUCpzcnKYLuvt/Yb4JI5f3XB3wLws\r
 EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 8wIDAQAB\r
 -----END PUBLIC KEY-----",
-     '06dcba0c1a62963f8d069ab486af931b0036004a' => "-----BEGIN PUBLIC KEY-----\r
+		'06dcba0c1a62963f8d069ab486af931b0036004a' => "-----BEGIN PUBLIC KEY-----\r
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1ZJ0vMEk1zqDvxd2Rq2C\r
 zbRnR/BXS/QhCnVCVsMl4vJAPjeavccCkLxK/alM5uu+QFHwBtafdJJS1poATPWe\r
 7Rmvo94TuUz0cHoSW38JfmhEqypZ+SbSNNA903dX2dxpZZOPLpbw34un6txSue8X\r
@@ -120,7 +119,7 @@ CHwGa3PiQLDO6k1Ob99ldBLUOvSw3ymJoIuvVftq+wDpkwZ1p/ouPCfPB7lA5uJT\r
 srjpRv3Uj6+PVL4yIF8RrCO48Afw2LbaNluwTucFF5PHDB/hXvVqThIvKjP/t2zS\r
 +QIDAQAB\r
 -----END PUBLIC KEY-----",
-     '303b2855a91438570ca72850491741e96bd99ef8' => "-----BEGIN PUBLIC KEY-----\r
+		'303b2855a91438570ca72850491741e96bd99ef8' => "-----BEGIN PUBLIC KEY-----\r
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxjHhLN2489+vNqJrOTWb\r
 NS+f1H810owFC+bZii1eAZ3UfAnB92V9lPsU/x9IKSLCLrsGIMfVG9Zs+m+7g8xG\r
 Q/tUrCnHZF0CWgGt14LV53caoSIh7jXSz18zsTMIF0U5Fn1y4gARAp2KHh9qnuK9\r
@@ -215,7 +214,7 @@ LQIDAQAB\r
 	}
 
 	private function setClientResponse($body = null) {
-		if($body){
+		if($body) {
 			$this->response->expects($this->once())
 				->method('getBody')
 				->willReturn($body);
@@ -385,7 +384,7 @@ LQIDAQAB\r
 		$this->setClientResponse(self::ID_TOKEN_RESPONSE_BODY);
 
 		$expected = self::ID_TOKEN_RESPONSE_ARRAY;
-		$actual = $this->provider->getIdTokenPreparedResponse(self::AN_AUTHORIZATION_GRANT, self::AN_AUTHORIZATION_CODE_ARRAY);
+		$actual = $this->provider->getIdTokenParsedResponse(self::AN_AUTHORIZATION_GRANT, self::AN_AUTHORIZATION_CODE_ARRAY);
 
 		$this->assertEquals($expected, $actual);
 	}
@@ -396,7 +395,7 @@ LQIDAQAB\r
 		$this->expectException(BadMethodCallException::class);
 		$this->expectExceptionMessage('Required parameter not passed: "code"');
 
-		$this->provider->getIdTokenPreparedResponse(self::AN_AUTHORIZATION_GRANT);
+		$this->provider->getIdTokenParsedResponse(self::AN_AUTHORIZATION_GRANT);
 	}
 
 	public function test_InvalidGrant_getIdTokenPreparedResponse_ShouldThrow() {
@@ -405,7 +404,7 @@ LQIDAQAB\r
 		$this->expectException(InvalidGrantException::class);
 		$this->expectExceptionMessage('Grant "League\OAuth2\Client\Grant\\' . self::AN_INVALID_GRANT_STRING . '" must extend AbstractGrant');
 
-		$this->provider->getIdTokenPreparedResponse(self::AN_INVALID_GRANT_STRING);
+		$this->provider->getIdTokenParsedResponse(self::AN_INVALID_GRANT_STRING);
 	}
 
 	public function test_InvalidCode_getIdTokenPreparedResponse_ShouldThrow() {
@@ -417,7 +416,7 @@ LQIDAQAB\r
 		$this->expectException(IdentityProviderException::class);
 		$this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-		$this->provider->getIdTokenPreparedResponse(self::AN_AUTHORIZATION_GRANT, self::AN_AUTHORIZATION_CODE_ARRAY);
+		$this->provider->getIdTokenParsedResponse(self::AN_AUTHORIZATION_GRANT, self::AN_AUTHORIZATION_CODE_ARRAY);
 	}
 
 	public function test_WithCode_getIdTokenByAuthorizationCode_ShouldFetchAndCreateIdToken() {
@@ -485,7 +484,7 @@ LQIDAQAB\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithSuccessfulRequest_getResponse_ShouldReturnResponse(){
+	public function test_WithSuccessfulRequest_getResponse_ShouldReturnResponse() {
 		$request = new Request(self::A_GET_REQUEST_METHOD, self::A_URI, [], null, '1.1');
 
 		$this->setClientResponse();
@@ -496,7 +495,7 @@ LQIDAQAB\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithFailedRequest_getResponse_ShouldLetExceptionThrough(){
+	public function test_WithFailedRequest_getResponse_ShouldLetExceptionThrough() {
 		$request = new Request(self::A_GET_REQUEST_METHOD, self::A_URI, [], null, '1.1');
 
 		$exception = new RequestException(self::AN_EXCEPTION_MESSAGE, $request);
@@ -510,7 +509,7 @@ LQIDAQAB\r
 		$this->provider->getResponse($request);
 	}
 
-	public function test_WithSuccessfulRequest_getParsedResponse_ShouldReturnParsedResponse(){
+	public function test_WithSuccessfulRequest_getParsedResponse_ShouldReturnParsedResponse() {
 		$request = new Request(self::A_GET_REQUEST_METHOD, self::A_URI, [], null, '1.1');
 
 		$this->setClientResponse(self::ID_TOKEN_RESPONSE_BODY);
@@ -521,7 +520,7 @@ LQIDAQAB\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithFailedRequest_getParsedResponse_ShouldReturnParsedResponseError(){
+	public function test_WithFailedRequest_getParsedResponse_ShouldReturnParsedResponseError() {
 		$request = new Request(self::A_GET_REQUEST_METHOD, self::A_URI, [], null, '1.1');
 
 		$this->badResponseException = $this->getMockBuilder(BadResponseException::class)
@@ -545,43 +544,14 @@ LQIDAQAB\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithIdToken_getResourceOwner_ShouldReturnNewOpenidUser(){
-		$token = new IdTokenStub(self::A_REQUEST_OPTIONS_ARRAY, $this->provider);
-		$openidUser = $this->provider->getResourceOwner($token);
-
-		$expected = $token;
-		$actual = null;
-		if($openidUser instanceof OpenidUserStub) {
-			$actual = $openidUser->id_token;
-		}
-
-		$this->assertEquals($expected, $actual);
-	}
-
-	public function test_WithoutToken_getHeaders_ShouldReturnDefaultHeaders(){
+	public function test_WithoutToken_getHeaders_ShouldReturnDefaultHeaders() {
 		$expected = [];
 		$actual = $this->provider->getHeaders();
 
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithStringToken_getHeaders_ShouldReturnAuthorizationBearerWithToken(){
-		$expected = ['Authorization' => 'Bearer ' . self::A_TOKEN_STRING];
-		$actual = $this->provider->getHeaders(self::A_TOKEN_STRING);
-
-		$this->assertEquals($expected, $actual);
-	}
-
-	public function test_WithObjectToken_getHeaders_ShouldReturnAuthorizationBearerWithTokenToString(){
-		$token = new IdTokenStub(self::A_REQUEST_OPTIONS_ARRAY, $this->provider);
-
-		$expected = ['Authorization' => 'Bearer ' . $token];
-		$actual = $this->provider->getHeaders($token);
-
-		$this->assertEquals($expected, $actual);
-	}
-
-	public function test_WithUrlAndSuccessfulResponse_getJwtVerificationKeys_ShouldReturnKeysArray(){
+	public function test_WithUrlAndSuccessfulResponse_getJwtVerificationKeys_ShouldReturnKeysArray() {
 		$request = new Request(self::A_GET_REQUEST_METHOD, self::OPENID_CONFIG_ARRAY['jwks_uri'], [], null, '1.1');
 		$this->requestFactory = $this->getMockBuilder(RequestFactory::class)
 			->setMethods(['getRequestWithOptions'])
@@ -602,7 +572,7 @@ LQIDAQAB\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithUrlAndErrorResponse_getJwtVerificationKeys_ShouldReturnEmptyArray(){
+	public function test_WithUrlAndErrorResponse_getJwtVerificationKeys_ShouldReturnEmptyArray() {
 		$request = new Request(self::A_GET_REQUEST_METHOD, self::OPENID_CONFIG_ARRAY['jwks_uri'], [], null, '1.1');
 		$this->requestFactory = $this->getMockBuilder(RequestFactory::class)
 			->setMethods(['getRequestWithOptions'])
@@ -636,14 +606,14 @@ LQIDAQAB\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithUrl_getVerificationKeysUrl_ShouldReturnKeysUrl(){
+	public function test_WithUrl_getVerificationKeysUrl_ShouldReturnKeysUrl() {
 		$expected = self::OPENID_CONFIG_ARRAY['jwks_uri'];
 		$actual = $this->provider->getVerificationKeysUrl();
 
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithoutUrl_getVerificationKeysUrl_ShouldReturnEmptyString(){
+	public function test_WithoutUrl_getVerificationKeysUrl_ShouldReturnEmptyString() {
 		$config = self::OPENID_CONFIG_ARRAY;
 		unset($config['jwks_uri']);
 		$this->provider->setOpenidConfig($config);
@@ -654,21 +624,21 @@ LQIDAQAB\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithConfig_getOpenidConfiguration_ShouldReturnOpenidConfig(){
+	public function test_WithConfig_getOpenidConfiguration_ShouldReturnOpenidConfig() {
 		$expected = self::OPENID_CONFIG_ARRAY;
 		$actual = $this->provider->getOpenidConfiguration();
 
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithUrl_getOpenidConfigurationUrl_ShouldReturnOpenidConfigUrl(){
+	public function test_WithUrl_getOpenidConfigurationUrl_ShouldReturnOpenidConfigUrl() {
 		$expected = self::VALID_OPTIONS['openidConfigurationUrl'];
 		$actual = $this->provider->getOpenidConfigurationUrl();
 
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithUrl_getOpenidConfigurationUrl_ShouldReturnNull(){
+	public function test_WithUrl_getOpenidConfigurationUrl_ShouldReturnNull() {
 		$this->options = self::VALID_OPTIONS;
 		unset($this->options['openidConfigurationUrl']);
 		$this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
@@ -679,14 +649,14 @@ LQIDAQAB\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithoutState_getState_ShouldReturnNull(){
+	public function test_WithoutState_getState_ShouldReturnNull() {
 		$expected = null;
 		$actual = $this->provider->getState();
 
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_WithState_getState_ShouldReturnState(){
+	public function test_WithState_getState_ShouldReturnState() {
 		$this->options['state'] = self::A_STATE_STRING;
 		$this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
 
@@ -715,15 +685,11 @@ class TestableGenericOpenidProvider extends GenericOpenidProvider {
 		return $this->state;
 	}
 
-	protected function createIdToken(array $response, GenericOpenidProvider $provider) {
-		return new IdTokenStub($response, $provider);
+	protected function createIdToken(array $response) {
+		return new IdTokenStub($response);
 	}
 
-	protected function createResourceOwner(IdToken $token) {
-		return new OpenidUserStub($token);
-	}
-
-	public function setOpenidConfig($config = []){
+	public function setOpenidConfig($config = []) {
 		$this->setOpenidConfiguration($config);
 	}
 }
@@ -733,14 +699,8 @@ class IdTokenStub extends IdToken {
 	public $options;
 	public $provider;
 
-	public function __construct(array $options = [], GenericOpenidProvider $provider) {
+	public function __construct(array $options = []) {
 		//parent::__construct($options, $provider);
 		$this->options = $options;
-		$this->provider = $provider;
 	}
-}
-
-class OpenidUserStub extends OpenidUser {
-
-	public $id_token;
 }

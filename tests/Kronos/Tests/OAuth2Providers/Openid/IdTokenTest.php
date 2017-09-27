@@ -4,7 +4,8 @@ namespace Kronos\Tests\OAuth2Providers\Openid;
 
 use InvalidArgumentException;
 use Kronos\OAuth2Providers\Openid\GenericOpenidProvider;
-use Kronos\OAuth2Providers\Openid\IdToken;
+
+use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
@@ -26,8 +27,8 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 	const OPENID_CONFIGURATION = ['issuer' => 'https://accounts.google.com'];
 	const VALID_CLIENT_ID = '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com';
 	const INVALID_CLIENT_ID = '';
-	const VALID_OPTIONS = ['id_token' => 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2ZGNiYTBjMWE2Mjk2M2Y4ZDA2OWFiNDg2YWY5MzFiMDAzNjAwNGEifQ.eyJhenAiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDc5NjM5NjIxNDgwMzMzNDcwNTIiLCJhdF9oYXNoIjoiWXYwV1hLMTItT3Y1OW11RTBwVXpxdyIsIm5vbmNlIjoiNjY2NGIzZWI2NGQ1MWJiMTQyMDE1ODBhNmQyNjEzM2Q3M2QzYTk2NjVmZGM1YmM4MzViZWNiNjdlYmI0MWRhY18wY2M1M2U2ZjY1MzM5NzkzMGZkZTU2MzI3NWY0Mjg2OGZjMGY5OTc4IiwiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwiaWF0IjoxNTA1MzI4Njk3LCJleHAiOjE1MDUzMzIyOTd9.piVQuDW0lK1SXSmUylLkdcHxLwE7IL5BpIboAv4i6O1qIe9KUcJFIE2YCUCQIAw1xnosr0o-KQ_m-9UDG401WUI4t8tO-IRhpufYvfwhNYexTclhD3b4TZQUATmhe0mxfZiYWWjnZhO-crG5kc1l9iDFO8Yu7UefpHIbjCVWtkC7UEOJXlzsKizTsU3FuseRMCOMD1PNEhS5iOILLce-O0VzdTtUSLvnUp15nEvHaXPLvLqbhGGCfabqfVEF1QuQ_APEp3WBhVgvhOy5aD0n0k7CS4yIz8NE-m9tzuMGkY8ujZAQDk_zV5nLx4ZdsdUMbBVMJxEabHVg0WdbKfBGPg'];
-	const INVALID_OPTIONS = ['id_token' => 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2ZGNiYTBjMWE2Mjk2M2Y4ZDA2OWFiNDg2YWY5MzFiMDAzNjAwNGEifQ.eyJhenAiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDc5NjM5NjIxNDgwMzMzNDcwNTIiLCJhdF9oYXNoIjoiWXYwV1hLMTItT3Y1OW11RTBwVXpxdyIsIm5vbmNlIjoiNjY2NGIzZWI2NGQ1MWJiMTQyMDE1ODBhNmQyNjEzM2Q3M2QzYTk2NjVmZGM1YmM4MzViZWNiNjdlYmI0MWRhY18wY2M1M2U2ZjY1MzM5NzkzMGZkZTU2MzI3NWY0Mjg2OGZjMGY5OTc4IiwiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwiaWF0IjoxNTA1MzI4Njk3LCJleHAiOjE1MDUzMzIyOTd9'];
+	const A_VALID_TOKEN = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2ZGNiYTBjMWE2Mjk2M2Y4ZDA2OWFiNDg2YWY5MzFiMDAzNjAwNGEifQ.eyJhenAiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDc5NjM5NjIxNDgwMzMzNDcwNTIiLCJhdF9oYXNoIjoiWXYwV1hLMTItT3Y1OW11RTBwVXpxdyIsIm5vbmNlIjoiNjY2NGIzZWI2NGQ1MWJiMTQyMDE1ODBhNmQyNjEzM2Q3M2QzYTk2NjVmZGM1YmM4MzViZWNiNjdlYmI0MWRhY18wY2M1M2U2ZjY1MzM5NzkzMGZkZTU2MzI3NWY0Mjg2OGZjMGY5OTc4IiwiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwiaWF0IjoxNTA1MzI4Njk3LCJleHAiOjE1MDUzMzIyOTd9.piVQuDW0lK1SXSmUylLkdcHxLwE7IL5BpIboAv4i6O1qIe9KUcJFIE2YCUCQIAw1xnosr0o-KQ_m-9UDG401WUI4t8tO-IRhpufYvfwhNYexTclhD3b4TZQUATmhe0mxfZiYWWjnZhO-crG5kc1l9iDFO8Yu7UefpHIbjCVWtkC7UEOJXlzsKizTsU3FuseRMCOMD1PNEhS5iOILLce-O0VzdTtUSLvnUp15nEvHaXPLvLqbhGGCfabqfVEF1QuQ_APEp3WBhVgvhOy5aD0n0k7CS4yIz8NE-m9tzuMGkY8ujZAQDk_zV5nLx4ZdsdUMbBVMJxEabHVg0WdbKfBGPg';
+	const AN_INVALID_TOKEN = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2ZGNiYTBjMWE2Mjk2M2Y4ZDA2OWFiNDg2YWY5MzFiMDAzNjAwNGEifQ.eyJhenAiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIxNjQ3ODUzMTA4NjgtbzFxa2luZWgxOWQyZmN2cXNmM3RxYWNsY3Q5bm0zOWQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDc5NjM5NjIxNDgwMzMzNDcwNTIiLCJhdF9oYXNoIjoiWXYwV1hLMTItT3Y1OW11RTBwVXpxdyIsIm5vbmNlIjoiNjY2NGIzZWI2NGQ1MWJiMTQyMDE1ODBhNmQyNjEzM2Q3M2QzYTk2NjVmZGM1YmM4MzViZWNiNjdlYmI0MWRhY18wY2M1M2U2ZjY1MzM5NzkzMGZkZTU2MzI3NWY0Mjg2OGZjMGY5OTc4IiwiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwiaWF0IjoxNTA1MzI4Njk3LCJleHAiOjE1MDUzMzIyOTd9';
 
 	/**
 	 * @var IdToken|TestableIdToken
@@ -62,7 +63,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('Unable to parse the id_token!');
 
-		$this->id_token = new IdToken(self::INVALID_OPTIONS, $this->provider);
+		$this->id_token = new IdToken(self::AN_INVALID_TOKEN, $this->provider);
 	}
 
 	public function test_InvalidNonce_validateIdToken_ShouldThrow() {
@@ -75,7 +76,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('The nonce is invalid!');
 
-		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token = new TestableIdToken(self::A_VALID_TOKEN, $this->provider);
 		$this->id_token->emptyNonce();
 		$this->id_token->validate($this->provider);
 	}
@@ -93,7 +94,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('The audience is invalid!');
 
-		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token = new TestableIdToken(self::A_VALID_TOKEN, $this->provider);
 		$this->id_token->validate($this->provider);
 	}
 
@@ -116,7 +117,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('Invalid token issuer!');
 
-		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token = new TestableIdToken(self::A_VALID_TOKEN, $this->provider);
 		$this->id_token->validate($this->provider);
 	}
 
@@ -124,7 +125,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 		$this->provider->expects($this->once())
 			->method('getJwtVerificationKeys');
 
-		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token = new TestableIdToken(self::A_VALID_TOKEN, $this->provider);
 
 		$expected = self::PARSED_CLAIMS;
 		$actual = $this->id_token->getClaims();
@@ -136,7 +137,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 		$this->provider->expects($this->once())
 			->method('getJwtVerificationKeys');
 
-		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token = new TestableIdToken(self::A_VALID_TOKEN, $this->provider);
 
 		$expected = self::USER_ID;
 		$actual = $this->id_token->getUserId();
@@ -148,9 +149,9 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 		$this->provider->expects($this->once())
 			->method('getJwtVerificationKeys');
 
-		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token = new TestableIdToken(self::A_VALID_TOKEN, $this->provider);
 
-		$expected = self::VALID_OPTIONS['id_token'];
+		$expected = self::A_VALID_TOKEN;
 		$actual = $this->id_token->getIdToken();
 
 		$this->assertEquals($expected, $actual);
@@ -160,7 +161,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 		$this->provider->expects($this->once())
 			->method('getJwtVerificationKeys');
 
-		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token = new TestableIdToken(self::A_VALID_TOKEN, $this->provider);
 
 		$expected = self::PARSED_CLAIMS;
 		$actual = $this->id_token->jsonSerialize();
@@ -169,9 +170,9 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_ValidIdToken___toString_ShouldReturnIdTokenKey(){
-		$this->id_token = new TestableIdToken(self::VALID_OPTIONS, $this->provider);
+		$this->id_token = new TestableIdToken(self::A_VALID_TOKEN, $this->provider);
 
-		$expected = self::VALID_OPTIONS['id_token'];
+		$expected = self::A_VALID_TOKEN;
 		$actual = (string) $this->id_token;
 
 		$this->assertEquals($expected, $actual);
