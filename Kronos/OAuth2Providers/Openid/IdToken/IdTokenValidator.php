@@ -16,7 +16,7 @@ class IdTokenValidator {
 		$this->hashService = empty($sessionBasedHashService) ? new SessionBasedHashService() : $sessionBasedHashService;
 	}
 
-	public function validateIdTokenClaims(array $idTokenClaims, $clientId, $issuer, $nonce) {
+	public function validateIdTokenClaims(array $idTokenClaims, $clientId, $issuer) {
 		if($clientId !== $idTokenClaims['aud']) {
 			throw new RuntimeException('The audience is invalid!');
 		}
@@ -25,7 +25,7 @@ class IdTokenValidator {
 			throw new RuntimeException('The issuer is invalid!');
 		}
 
-		if(!$this->hashService->validateSessionBasedHash($idTokenClaims['nonce']) || $nonce !== $idTokenClaims['nonce']) {
+		if(!$this->hashService->validateSessionBasedHash($idTokenClaims['nonce'])) {
 			throw new RuntimeException('The nonce is invalid!');
 		}
 	}

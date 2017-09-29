@@ -19,9 +19,9 @@ class IdTokenFactory {
 		$this->idTokenValidator = $idTokenValidator ?: new IdTokenValidator();
 	}
 
-	public function createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey = null) {
+	public function createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey = null) {
 		$idTokenClaims = $this->idTokenParser->parseIdToken($idTokenString, $keys);
-		$this->idTokenValidator->validateIdTokenClaims($idTokenClaims, $clientId, $issuer, $nonce);
+		$this->idTokenValidator->validateIdTokenClaims($idTokenClaims, $clientId, $issuer);
 
 		return new IdToken($idTokenClaims, $userIdKey);
 	}

@@ -33,16 +33,6 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	protected $openidConfiguration;
 
 	/**
-	 * @var string
-	 */
-	protected $state;
-
-	/**
-	 * @var string
-	 */
-	protected $nonce;
-
-	/**
 	 * @var OpenidProviderCollaborators
 	 */
 	protected $collaborators;
@@ -111,10 +101,8 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 		$options = [];
 
 		$options['state'] = $this->collaborators->getHashService()->getSessionBasedHash();
-		$this->state = $options['state'];
 
 		$options['nonce'] = $this->collaborators->getHashService()->getSessionBasedHash();
-		$this->nonce = $options['nonce'];
 
 		$options['response_type'] = 'code';
 		$options['approval_prompt'] = 'auto';
@@ -442,7 +430,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	protected function createIdToken(array $response) {
 		$factory = new IdTokenFactory();
 
-		return $factory->createIdToken($response['id_token'], $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer'], $this->nonce);
+		return $factory->createIdToken($response['id_token'], $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer']);
 	}
 
 	/**

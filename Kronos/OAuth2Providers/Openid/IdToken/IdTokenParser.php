@@ -21,7 +21,7 @@ class IdTokenParser {
 			$tks = explode('.', $idTokenString);
 
 			if(count($tks) == 3 && !empty($tks[2])) {
-				$idTokenClaims = $this->decodeJWT($idTokenClaims, $keys);
+				$idTokenClaims = $this->decodeJWT($idTokenString, $keys);
 			}
 			else {
 				throw new RuntimeException('Unsigned id_token');
