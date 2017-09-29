@@ -24,11 +24,11 @@ class IdTokenParser {
 				$idTokenClaims = $this->decodeJWT($idTokenClaims, $keys);
 			}
 			else {
-				throw new RuntimeException("Unsigned id_token");
+				throw new RuntimeException('Unsigned id_token');
 			}
 		}
 		catch(RuntimeException $e) {
-			throw new RuntimeException("Unable to parse the id_token!");
+			throw new RuntimeException('Unable to parse the id_token!');
 		}
 
 		return $idTokenClaims;

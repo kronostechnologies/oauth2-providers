@@ -5,6 +5,7 @@ namespace Kronos\OAuth2Providers\Openid;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
 use Kronos\OAuth2Providers\SessionBasedHashService;
+use League\OAuth2\Client\Grant\AbstractGrant;
 use League\OAuth2\Client\Grant\GrantFactory;
 use League\OAuth2\Client\Tool\RequestFactory;
 

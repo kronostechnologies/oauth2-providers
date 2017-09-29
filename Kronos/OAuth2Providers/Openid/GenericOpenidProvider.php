@@ -3,18 +3,14 @@
 namespace Kronos\OAuth2Providers\Openid;
 
 use Firebase\JWT\JWT;
-use GuzzleHttp\ClientInterface as HttpClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
 use Kronos\OAuth2Providers\OpenidServiceInterface;
-use Kronos\OAuth2Providers\SessionBasedHashService;
 use League\OAuth2\Client\Grant\AbstractGrant;
-use League\OAuth2\Client\Grant\GrantFactory;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Tool\ArrayAccessorTrait;
 use League\OAuth2\Client\Tool\QueryBuilderTrait;
-use League\OAuth2\Client\Tool\RequestFactory;
 use phpseclib\Crypt\RSA;
 use phpseclib\Math\BigInteger;
 use Psr\Http\Message\RequestInterface;
@@ -27,24 +23,9 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	use QueryBuilderTrait;
 
 	/**
-	 * @var string
+	 * @var OpenidProviderOptions
 	 */
-	protected $clientId;
-
-	/**
-	 * @var string
-	 */
-	protected $clientSecret;
-
-	/**
-	 * @var string
-	 */
-	protected $redirectUri;
-
-	/**
-	 * @var string
-	 */
-	protected $openidConfigurationUrl;
+	protected $options;
 
 	/**
 	 * @var array
@@ -62,25 +43,9 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	protected $nonce;
 
 	/**
-	 * @var GrantFactory
+	 * @var OpenidProviderCollaborators
 	 */
-	protected $grantFactory;
-
-	/**
-	 * @var RequestFactory
-	 */
-	protected $requestFactory;
-
-	/**
-	 * @var HttpClientInterface
-	 */
-	protected $httpClient;
-
-	/**
-	 * @var SessionBasedHashService
-	 */
-	protected $hashService;
-
+	protected $collaborators;
 
 	/**
 	 * Constructs an Openid Connect service provider.
@@ -89,17 +54,11 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @param OpenidProviderCollaborators $collaborators
 	 */
 	public function __construct(OpenidProviderOptions $options, OpenidProviderCollaborators $collaborators) {
-		$this->clientId = $options->getClientId();
-		$this->clientSecret = $options->getClientSecret();
-		$this->redirectUri = $options->getRedirectUri();
-		$this->openidConfigurationUrl = $options->getOpenidConfigurationUrl();
+		$this->options = $options;
 		$this->openidConfiguration = $this->fetchOpenidConfiguration();
 
-		$this->grantFactory = $collaborators->getGrantFactory();
-		$this->grantFactory->setGrant('jwt_bearer', new JwtBearer);
-		$this->requestFactory = $collaborators->getRequestFactory();
-		$this->httpClient = $collaborators->getHttpClient();
-		$this->hashService = $collaborators->getHashService();
+		$this->collaborators = $collaborators;
+		$this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer);
 	}
 
 	/**
@@ -151,10 +110,10 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	protected function getAuthorizationParameters() {
 		$options = [];
 
-		$options['state'] = $this->hashService->getSessionBasedHash();
+		$options['state'] = $this->collaborators->getHashService()->getSessionBasedHash();
 		$this->state = $options['state'];
 
-		$options['nonce'] = $this->hashService->getSessionBasedHash();
+		$options['nonce'] = $this->collaborators->getHashService()->getSessionBasedHash();
 		$this->nonce = $options['nonce'];
 
 		$options['response_type'] = 'code';
@@ -166,8 +125,8 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 			$options['scope'] = implode($separator, $options['scope']);
 		}
 
-		$options['redirect_uri'] = $this->redirectUri;
-		$options['client_id'] = $this->clientId;
+		$options['redirect_uri'] = $this->options->getRedirectUri();
+		$options['client_id'] = $this->options->getClientId();
 
 		return $options;
 	}
@@ -226,9 +185,9 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 		$grant = $this->verifyGrant($grant);
 
 		$params = [
-			'client_id' => $this->clientId,
-			'client_secret' => $this->clientSecret,
-			'redirect_uri' => $this->redirectUri
+			'client_id' => $this->options->getClientId(),
+			'client_secret' => $this->options->getClientSecret(),
+			'redirect_uri' => $this->options->getRedirectUri()
 		];
 
 		$params = $grant->prepareRequestParameters($params, $options);
@@ -247,10 +206,10 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 */
 	protected function verifyGrant($grant) {
 		if(is_string($grant)) {
-			return $this->grantFactory->getGrant($grant);
+			return $this->collaborators->getGrantFactory()->getGrant($grant);
 		}
 
-		$this->grantFactory->checkGrant($grant);
+		$this->collaborators->getGrantFactory()->checkGrant($grant);
 		return $grant;
 	}
 
@@ -338,9 +297,8 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 		];
 
 		$options = array_merge_recursive($defaults, $options);
-		$factory = $this->requestFactory;
 
-		return $factory->getRequestWithOptions($method, $url, $options);
+		return $this->collaborators->getRequestFactory()->getRequestWithOptions($method, $url, $options);
 	}
 
 	/**
@@ -353,7 +311,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return ResponseInterface
 	 */
 	protected function getResponse(RequestInterface $request) {
-		return $this->httpClient->send($request);
+		return $this->collaborators->getHttpClient()->send($request);
 	}
 
 	/**
@@ -484,7 +442,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	protected function createIdToken(array $response) {
 		$factory = new IdTokenFactory();
 
-		return $factory->createIdToken($response['id_token'], $this->getJwtVerificationKeys(), $this->clientId, $this->openidConfiguration['issuer'], $this->nonce);
+		return $factory->createIdToken($response['id_token'], $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer'], $this->nonce);
 	}
 
 	/**
@@ -514,7 +472,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return array
 	 */
 	protected function getJwtVerificationKeys() {
-		$request = $this->requestFactory->getRequestWithOptions('GET', $this->openidConfiguration['jwks_uri']);
+		$request = $this->collaborators->getRequestFactory()->getRequestWithOptions('GET', $this->openidConfiguration['jwks_uri']);
 		$response = $this->getParsedResponse($request);
 
 		$keys = [];
@@ -555,7 +513,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return array
 	 */
 	protected function fetchOpenidConfiguration() {
-		$request = $this->requestFactory->getRequestWithOptions('get', $this->openidConfigurationUrl, []);
+		$request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get', $this->options->getOpenidConfigurationUrl(), []);
 		$response = $this->getParsedResponse($request);
 
 		return $response;
@@ -566,6 +524,6 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return bool
 	 */
 	public function validateSate($state) {
-		return $this->hashService->validateSessionBasedHash($state);
+		return $this->collaborators->getHashService()->validateSessionBasedHash($state);
 	}
 }

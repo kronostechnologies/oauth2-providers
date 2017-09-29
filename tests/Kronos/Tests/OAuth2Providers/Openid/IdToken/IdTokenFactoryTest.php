@@ -8,6 +8,7 @@ use Kronos\OAuth2Providers\Openid\IdToken\IdTokenParser;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenValidator;
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 
@@ -26,6 +27,8 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 		'nonce' => '6664b3eb64d51bb14201580a6d26133d73d3a9665fdc5bc835becb67ebb41dac_0cc53e6f653397930fde563275f42868fc0f9978',
 		'iss' => 'https://accounts.google.com',
 	];
+	const A_PARSER_EXCEPTION_MESSAGE = 'Unable to parse the id_token!';
+	const A_VALIDATOR_EXCEPTION_MESSAGE = 'The audience is invalid!';
 
 	/**
 	 * @var PHPUnit_Framework_MockObject_MockObject|IdTokenParser
@@ -93,6 +96,58 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 		$expected = self::A_PARSED_CLAIMS_ARRAY;
 		$actual = $idToken->getClaims();
 		$this->assertEquals($expected, $actual);
+	}
+
+	public function test_ParseError_createIdToken_ShouldThrow(){
+		$idTokenString = self::AN_ID_TOKEN_STRING;
+		$keys = self::A_KEYS_ARRAY;
+		$clientId = self:: A_CLIENT_ID;
+		$issuer = self::AN_ISSUER;
+		$nonce = self::A_NONCE;
+		$userIdKey = self::A_USER_ID_KEY;
+
+
+		$exception = new RuntimeException(self::A_PARSER_EXCEPTION_MESSAGE);
+
+		$this->parser->expects($this->once())
+			->method('parseIdToken')
+			->with($idTokenString, $keys)
+			->willThrowException($exception);
+
+		$factory = new TestableIdTokenFactory($this->parser, $this->validator);
+
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage(self::A_PARSER_EXCEPTION_MESSAGE);
+
+		$factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey);
+	}
+
+	public function test_ValidateError_createIdToken_ShouldThrow(){
+		$idTokenString = self::AN_ID_TOKEN_STRING;
+		$keys = self::A_KEYS_ARRAY;
+		$clientId = self:: A_CLIENT_ID;
+		$issuer = self::AN_ISSUER;
+		$nonce = self::A_NONCE;
+		$userIdKey = self::A_USER_ID_KEY;
+
+		$this->parser->expects($this->once())
+			->method('parseIdToken')
+			->with($idTokenString, $keys)
+			->willReturn(self::A_PARSED_CLAIMS_ARRAY);
+
+		$exception = new RuntimeException(self::A_VALIDATOR_EXCEPTION_MESSAGE);
+
+		$this->validator->expects($this->once())
+			->method('validateIdTokenClaims')
+			->with(self::A_PARSED_CLAIMS_ARRAY, $clientId, $issuer, $nonce)
+			->willThrowException($exception);
+
+		$factory = new TestableIdTokenFactory($this->parser, $this->validator);
+
+		$this->expectException(RuntimeException::class);
+		$this->expectExceptionMessage(self::A_VALIDATOR_EXCEPTION_MESSAGE);
+
+		$factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey);
 	}
 }
 
