@@ -4,8 +4,8 @@ namespace Kronos\OAuth2Providers\Openid;
 
 use Firebase\JWT\JWT;
 use GuzzleHttp\Exception\BadResponseException;
+use InvalidArgumentException;
 use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
-use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
 use Kronos\OAuth2Providers\OpenidServiceInterface;
 use League\OAuth2\Client\Grant\AbstractGrant;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -44,11 +44,14 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @param OpenidProviderCollaborators $collaborators
 	 */
 	public function __construct(OpenidProviderOptions $options, OpenidProviderCollaborators $collaborators) {
+		$this->collaborators = $collaborators ?: new OpenidProviderCollaborators();
+		$this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer);
+
+		if(!$options) {
+			throw new InvalidArgumentException('$option argument must be a valid OpenidProviderOptions instance');
+		}
 		$this->options = $options;
 		$this->openidConfiguration = $this->fetchOpenidConfiguration();
-
-		$this->collaborators = $collaborators;
-		$this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer);
 	}
 
 	/**
@@ -428,9 +431,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return IdToken
 	 */
 	protected function createIdToken(array $response) {
-		$factory = new IdTokenFactory();
-
-		return $factory->createIdToken($response['id_token'], $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer']);
+		return $this->collaborators->getIdTokenFactory()->createIdToken($response['id_token'], $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer']);
 	}
 
 	/**

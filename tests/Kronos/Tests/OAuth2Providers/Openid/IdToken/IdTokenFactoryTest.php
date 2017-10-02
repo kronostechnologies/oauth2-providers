@@ -72,7 +72,6 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 		$keys = self::A_KEYS_ARRAY;
 		$clientId = self:: A_CLIENT_ID;
 		$issuer = self::AN_ISSUER;
-		$nonce = self::A_NONCE;
 		$userIdKey = self::A_USER_ID_KEY;
 
 		$this->parser->expects($this->once())
@@ -82,10 +81,10 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 
 		$this->validator->expects($this->once())
 			->method('validateIdTokenClaims')
-			->with(self::A_PARSED_CLAIMS_ARRAY, $clientId, $issuer, $nonce);
+			->with(self::A_PARSED_CLAIMS_ARRAY, $clientId, $issuer);
 
 		$factory = new TestableIdTokenFactory($this->parser, $this->validator);
-		$idToken = $factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey);
+		$idToken = $factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey);
 
 		$this->assertInstanceOf(IdToken::class, $idToken);
 
@@ -103,7 +102,6 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 		$keys = self::A_KEYS_ARRAY;
 		$clientId = self:: A_CLIENT_ID;
 		$issuer = self::AN_ISSUER;
-		$nonce = self::A_NONCE;
 		$userIdKey = self::A_USER_ID_KEY;
 
 
@@ -119,7 +117,7 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage(self::A_PARSER_EXCEPTION_MESSAGE);
 
-		$factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey);
+		$factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey);
 	}
 
 	public function test_ValidateError_createIdToken_ShouldThrow(){
@@ -127,7 +125,6 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 		$keys = self::A_KEYS_ARRAY;
 		$clientId = self:: A_CLIENT_ID;
 		$issuer = self::AN_ISSUER;
-		$nonce = self::A_NONCE;
 		$userIdKey = self::A_USER_ID_KEY;
 
 		$this->parser->expects($this->once())
@@ -139,7 +136,7 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 
 		$this->validator->expects($this->once())
 			->method('validateIdTokenClaims')
-			->with(self::A_PARSED_CLAIMS_ARRAY, $clientId, $issuer, $nonce)
+			->with(self::A_PARSED_CLAIMS_ARRAY, $clientId, $issuer)
 			->willThrowException($exception);
 
 		$factory = new TestableIdTokenFactory($this->parser, $this->validator);
@@ -147,7 +144,7 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage(self::A_VALIDATOR_EXCEPTION_MESSAGE);
 
-		$factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $nonce, $userIdKey);
+		$factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey);
 	}
 }
 
