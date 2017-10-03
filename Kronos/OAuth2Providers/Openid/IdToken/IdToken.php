@@ -6,6 +6,8 @@ use JsonSerializable;
 
 class IdToken implements JsonSerializable {
 
+	const DEFAULT_USER_ID_KEY = 'sub';
+
 	/**
 	 * @var string
 	 */
@@ -25,7 +27,7 @@ class IdToken implements JsonSerializable {
 	public function __construct(array $idTokenClaims, $userIdKey = 'sub') {
 
 		$this->idTokenClaims = $idTokenClaims;
-		$this->userIdKey = $userIdKey;
+		$this->userIdKey = isset($userIdKey) ? $userIdKey : self::DEFAULT_USER_ID_KEY;
 	}
 
 	/**
