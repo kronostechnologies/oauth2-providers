@@ -29,7 +29,7 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	 */
 	public function __construct($clientId, $clientSecret, $redirectUri, AccessTokenStorageInterface $accessTokenStore,array $collaborators = []) {
 
-		$this->pathOAuth2 = '/oauth2/v2';
+		$this->pathOAuth2 = '/oauth2/v2.0';
 
 		parent::__construct([
 			'clientId'          => $clientId,
