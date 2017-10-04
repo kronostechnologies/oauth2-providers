@@ -18,7 +18,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "git@github.com:kronostechnologies/oauth2-microsoft-graph.git"
+      "url": "https://github.com/kronostechnologies/oauth2-microsoft-graph.git"
     }
   ],
   "require": {
