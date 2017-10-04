@@ -122,19 +122,6 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	}
 
 	/**
-	 * Requests resource owner details.
-	 *
-	 * @param  AccessToken $token
-	 * @return mixed
-	 */
-	public function fetchResourceOwnerDetails(AccessToken $token)
-	{
-		$response = $this->get('me',$token);
-
-		return $response;
-	}
-
-	/**
 	 * @param array $response
 	 * @param AccessToken $token
 	 * @return MicrosoftGraphUser
