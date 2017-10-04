@@ -24,10 +24,10 @@ class IdToken implements JsonSerializable {
 	 * @param array $idTokenClaims
 	 * @param string $userIdKey
 	 */
-	public function __construct(array $idTokenClaims, $userIdKey = 'sub') {
+	public function __construct(array $idTokenClaims, $userIdKey = null) {
 
 		$this->idTokenClaims = $idTokenClaims;
-		$this->userIdKey = isset($userIdKey) ? $userIdKey : self::DEFAULT_USER_ID_KEY;
+		$this->userIdKey = isset($userIdKey) ? $userIdKey : static::DEFAULT_USER_ID_KEY;
 	}
 
 	/**
