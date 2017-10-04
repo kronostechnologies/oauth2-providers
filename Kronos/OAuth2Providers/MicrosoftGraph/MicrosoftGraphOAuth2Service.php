@@ -10,6 +10,8 @@ use League\OAuth2\Client\Token\AccessToken;
 
 class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provider\MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface {
 
+	const DEFAULT_SCOPES = ['openid', 'profile', 'offline_access', 'User.Read', 'Mail.ReadWrite', 'Contacts.ReadWrite', 'Calendars.ReadWrite', 'Tasks.ReadWrite'];
+
 	/**
 	 * @var AccessTokenStorageInterface
 	 */
@@ -30,6 +32,7 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	public function __construct($clientId, $clientSecret, $redirectUri, AccessTokenStorageInterface $accessTokenStore,array $collaborators = []) {
 
 		$this->pathOAuth2 = '/oauth2/v2.0';
+		$this->scopes = self::DEFAULT_SCOPES;
 
 		parent::__construct([
 			'clientId'          => $clientId,
@@ -39,6 +42,26 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 		],$collaborators);
 
 		$this->accessTokenStore = $accessTokenStore;
+	}
+
+	public function setScopes(array $scopes){
+		$this->scopes = $scopes;
+	}
+
+	public function AddScope($scope){
+		$this->scopes[] = $scope;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	protected function getDefaultScopes()
+	{
+		if(is_array($this->scopes)){
+			return implode(' ', $this->scopes);
+		}
+
+		return $this->scopes;
 	}
 
 	/**
@@ -53,12 +76,6 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 		);
 	}
 
-	/**
-	 * @return string
-	 */
-	protected function getDefaultRessource(){
-		return 'https://graph.microsoft.com';
-	}
 
 	/**
 	 * @param string $code
@@ -67,7 +84,7 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	public function getAccessTokenByAuthorizationCode($code) {
 		$token = $this->getAccessToken('authorization_code', [
 			'code' => $code,
-			'resource' => $this->getDefaultRessource(),
+			'scope' => $this->getDefaultScopes(),
 		]);
 
 		$this->accessTokenStore->storeAccessToken($token);
