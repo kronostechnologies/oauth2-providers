@@ -1,6 +1,6 @@
 <?php
 
-namespace Kronos\OAuth2Providers\Office365;
+namespace Kronos\OAuth2Providers\MicrosoftGraph;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 

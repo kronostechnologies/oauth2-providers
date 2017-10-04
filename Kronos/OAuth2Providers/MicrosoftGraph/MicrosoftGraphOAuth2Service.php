@@ -1,6 +1,6 @@
 <?php
 
-namespace Kronos\OAuth2Providers\Office365;
+namespace Kronos\OAuth2Providers\MicrosoftGraph;
 
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
