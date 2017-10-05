@@ -10,8 +10,6 @@ use League\OAuth2\Client\Token\AccessToken;
 
 class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provider\MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface {
 
-	//const DEFAULT_SCOPES = ['openid', 'profile', 'offline_access', 'User.Read', 'Mail.ReadWrite', 'Contacts.ReadWrite', 'Calendars.ReadWrite', 'Tasks.ReadWrite'];
-
 	/**
 	 * @var AccessTokenStorageInterface
 	 */
