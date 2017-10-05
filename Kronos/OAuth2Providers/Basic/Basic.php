@@ -61,12 +61,10 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface {
 	 * @param string $code
 	 * @return AccessToken
 	 */
-	public function getAccessTokenByAuthorizationCode($code) {
-		$token = $this->getAccessToken('authorization_code', [
+	public function getAccessTokenByAuthorizationCode($code, array $options = []) {
+		return $this->getAccessToken('authorization_code', array_merge([
 			'code' => $code
-		]);
-
-		return $token;
+		], $options));
 	}
 
 	protected function checkResponse(ResponseInterface $response, $data) {

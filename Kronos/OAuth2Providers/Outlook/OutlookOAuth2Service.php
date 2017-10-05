@@ -63,16 +63,34 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function getAccessToken($grant, array $options = []){
+		$token = parent::getAccessToken($grant, $options);
+		$this->storeToken($token);
+		return $token;
+	}
+
+
+	/**
 	 * @param string $code
+	 * @param array $options Additionnal options to pass getAccessToken()
 	 * @return AccessToken
 	 */
-	public function getAccessTokenByAuthorizationCode($code) {
-		$token = $this->getAccessToken('authorization_code', [
+	public function getAccessTokenByAuthorizationCode($code, array $options = []) {
+		return $this->getAccessToken('authorization_code', array_merge([
 			'code' => $code
-		]);
-		$this->storeToken($token);
+		], $options));
+	}
 
-		return $token;
+	/**
+	 * @param string $refresh_token
+	 * @return AccessToken
+	 */
+	protected function getNewAccessTokenByRefreshToken($refresh_token){
+		return $this->getAccessToken('refresh_token', [
+			'refresh_token' => $refresh_token
+		]);
 	}
 
 	/**
@@ -99,23 +117,9 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 	 * @param AccessToken $token
 	 */
 	protected function storeToken(AccessToken $token){
-			$this->accessTokenStore->storeAccessToken($token);
+		$this->accessTokenStore->storeAccessToken($token);
 	}
 
-
-	/**
-	 * @param string $refresh_token
-	 * @return AccessToken
-	 */
-	protected function getNewAccessTokenByRefreshToken($refresh_token){
-		$token = $this->getAccessToken('refresh_token', [
-			'refresh_token' => $refresh_token
-		]);
-
-		$this->storeToken($token);
-
-		return $token;
-	}
 
 	/**
 	 * @return string

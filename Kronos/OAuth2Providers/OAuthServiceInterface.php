@@ -14,14 +14,16 @@ interface OAuthServiceInterface {
 
 	/**
 	 * @param string $code
+	 * @param array $options Additionnal options to pass getAccessToken()
 	 * @return AccessToken
 	 */
-	public function getAccessTokenByAuthorizationCode($code);
+	public function getAccessTokenByAuthorizationCode($code, array $options = []);
 
 	/**
+	 * @param array $options Additionnal options
 	 * @return string url for hand shake
 	 */
-	public function getAuthorizationUrl();
+	public function getAuthorizationUrl(array $options = []);
 
 	/**
 	 * @param string $state

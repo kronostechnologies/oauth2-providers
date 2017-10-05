@@ -54,18 +54,31 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 
 
 	/**
+	 * @inheritdoc
+	 */
+	public function getAccessToken($grant = 'authorization_code', array $options = []){
+		$token = parent::getAccessToken($grant, $options);
+		$this->storeToken($token);
+		return $token;
+	}
+
+	/**
 	 * @param string $code
 	 * @return AccessToken
 	 */
-	public function getAccessTokenByAuthorizationCode($code) {
-		$token = $this->getAccessToken('authorization_code', [
+	public function getAccessTokenByAuthorizationCode($code, array $options = []) {
+		return $this->getAccessToken('authorization_code', array_merge([
 			'code' => $code,
-			'scope' => $this->getDefaultScopes(),
-		]);
+		], $options));
+	}
 
-		$this->accessTokenStore->storeAccessToken($token);
-
-		return $token;
+	/**
+	 * @param string $refresh_token
+	 * @return AccessToken
+	 */
+	protected function getNewAccessTokenByRefreshToken($refresh_token){
+		return $this->getAccessToken('refresh_token', [
+			'refresh_token' => $refresh_token]);
 	}
 
 	/**
@@ -89,16 +102,10 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	}
 
 	/**
-	 * @param string $refresh_token
-	 * @return AccessToken
+	 * @param AccessToken $token
 	 */
-	protected function getNewAccessTokenByRefreshToken($refresh_token){
-		$token = $this->getAccessToken('refresh_token', [
-			'refresh_token' => $refresh_token]);
-
+	protected function storeToken(AccessToken $token){
 		$this->accessTokenStore->storeAccessToken($token);
-
-		return $token;
 	}
 
 	/**
