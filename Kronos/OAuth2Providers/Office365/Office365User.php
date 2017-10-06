@@ -48,7 +48,7 @@ class Office365User implements ResourceOwnerInterface  {
 	 */
 	public function getDisplayName()
 	{
-		return $this->getProperty('displayName');
+		return $this->getProperty('DisplayName');
 	}
 
 	/**
@@ -58,28 +58,10 @@ class Office365User implements ResourceOwnerInterface  {
 	 */
 	public function getEmail()
 	{
-		return $this->getProperty('mail');
+		return $this->getProperty('EmailAddress');
 	}
 
-	/**
-	 * Returns the given name (first name) of the user.
-	 *
-	 * @return null|string givenName
-	 */
-	public function getFirstName()
-	{
-		return $this->getProperty('givenName');
-	}
 
-	/**
-	 * Returns the user's surname (family name or last name).
-	 *
-	 * @return null|string surname
-	 */
-	public function getLastName()
-	{
-		return $this->getProperty('surname');
-	}
 
 	/**
 	 * Returns the user principal name (UPN) of the user. This *should* map to
@@ -89,7 +71,7 @@ class Office365User implements ResourceOwnerInterface  {
 	 */
 	public function getPrincipalName()
 	{
-		return $this->getProperty('userPrincipalName');
+		return $this->getProperty('EmailAddress');
 	}
 
 	/**
