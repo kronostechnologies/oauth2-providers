@@ -2,7 +2,9 @@
 
 namespace Kronos\OAuth2Providers\Openid\IdToken;
 
-class IdTokenFactory {
+class IdTokenFactory implements IdTokenFactoryInterface {
+
+	const DEFAULT_USER_ID_KEY = 'sub';
 
 	/**
 	 * @var IdTokenParser
@@ -14,15 +16,31 @@ class IdTokenFactory {
 	 */
 	protected $idTokenValidator;
 
+	/**
+	 * IdTokenFactory constructor.
+	 *
+	 * @param IdTokenParser|null $idTokenParser
+	 * @param IdTokenValidator|null $idTokenValidator
+	 */
 	public function __construct(IdTokenParser $idTokenParser = null, IdTokenValidator $idTokenValidator = null) {
 		$this->idTokenParser = $idTokenParser ?: new IdTokenParser();
 		$this->idTokenValidator = $idTokenValidator ?: new IdTokenValidator();
 	}
 
+	/**
+	 * Creates an instance of IdTokenInterface
+	 *
+	 * @param $idTokenString
+	 * @param $keys
+	 * @param $clientId
+	 * @param $issuer
+	 * @param null $userIdKey
+	 * @return IdTokenInterface
+	 */
 	public function createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey = null) {
 		$idTokenClaims = $this->idTokenParser->parseIdToken($idTokenString, $keys);
 		$this->idTokenValidator->validateIdTokenClaims($idTokenClaims, $clientId, $issuer);
 
-		return new IdToken($idTokenClaims, $userIdKey);
+		return new IdToken($idTokenClaims, is_null($userIdKey) ? static::DEFAULT_USER_ID_KEY : $userIdKey);
 	}
 }

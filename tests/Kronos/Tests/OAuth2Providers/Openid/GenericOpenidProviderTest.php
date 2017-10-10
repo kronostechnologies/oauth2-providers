@@ -243,7 +243,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 			->method('send')
 			->willReturn($this->response);
 
-		$testIdToken = new IdToken(self::ID_TOKEN_RESPONSE_ARRAY);
+		$testIdToken = new IdToken(self::ID_TOKEN_RESPONSE_ARRAY, 'sub');
 
 		$this->idTokenFactory->expects($this->once())
 			->method('createIdToken')
@@ -320,7 +320,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 			->method('send')
 			->willReturn($this->response);
 
-		$testIdToken = new IdToken(self::ID_TOKEN_RESPONSE_ARRAY);
+		$testIdToken = new IdToken(self::ID_TOKEN_RESPONSE_ARRAY, 'sub');
 
 		$this->idTokenFactory->expects($this->once())
 			->method('createIdToken')
