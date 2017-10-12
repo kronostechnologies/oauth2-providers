@@ -1,29 +1,24 @@
 <?php
 
-namespace Kronos\OAuth2Providers\Outlook;
+namespace Kronos\OAuth2Providers\MicrosoftGraph;
 
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Token\AccessToken;
-use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
-class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, OAuthRefreshableInterface {
-
-	const SCOPE_EMAIL =  "wl.emails";
-	const SCOPE_BASIC_PROFILE = "wl.basic";
-	const SCOPE_IMAP =  "wl.imap";
-	const OFFLINE_ACCESS = 'wl.offline_access';
-
-	const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
-
-	protected $defaultAuthorizationUrlOptions = ['display'=>'popup'];
+class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provider\MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface {
 
 	/**
 	 * @var AccessTokenStorageInterface
 	 */
 	private $accessTokenStore;
+
+	/**
+	 * @var string[]
+	 */
+	protected $defaultAuthorizationUrlOptions = ['prompt'=>'consent'];
 
 	/**
 	 * @param string $clientId
@@ -33,21 +28,14 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 	 * @param array $collaborators
 	 */
 	public function __construct($clientId, $clientSecret, $redirectUri, AccessTokenStorageInterface $accessTokenStore,array $collaborators = []) {
-
 		parent::__construct([
 			'clientId'          => $clientId,
 			'clientSecret'      => $clientSecret,
-			'redirectUri'       => $redirectUri
+			'redirectUri'       => $redirectUri,
+			'accessType'        => 'offline',
 		],$collaborators);
 
 		$this->accessTokenStore = $accessTokenStore;
-	}
-
-	/**
-	 * @return string[]
-	 */
-	protected function getDefaultScopes() {
-		return [self::SCOPE_EMAIL,self::SCOPE_BASIC_PROFILE,self::SCOPE_IMAP,self::OFFLINE_ACCESS];
 	}
 
 	/**
@@ -62,24 +50,23 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 		);
 	}
 
+
 	/**
 	 * @inheritdoc
 	 */
-	public function getAccessToken($grant, array $options = []){
+	public function getAccessToken($grant = 'authorization_code', array $options = []){
 		$token = parent::getAccessToken($grant, $options);
 		$this->storeToken($token);
 		return $token;
 	}
 
-
 	/**
 	 * @param string $code
-	 * @param array $options Additionnal options to pass getAccessToken()
 	 * @return AccessToken
 	 */
 	public function getAccessTokenByAuthorizationCode($code, array $options = []) {
 		return $this->getAccessToken('authorization_code', array_merge([
-			'code' => $code
+			'code' => $code,
 		], $options));
 	}
 
@@ -89,14 +76,13 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 	 */
 	protected function getNewAccessTokenByRefreshToken($refresh_token){
 		return $this->getAccessToken('refresh_token', [
-			'refresh_token' => $refresh_token
-		]);
+			'refresh_token' => $refresh_token]);
 	}
 
 	/**
 	 * @param string $refresh_token
-	 * @return AccessToken
 	 * @throws InvalidRefreshTokenException
+	 * @return AccessToken
 	 */
 	public function retrieveAccessToken($refresh_token) {
 		if(empty($refresh_token)){
@@ -120,6 +106,27 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 		$this->accessTokenStore->storeAccessToken($token);
 	}
 
+	/**
+	 * @param string $state
+	 * @return bool
+	 */
+	public function validateSate($state) {
+		$session_id = session_id();
+		list($salt, $hash) = explode('_', $state);
+		if($hash == sha1($session_id . $salt)){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param array $response
+	 * @param AccessToken $token
+	 * @return MicrosoftGraphUser
+	 */
+	protected function createResourceOwner(array $response, AccessToken $token) {
+		return new MicrosoftGraphUser($response);
+	}
 
 	/**
 	 * @return string
@@ -130,19 +137,4 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 		$state = $salt . '_'. sha1($session_id . $salt);
 		return $state;
 	}
-
-	/**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state){
-		$session_id = session_id();
-		list($salt, $hash) = explode('_', $state);
-		if($hash == sha1($session_id . $salt)){
-			return true;
-		}
-		return false;
-
-	}
-
 }

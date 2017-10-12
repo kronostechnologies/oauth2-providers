@@ -4,15 +4,19 @@ namespace Kronos\OAuth2Providers\Office365;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-class Office365User implements ResourceOwnerInterface  {
 
+class Office365User implements ResourceOwnerInterface  {
 	/**
+	 * Response data
+	 *
 	 * @var array
 	 */
 	protected $response;
 
 	/**
-	 * @param array $response
+	 * Constructor
+	 *
+	 * @param array $response Response data
 	 */
 	public function __construct(array $response)
 	{
@@ -20,62 +24,65 @@ class Office365User implements ResourceOwnerInterface  {
 	}
 
 	/**
-	 * (oid) The immutable identifier for an object in the Microsoft identity system, in this case, a user account.
-	 * @return string
+	 * @inheritdoc
 	 */
 	public function getId()
 	{
-		return $this->response['oid'];
+		return $this->getProperty('Id');
 	}
 
 	/**
-	 * (tid) A GUID that represents the Azure AD tenant that the user is from. For work and school accounts, the GUID is the immutable tenant ID of the organization that the user belongs to.
-	 */
-	public function getTenantId()
-	{
-		$this->response['tid'];
-	}
-
-	/**
-	 * The name claim provides a human-readable value that identifies the subject of the token.
-	 *
-	 * @return string|null
-	 */
-	public function getName()
-	{
-		return $this->response['name'];
-	}
-
-	/**
-	 * @return string|null
-	 */
-	public function getFirstName()
-	{
-		return $this->response['given_name'];
-	}
-
-	public function getLastName()
-	{
-		return $this->response['family_name'];
-	}
-
-	/**
-	 * (upn) Get email address.
-	 *
-	 * @return string|null
-	 */
-	public function getEmail()
-	{
-		return $this->response['upn'];
-	}
-
-	/**
-	 * Get user data as an array.
-	 *
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function toArray()
 	{
 		return $this->response;
+	}
+
+	/**
+	 * Returns the name displayed in the address book for the user. This is
+	 * usually the combination of the user's first name, middle initial and
+	 * last name.
+	 *
+	 * @return null|string displayName
+	 */
+	public function getDisplayName()
+	{
+		return $this->getProperty('DisplayName');
+	}
+
+	/**
+	 * Returns email address (may be same as UserPrincipalName)
+	 *
+	 * @return null|string mail
+	 */
+	public function getEmail()
+	{
+		return $this->getProperty('EmailAddress');
+	}
+
+
+
+	/**
+	 * Returns the user principal name (UPN) of the user. This *should* map to
+	 * the user's email name.
+	 *
+	 * @return null|string userPrincipalName
+	 */
+	public function getPrincipalName()
+	{
+		return $this->getProperty('EmailAddress');
+	}
+
+	/**
+	 * Gets property value
+	 *
+	 * @param string $property Property name
+	 * @param mixed $default Default value to return if property does not exist
+	 * @return mixed
+	 */
+	public function getProperty($property, $default = null)
+	{
+		return isset($this->response[$property]) ? $this->response[$property] : $default;
 	}
 }
