@@ -23,7 +23,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 	const A_NON_DEFAULT_USER_ID_KEY = 'aud';
 
 	public function test_EmptyClaims_getClaims_ShouldReturnEmptyArray() {
-		$idToken = new IdToken([]);
+		$idToken = new IdToken([], '');
 
 		$expected = [];
 		$actual = $idToken->getClaims();
@@ -32,7 +32,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_NonEmptyClaims_getClaims_ShouldReturnClaims() {
-		$idToken = new IdToken(self::A_CLAIMS_ARRAY);
+		$idToken = new IdToken(self::A_CLAIMS_ARRAY, '');
 
 		$expected = self::A_CLAIMS_ARRAY;
 		$actual = $idToken->getClaims();
@@ -41,7 +41,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_NonEmptyClaimsWithoutSub_getUserId_ShouldReturnNull() {
-		$idToken = new IdToken(self::A_CLAIMS_ARRAY_WITHOUT_SUB);
+		$idToken = new IdToken(self::A_CLAIMS_ARRAY_WITHOUT_SUB, '');
 
 		$expected = null;
 		$actual = $idToken->getUserId();
@@ -59,7 +59,7 @@ class IdTokenTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_NonEmptyClaims_jsonSerialize_ShouldReturnClaims() {
-		$idToken = new IdToken(self::A_CLAIMS_ARRAY);
+		$idToken = new IdToken(self::A_CLAIMS_ARRAY, 'sub');
 
 		$expected = self::A_CLAIMS_ARRAY;
 		$actual = $idToken->jsonSerialize();

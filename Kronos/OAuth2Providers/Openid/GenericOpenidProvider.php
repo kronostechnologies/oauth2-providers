@@ -5,7 +5,7 @@ namespace Kronos\OAuth2Providers\Openid;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Exception\BadResponseException;
 use InvalidArgumentException;
-use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
+use Kronos\OAuth2Providers\Openid\IdToken\IdTokenInterface;
 use Kronos\OAuth2Providers\OpenidServiceInterface;
 use League\OAuth2\Client\Grant\AbstractGrant;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -144,7 +144,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * Requests an id token using an 'authorization_code' grant.
 	 *
 	 * @param string $authorization_code
-	 * @return IdToken
+	 * @return IdTokenInterface
 	 */
 	public function getIdTokenByAuthorizationCode($authorization_code) {
 		return $this->getIdToken('authorization_code', [
@@ -157,7 +157,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 *
 	 * @param $grant
 	 * @param array $options
-	 * @return IdToken
+	 * @return IdTokenInterface
 	 */
 	public function getIdToken($grant, array $options = []) {
 		$parsed = $this->getIdTokenParsedResponse($grant, $options);
@@ -278,7 +278,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 *
 	 * @param  string $method
 	 * @param  string $url
-	 * @param  IdToken|string|null $token
+	 * @param  IdTokenInterface|string|null $token
 	 * @param  array $options
 	 * @return RequestInterface
 	 */
@@ -428,7 +428,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * additional context.
 	 *
 	 * @param  array $response
-	 * @return IdToken
+	 * @return IdTokenInterface
 	 */
 	protected function createIdToken(array $response) {
 		return $this->collaborators->getIdTokenFactory()->createIdToken($response['id_token'], $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer']);

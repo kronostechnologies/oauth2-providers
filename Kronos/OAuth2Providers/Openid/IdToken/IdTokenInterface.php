@@ -2,49 +2,28 @@
 
 namespace Kronos\OAuth2Providers\Openid\IdToken;
 
-use JsonSerializable;
-
-class IdToken implements JsonSerializable, IdTokenInterface {
-
-	/**
-	 * @var string
-	 */
-	protected $userIdKey;
-
-	/**
-	 * @var array
-	 */
-	protected $idTokenClaims;
-
+interface IdTokenInterface {
 	/**
 	 * Constructs an id token.
 	 *
 	 * @param array $idTokenClaims
 	 * @param string $userIdKey
 	 */
-	public function __construct(array $idTokenClaims, $userIdKey) {
-
-		$this->idTokenClaims = $idTokenClaims;
-		$this->userIdKey = $userIdKey;
-	}
+	public function __construct(array $idTokenClaims, $userIdKey);
 
 	/**
 	 * Returns this token's claims.
 	 *
 	 * @return array
 	 */
-	public function getClaims() {
-		return $this->idTokenClaims;
-	}
+	public function getClaims();
 
 	/**
 	 * Returns this token's 'user id', corresponding to the claim identified at initialization time by the provider.
 	 *
 	 * @return mixed
 	 */
-	public function getUserId() {
-		return isset($this->idTokenClaims[$this->userIdKey]) ? $this->idTokenClaims[$this->userIdKey] : null;
-	}
+	public function getUserId();
 
 	/**
 	 * Specify data which should be serialized to JSON
@@ -53,7 +32,5 @@ class IdToken implements JsonSerializable, IdTokenInterface {
 	 * which is a value of any type other than a resource.
 	 * @since 5.4.0
 	 */
-	function jsonSerialize() {
-		return $this->idTokenClaims;
-	}
+	function jsonSerialize();
 }
