@@ -6,6 +6,7 @@ use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
 use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
+use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Token\AccessToken;
 
@@ -97,9 +98,21 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 	 * @return AccessToken
 	 */
 	protected function getNewAccessTokenByRefreshToken($refresh_token){
-		return $this->getAccessToken('refresh_token', [
-			'refresh_token' => $refresh_token
-		]);
+        $options = [];
+        $grant = new Grant\RefreshToken();
+        $params = [
+            'client_id'     => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'refresh_token' => $refresh_token
+        ];
+
+        $params   = $grant->prepareRequestParameters($params, $options);
+        $request  = $this->getAccessTokenRequest($params);
+        $response = $this->getParsedResponse($request);
+        $prepared = $this->prepareAccessTokenResponse($response);
+        $token    = $this->createAccessToken($prepared, $grant);
+
+        return $token;
 	}
 
 	/**
