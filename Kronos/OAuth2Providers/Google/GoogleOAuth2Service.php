@@ -17,19 +17,14 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 
 	protected $defaultAuthorizationUrlOptions = ['approval_prompt'=>'force'];
 
-	/**
-	 * @var AccessTokenStorageInterface
-	 */
-	private $accessTokenStore;
 
 	/**
 	 * @param string $clientId
 	 * @param string $clientSecret
 	 * @param string $redirectUri
-	 * @param AccessTokenStorageInterface $accessTokenStore
 	 * @param array $collaborators
 	 */
-	public function __construct($clientId, $clientSecret, $redirectUri, AccessTokenStorageInterface $accessTokenStore,array $collaborators = []) {
+	public function __construct($clientId, $clientSecret, $redirectUri, array $collaborators = []) {
 
 		parent::__construct([
 			'clientId'          => $clientId,
@@ -37,8 +32,6 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 			'redirectUri'       => $redirectUri,
 			'accessType'        => 'offline',
 		],$collaborators);
-
-		$this->accessTokenStore = $accessTokenStore;
 	}
 
 	/**
@@ -72,16 +65,6 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function getAccessToken($grant, array $options = []){
-		$token = parent::getAccessToken($grant, $options);
-		$this->storeToken($token);
-		return $token;
-	}
-
-
-	/**
 	 * @param string $code
 	 * @param array $options Additionnal options to pass getAccessToken()
 	 * @return AccessToken
@@ -112,23 +95,8 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 			throw new InvalidRefreshTokenException($refresh_token);
 		}
 
-		$token = $this->accessTokenStore->retrieveAccessToken($refresh_token);
-		if($token) {
-			return $token;
-		}
-
-		$token = $this->getNewAccessTokenByRefreshToken($refresh_token);
-
-		return $token;
+		return $this->getNewAccessTokenByRefreshToken($refresh_token);
 	}
-
-	/**
-	 * @param AccessToken $token
-	 */
-	protected function storeToken(AccessToken $token){
-		$this->accessTokenStore->storeAccessToken($token);
-	}
-
 
 	/**
 	 * @param array $response
