@@ -103,6 +103,7 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
         $prepared = $this->prepareAccessTokenResponse($response);
         $token    = $this->createAccessToken($prepared, $grant);
 
+        $this->storeToken($token);
         return $token;
 	}
 

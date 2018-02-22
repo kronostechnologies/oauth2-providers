@@ -112,6 +112,7 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
         $prepared = $this->prepareAccessTokenResponse($response);
         $token    = $this->createAccessToken($prepared, $grant);
 
+        $this->storeToken($token);
         return $token;
 	}
 

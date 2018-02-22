@@ -90,6 +90,7 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
         $prepared = $this->prepareAccessTokenResponse($response);
         $token    = $this->createAccessToken($prepared, $grant);
 
+        $this->storeToken($token);
         return $token;
 	}
 
