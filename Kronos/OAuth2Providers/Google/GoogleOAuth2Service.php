@@ -80,21 +80,21 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 	 * @return AccessToken
 	 */
 	protected function getNewAccessTokenByRefreshToken($refresh_token){
-	    $options = [];
-        $grant = new Grant\RefreshToken();
-        $params = [
-            'client_id'     => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'refresh_token' => $refresh_token
-        ];
+		$options = [];
+		$grant = new Grant\RefreshToken();
+		$params = [
+		    'client_id'     => $this->clientId,
+		    'client_secret' => $this->clientSecret,
+		    'refresh_token' => $refresh_token
+		];
 
-        $params   = $grant->prepareRequestParameters($params, $options);
-        $request  = $this->getAccessTokenRequest($params);
-        $response = $this->getParsedResponse($request);
-        $prepared = $this->prepareAccessTokenResponse($response);
-        $token    = $this->createAccessToken($prepared, $grant);
+		$params   = $grant->prepareRequestParameters($params, $options);
+		$request  = $this->getAccessTokenRequest($params);
+		$response = $this->getParsedResponse($request);
+		$prepared = $this->prepareAccessTokenResponse($response);
+		$token    = $this->createAccessToken($prepared, $grant);
 
-        return $token;
+		return $token;
 	}
 
 	/**
