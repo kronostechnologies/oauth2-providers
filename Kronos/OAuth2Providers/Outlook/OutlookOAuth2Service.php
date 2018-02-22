@@ -5,7 +5,6 @@ namespace Kronos\OAuth2Providers\Outlook;
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
-use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Token\AccessToken;
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
@@ -22,26 +21,18 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 	protected $defaultAuthorizationUrlOptions = ['display'=>'popup'];
 
 	/**
-	 * @var AccessTokenStorageInterface
-	 */
-	private $accessTokenStore;
-
-	/**
 	 * @param string $clientId
 	 * @param string $clientSecret
 	 * @param string $redirectUri
-	 * @param AccessTokenStorageInterface $accessTokenStore
 	 * @param array $collaborators
 	 */
-	public function __construct($clientId, $clientSecret, $redirectUri, AccessTokenStorageInterface $accessTokenStore,array $collaborators = []) {
+	public function __construct($clientId, $clientSecret, $redirectUri, array $collaborators = []) {
 
 		parent::__construct([
 			'clientId'          => $clientId,
 			'clientSecret'      => $clientSecret,
 			'redirectUri'       => $redirectUri
 		],$collaborators);
-
-		$this->accessTokenStore = $accessTokenStore;
 	}
 
 	/**
@@ -62,16 +53,6 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 			array_merge($this->defaultAuthorizationUrlOptions,$options)
 		);
 	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getAccessToken($grant, array $options = []){
-		$token = parent::getAccessToken($grant, $options);
-		$this->storeToken($token);
-		return $token;
-	}
-
 
 	/**
 	 * @param string $code
@@ -103,7 +84,6 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
         $prepared = $this->prepareAccessTokenResponse($response);
         $token    = $this->createAccessToken($prepared, $grant);
 
-        $this->storeToken($token);
         return $token;
 	}
 
@@ -117,23 +97,8 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 			throw new InvalidRefreshTokenException($refresh_token);
 		}
 
-		$token = $this->accessTokenStore->retrieveAccessToken($refresh_token);
-		if($token) {
-			return $token;
-		}
-
-		$token = $this->getNewAccessTokenByRefreshToken($refresh_token);
-
-		return $token;
+		return $this->getNewAccessTokenByRefreshToken($refresh_token);
 	}
-
-	/**
-	 * @param AccessToken $token
-	 */
-	protected function storeToken(AccessToken $token){
-		$this->accessTokenStore->storeAccessToken($token);
-	}
-
 
 	/**
 	 * @return string

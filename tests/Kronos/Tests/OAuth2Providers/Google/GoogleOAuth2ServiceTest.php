@@ -37,11 +37,6 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 	/**
 	 * @var PHPUnit_Framework_MockObject_MockObject
 	 */
-	private $accessTokenStorage;
-
-	/**
-	 * @var PHPUnit_Framework_MockObject_MockObject
-	 */
 	private $anAccessToken;
 
 	/**
@@ -56,7 +51,6 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 
 	public function setUp(){
 		$this->anAccessToken = $this->getMockWithoutInvokingTheOriginalConstructor(AccessToken::class);
-		$this->accessTokenStorage = $this->getMockWithoutInvokingTheOriginalConstructor(AccessTokenStorageInterface::class);
 
 		$this->httpResponse = $this->getMockWithoutInvokingTheOriginalConstructor(ResponseInterface::class);
 		$this->httpResponse->method('getBody')->willReturn('{"access_token":"an_access_token"}');
@@ -64,7 +58,7 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 		$this->httpClient = $this->getMockWithoutInvokingTheOriginalConstructor(Client::class);
 		$this->httpClient->method('send')->willReturn($this->httpResponse);
 
-		$this->googleOAuth2Service = new GoogleOAuth2Service(self::A_CLIENT_ID,self::A_SECRET,self::A_REDIRECT_URI,$this->accessTokenStorage,['httpClient' => $this->httpClient]);
+		$this->googleOAuth2Service = new GoogleOAuth2Service(self::A_CLIENT_ID,self::A_SECRET,self::A_REDIRECT_URI,['httpClient' => $this->httpClient]);
 	}
 
 	public function test_AccessToken_getResourceOwnerDetailsUrl_ShouldReturnOAuth2V2UserinfoUrl(){
@@ -92,15 +86,6 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 		$this->assertContains(self::A_CUSTOME_OPTION_NAME.'='.self::A_CUSTOME_OPTION_VALUE,$url);
 	}
 
-	public function test_authorizationCode_getAccessTokenByAuthorizationCode_ShouldStoreTokenReceived(){
-
-		$this->accessTokenStorage
-			->expects(self::once())
-			->method('storeAccessToken');
-
-		$this->googleOAuth2Service->getAccessTokenByAuthorizationCode(self::A_CODE);
-	}
-
 	public function test_ARefreshToken_retrieveAccessToken_ShouldReturnAToken(){
 
 		$token = $this->googleOAuth2Service->retrieveAccessToken(self::A_REFRESH_TOKEN);
@@ -108,20 +93,7 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 		$this->assertInstanceOf(AccessToken::class,$token);
 	}
 
-	public function test_ARefreshTokenInStorage_retrieveAccessToken_ShouldRetrieveTokenFromStorage(){
-		$this->accessTokenStorage
-			->expects(self::once())
-			->method('retrieveAccessToken')
-			->with(self::A_REFRESH_TOKEN);
-
-		$this->googleOAuth2Service->retrieveAccessToken(self::A_REFRESH_TOKEN);
-	}
-
-	public function test_ARefreshTokenNotInStorage_retrieveAccessToken_ShouldRetrieveTokenFromGoogle(){
-		$this->accessTokenStorage
-			->method('retrieveAccessToken')
-			->willReturn(null);
-
+	public function test_retrieveAccessToken_ShouldRetrieveTokenFromGoogle(){
 		$this->httpClient
 			->expects(self::once())
 			->method('send');
@@ -134,29 +106,4 @@ class GoogleOAuth2ServiceTest extends PHPUnit_Framework_TestCase{
 
 		$this->googleOAuth2Service->retrieveAccessToken('');
 	}
-
-	public function test_TokenIsInStorage_retrieveAccessToken_ShouldNeverAskGoogle(){
-		$this->accessTokenStorage
-			->method('retrieveAccessToken')
-			->willReturn($this->anAccessToken);
-
-		$this->httpClient
-			->expects(self::never())
-			->method('send');
-
-		$this->googleOAuth2Service->retrieveAccessToken(self::A_REFRESH_TOKEN);
-	}
-
-	public function test_TokenIsRetreivedByGoogle_retrieveAccessToken_ShouldBeStored(){
-		$this->accessTokenStorage
-			->method('retrieveAccessToken')
-			->willReturn(null);
-
-		$this->accessTokenStorage
-			->expects(self::once())
-			->method('storeAccessToken');
-
-		$this->googleOAuth2Service->retrieveAccessToken(self::A_REFRESH_TOKEN);
-	}
-
 }

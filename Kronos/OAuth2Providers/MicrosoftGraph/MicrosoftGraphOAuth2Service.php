@@ -5,16 +5,10 @@ namespace Kronos\OAuth2Providers\MicrosoftGraph;
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
-use Kronos\OAuth2Providers\Storage\AccessTokenStorageInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Token\AccessToken;
 
 class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provider\MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface {
-
-	/**
-	 * @var AccessTokenStorageInterface
-	 */
-	private $accessTokenStore;
 
 	/**
 	 * @var string[]
@@ -25,18 +19,15 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	 * @param string $clientId
 	 * @param string $clientSecret
 	 * @param string $redirectUri
-	 * @param AccessTokenStorageInterface $accessTokenStore
 	 * @param array $collaborators
 	 */
-	public function __construct($clientId, $clientSecret, $redirectUri, AccessTokenStorageInterface $accessTokenStore,array $collaborators = []) {
+	public function __construct($clientId, $clientSecret, $redirectUri, array $collaborators = []) {
 		parent::__construct([
 			'clientId'          => $clientId,
 			'clientSecret'      => $clientSecret,
 			'redirectUri'       => $redirectUri,
 			'accessType'        => 'offline',
 		],$collaborators);
-
-		$this->accessTokenStore = $accessTokenStore;
 	}
 
 	/**
@@ -51,20 +42,11 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 		);
 	}
 
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getAccessToken($grant = 'authorization_code', array $options = []){
-		$token = parent::getAccessToken($grant, $options);
-		$this->storeToken($token);
-		return $token;
-	}
-
-	/**
-	 * @param string $code
-	 * @return AccessToken
-	 */
+    /**
+     * @param string $code
+     * @param array $options
+     * @return AccessToken
+     */
 	public function getAccessTokenByAuthorizationCode($code, array $options = []) {
 		return $this->getAccessToken('authorization_code', array_merge([
 			'code' => $code,
@@ -90,7 +72,6 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
         $prepared = $this->prepareAccessTokenResponse($response);
         $token    = $this->createAccessToken($prepared, $grant);
 
-        $this->storeToken($token);
         return $token;
 	}
 
@@ -104,21 +85,7 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 			throw new InvalidRefreshTokenException($refresh_token);
 		}
 
-		$token = $this->accessTokenStore->retrieveAccessToken($refresh_token);
-		if($token) {
-			return $token;
-		}
-
-		$token = $this->getNewAccessTokenByRefreshToken($refresh_token);
-
-		return $token;
-	}
-
-	/**
-	 * @param AccessToken $token
-	 */
-	protected function storeToken(AccessToken $token){
-		$this->accessTokenStore->storeAccessToken($token);
+		return $this->getNewAccessTokenByRefreshToken($refresh_token);
 	}
 
 	/**
