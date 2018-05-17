@@ -42,7 +42,10 @@ jobs:
     - run:
         working_directory: ~/kronostechnologies/oauth2-providers
         command: |-
-          ln -fs $HOME/.phpenv/versions/5.6.17/libexec/apache2/libphp5.so /usr/lib/apache2/modules/libphp5.so;
+          ln -fs $HOME/.phpenv/versions/5.6.17/libexec/apache2/libphp5.so/usr/lib/apache2/modules/libphp5.so /usr/lib/apache2/modules/libphp5.so
+    - run:
+        working_directory: ~/kronostechnologies/oauth2-providers
+        command: |-
           phpenv global 5.6.17 2>/dev/null
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
