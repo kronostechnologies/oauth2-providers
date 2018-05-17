@@ -39,8 +39,10 @@ jobs:
     # 'See docs on artifact collection here https://circleci.com/docs/2.0/artifacts/'
     - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
 
-    # running bootstrap script. installs composer.
+    # running bootstrap script. setting up composer.
     - run: chmod u+x ./.circleci/scripts/bootstrap.sh && ./.circleci/scripts/bootstrap.sh
+    # running composer install.
+    - run: /composer/composer.phar install -n --prefer-dist
     # This is based on your 1.0 configuration file or project settings
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
