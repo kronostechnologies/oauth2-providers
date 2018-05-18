@@ -7,5 +7,4 @@
 .*.un~
 nbproject
 
-composer.lock
 vendor
