@@ -11,12 +11,12 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-          - v1-composer-install-{{ checksum "composer.lock" }}
+        - v1-composer-install-{{ checksum "composer.lock" }}
     - run: mkdir -p ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
     - run: test ! -d vendor && composer install -n --prefer-dist --no-dev --no-autoloader || true
     - run:
-      name: "Cleanup .git folders"
-      command: 'find . -type d -name .git -exec rm -rf "{}" +'
+        name: "Cleanup .git folders"
+        command: 'find . -type d -name .git -exec rm -rf "{}" +'
     - save_cache:
       key: *composer_install_cache_key
       paths:
@@ -32,7 +32,7 @@ jobs:
     - attach_workspace:
       at: .
     - restore_cache:
-      name: "Restoring composer install cache"
-      keys: *composer_install_cache_key
+        name: "Restoring composer install cache"
+        keys: *composer_install_cache_key
     - run: rm -rf vendor && mv /root/project/vendor .
     - run: vendor/bin/phpunit
