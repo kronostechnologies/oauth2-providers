@@ -1,24 +1,37 @@
-version: 2
-aliases:
-  - &composer_install_cache_key v1-composer-install-{{ checksum "composer.lock" }}
+workflows:
+  version: 2
+  aliases:
+    - &composer_install_cache_key v1-composer-install-{{ checksum "composer.lock" }}
 
-jobs:
-  composer_install:
-    docker:
-      - image: composer:1.6
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-composer-install-{{ checksum "composer.lock" }}
-      - run: mkdir -p ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-      - run: test ! -d vendor && composer install -n --prefer-dist --no-dev --no-autoloader || true
-      - run: wget -O ~/phpunit https://phar.phpunit.de/phpunit-5.6.phar && chmod u+x ~/phpunit
-      - run: ./phpunit
-      - run:
+  jobs:
+    composer_install:
+      docker:
+        - image: composer:1.6
+      steps:
+        - checkout
+        - restore_cache:
+      keys:
+        - v1-composer-install-{{ checksum "composer.lock" }}
+        - run: mkdir -p ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+        - run: test ! -d vendor && composer install -n --prefer-dist --no-dev --no-autoloader || true
+        - run:
           name: "Cleanup .git folders"
           command: 'find . -type d -name .git -exec rm -rf "{}" +'
       - save_cache:
           key: *composer_install_cache_key
           paths:
             vendor
+
+    phpunit:
+      working_directory: ~/kronostechnologies/oauth2-providers
+      docker:
+        - image: php:5.6-cli-alpine
+        - command: /sbin/init
+      steps:
+        - attach_workspace:
+            at: .
+        - restore_cache:
+            name: "Restoring composer install cache"
+            keys: *composer_install_cache_key
+        - run: rm -rf vendor && mv /root/project/vendor .
+        - run: vendor/bin/phpunit
