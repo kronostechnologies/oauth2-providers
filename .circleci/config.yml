@@ -43,6 +43,6 @@ jobs:
         at: .
     - restore_cache:
         name: "Restoring composer install cache"
-        keys: *composer_install_cache_key
+        key: *composer_install_cache_key
     - run: rm -rf vendor && mv ~/kronostechnologies/oauth2-providers/project/vendor .
     - run: vendor/bin/phpunit
