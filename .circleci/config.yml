@@ -18,9 +18,9 @@ jobs:
         name: "Cleanup .git folders"
         command: 'find . -type d -name .git -exec rm -rf "{}" +'
     - save_cache:
-      key: *composer_install_cache_key
-      paths:
-        vendor
+        key: *composer_install_cache_key
+        paths:
+          vendor
 
   phpunit:
     parallelism: 1
