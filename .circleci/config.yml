@@ -4,33 +4,35 @@ aliases:
 
 jobs:
   build:
+    parallelism: 1
     docker:
-      - image: composer:1.6
+    - image: composer:1.6
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-composer-install-{{ checksum "composer.lock" }}
-      - run: mkdir -p ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-      - run: test ! -d vendor && composer install -n --prefer-dist --no-dev --no-autoloader || true
-      - run:
-          name: "Cleanup .git folders"
-          command: 'find . -type d -name .git -exec rm -rf "{}" +'
-      - save_cache:
-          key: *composer_install_cache_key
-          paths:
-            vendor
+    - checkout
+    - restore_cache:
+        keys:
+          - v1-composer-install-{{ checksum "composer.lock" }}
+    - run: mkdir -p ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+    - run: test ! -d vendor && composer install -n --prefer-dist --no-dev --no-autoloader || true
+    - run:
+      name: "Cleanup .git folders"
+      command: 'find . -type d -name .git -exec rm -rf "{}" +'
+    - save_cache:
+      key: *composer_install_cache_key
+      paths:
+        vendor
 
   phpunit:
+    parallelism: 1
     working_directory: ~/kronostechnologies/oauth2-providers
     docker:
-      - image: php:5.6-cli-alpine
-      - command: /sbin/init
+    - image: php:5.6-cli-alpine
+      command: /sbin/init
     steps:
-      - attach_workspace:
-          at: .
-      - restore_cache:
-          name: "Restoring composer install cache"
-          keys: *composer_install_cache_key
-      - run: rm -rf vendor && mv /root/project/vendor .
-      - run: vendor/bin/phpunit
+    - attach_workspace:
+      at: .
+    - restore_cache:
+      name: "Restoring composer install cache"
+      keys: *composer_install_cache_key
+    - run: rm -rf vendor && mv /root/project/vendor .
+    - run: vendor/bin/phpunit
