@@ -1,6 +1,6 @@
 version: 2
 aliases:
-  - &composer_install_cache_key v3-composer-install-{{ checksum "composer.lock" }}
+  - &composer_install_cache_key v4-composer-install-{{ checksum "composer.lock" }}
 
 workflows:
   version: 2
