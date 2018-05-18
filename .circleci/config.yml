@@ -39,6 +39,7 @@ jobs:
     - image: php:5.6-cli-alpine
       command: /sbin/init
     steps:
+    - checkout
     - restore_cache:
         name: "Restoring composer install cache"
         key: *composer_install_cache_key
