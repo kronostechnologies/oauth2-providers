@@ -7,7 +7,9 @@ workflows:
   composer_and_phpunit:
     jobs:
     - build
-    - phpunit
+    - phpunit:
+      requires:
+        - build
 
 jobs:
   build:
