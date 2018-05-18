@@ -2,9 +2,17 @@ version: 2
 aliases:
   - &composer_install_cache_key v1-composer-install-{{ checksum "composer.lock" }}
 
+workflows:
+  version: 2
+  composer_and_phpunit:
+    jobs:
+    - build
+    - phpunit
+
 jobs:
   build:
     parallelism: 1
+    working_directory: ~/kronostechnologies/oauth2-providers
     docker:
     - image: composer:1.6
     steps:
