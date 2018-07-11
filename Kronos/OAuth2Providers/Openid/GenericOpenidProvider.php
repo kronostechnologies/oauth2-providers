@@ -144,10 +144,10 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * Requests an id token using an 'authorization_code' grant.
 	 *
 	 * @param string $authorization_code
-	 * @return IdTokenInterface
+	 * @return array
 	 */
 	public function getIdTokenByAuthorizationCode($authorization_code) {
-		return $this->getIdToken('authorization_code', [
+		return $this->getTokenParsedResponse('authorization_code', [
 			'code' => $authorization_code
 		]);
 	}
@@ -155,15 +155,23 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	/**
 	 * Requests and creates an id token.
 	 *
-	 * @param $grant
-	 * @param array $options
+	 * @param $idTokenJWT id token received from authorization code exchange
 	 * @return IdTokenInterface
 	 */
-	public function getIdToken($grant, array $options = []) {
-		$parsed = $this->getIdTokenParsedResponse($grant, $options);
-
-		return $this->createIdToken($parsed);
+	public function parseIdToken($idTokenJWT) {
+		return $this->createIdToken($idTokenJWT);
 	}
+
+    /**
+     * @param $accessToken
+     * @return array
+     */
+    public function getUserInfo($accessToken) {
+        $request = $this->getRequest('GET', $this->openidConfiguration['userinfo_endpoint'],$accessToken);
+        $response = $this->getParsedResponse($request);
+
+        return $response;
+    }
 
 	/**
 	 * Requests an id token and returns the parsed response.
@@ -172,7 +180,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @param array $options
 	 * @return array
 	 */
-	protected function getIdTokenParsedResponse($grant, array $options = []) {
+	protected function getTokenParsedResponse($grant, array $options = []) {
 		$grant = $this->verifyGrant($grant);
 
 		$params = [
@@ -182,7 +190,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 		];
 
 		$params = $grant->prepareRequestParameters($params, $options);
-		$request = $this->getIdTokenRequest($params);
+		$request = $this->getTokenRequest($params);
 		$response = $this->getParsedResponse($request);
 
 		return $response;
@@ -210,12 +218,12 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @param array $params Query string parameters
 	 * @return RequestInterface
 	 */
-	protected function getIdTokenRequest(array $params) {
+	protected function getTokenRequest(array $params) {
 		$method = 'POST';
 		$url = $this->getTokenEndpoint();
-		$options = $this->getIdTokenOptions($params);
+		$options = $this->getTokenOptions($params);
 
-		return $this->getRequest($method, $url, $options);
+		return $this->getRequest($method, $url, null,$options);
 	}
 
 	/**
@@ -254,7 +262,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @param  array $params
 	 * @return array
 	 */
-	protected function getIdTokenOptions(array $params) {
+	protected function getTokenOptions(array $params) {
 		$options = ['headers' => ['content-type' => 'application/x-www-form-urlencoded']];
 		$options['body'] = $this->buildQueryString($params);
 
@@ -266,11 +274,12 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 *
 	 * @param  string $method
 	 * @param  string $url
+     * @param  string $token
 	 * @param  array $options
 	 * @return RequestInterface
 	 */
-	protected function getRequest($method, $url, array $options = []) {
-		return $this->createRequest($method, $url, null, $options);
+	protected function getRequest($method, $url, $token, array $options = []) {
+		return $this->createRequest($method, $url, $token, $options);
 	}
 
 	/**
@@ -427,11 +436,11 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * The provider that was used to fetch the response can be used to provide
 	 * additional context.
 	 *
-	 * @param  array $response
+	 * @param  string $idToken idToken jwt
 	 * @return IdTokenInterface
 	 */
-	protected function createIdToken(array $response) {
-		return $this->collaborators->getIdTokenFactory()->createIdToken($response['id_token'], $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer']);
+	protected function createIdToken($idTokenJWT) {
+		return $this->collaborators->getIdTokenFactory()->createIdToken($idTokenJWT, $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer']);
 	}
 
 	/**
