@@ -54,14 +54,15 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 		$this->openidConfiguration = $this->fetchOpenidConfiguration();
 	}
 
-	/**
-	 * Builds the authorization URL.
-	 *
-	 * @return string Authorization URL
-	 */
-	public function getAuthorizationUrl() {
+    /**
+     * Builds the authorization URL.
+     *
+     * @param array $options
+     * @return string Authorization URL
+     */
+	public function getAuthorizationUrl($options = []) {
 		$url = $this->getAuthorizationEndpoint();
-		$params = $this->getAuthorizationParameters();
+		$params = $this->getAuthorizationParameters($options);
 		$query = $this->buildQueryString($params);
 
 		return $this->appendQuery($url, $query);
@@ -89,28 +90,27 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * Returns the string that should be used to separate scopes when building
 	 * the URL for requesting an id token.
 	 *
-	 * @return string Scope separator, defaults to ','
+	 * @return string Scope separator, defaults to ' '
 	 */
 	protected function getScopeSeparator() {
-		return ',';
+		return ' ';
 	}
 
-	/**
-	 * Returns authorization parameters.
-	 *
-	 * @return array Authorization parameters
-	 */
-	protected function getAuthorizationParameters() {
-		$options = [];
+    /**
+     * Returns authorization parameters.
+     *
+     * @param array $options
+     * @return array Authorization parameters
+     */
+	protected function getAuthorizationParameters($options = []) {
 
 		$options['state'] = $this->collaborators->getHashService()->getSessionBasedHash();
 
 		$options['nonce'] = $this->collaborators->getHashService()->getSessionBasedHash();
 
 		$options['response_type'] = 'code';
-		$options['approval_prompt'] = 'auto';
 
-		$options['scope'] = $this->getDefaultScopes();
+		$options['scope'] = array_merge($this->getDefaultScopes(),$options['scope']);
 		if(is_array($options['scope'])) {
 			$separator = $this->getScopeSeparator();
 			$options['scope'] = implode($separator, $options['scope']);
