@@ -156,7 +156,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	/**
 	 * Requests and creates an id token.
 	 *
-	 * @param $idTokenJWT id token received from authorization code exchange
+	 * @param string $idTokenJWT id token received from authorization code exchange
 	 * @return IdTokenInterface
 	 */
 	public function parseIdToken($idTokenJWT) {
