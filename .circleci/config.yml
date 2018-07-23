@@ -1,42 +1,54 @@
 version: 2
 aliases:
+  # Variables
   - &composer_install_cache_key v4-composer-install-{{ checksum "composer.lock" }}
 
+jobs:
+  checkout_code:
+    docker:
+      - image: node:9
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  composer_install:
+    docker:
+      - image: composer:1.6
+    steps:
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - *composer_install_cache_key
+      - run: mkdir -p ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - run: test -d vendor || composer install -n --prefer-dist
+      - run:
+          name: "Cleanup .git folders"
+          command: 'find . -type d -name .git -exec rm -rf "{}" +'
+      - save_cache:
+          key: *composer_install_cache_key
+          paths: vendor
+    phpunit:
+      working_directory: ~/
+      docker:
+      - image: php:5.6-cli-alpine
+        command: /sbin/init
+      steps:
+      - checkout
+      - restore_cache:
+          name: "Restoring composer install cache"
+          key: *composer_install_cache_key
+      - run: vendor/bin/phpunit
 workflows:
   version: 2
   composer_and_phpunit:
     jobs:
-    - build
+    - checkout_code
+    - composer_install:
+        requires:
+        - checkout_code
     - phpunit:
         requires:
-        - build
-
-jobs:
-  build:
-    working_directory: ~/
-    docker:
-    - image: composer/composer:php5-alpine
-    steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - *composer_install_cache_key
-    - run: apk update && apk add openssh-keysign
-    - run: mkdir -p ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-    - run: test ! -d vendor && composer install -n --prefer-dist --dev || true
-    - save_cache:
-        key: *composer_install_cache_key
-        paths:
-          - vendor
-
-  phpunit:
-    working_directory: ~/
-    docker:
-    - image: php:5.6-cli-alpine
-      command: /sbin/init
-    steps:
-    - checkout
-    - restore_cache:
-        name: "Restoring composer install cache"
-        key: *composer_install_cache_key
-    - run: vendor/bin/phpunit
+        - composer_install
