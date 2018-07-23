@@ -104,22 +104,23 @@ class GenericOpenidProvider implements OpenidServiceInterface {
      */
 	protected function getAuthorizationParameters($options = []) {
 
-		$options['state'] = $this->collaborators->getHashService()->getSessionBasedHash();
+		$parameters['state'] = isset($options['state']) ? $options['state'] : $this->collaborators->getHashService()->getSessionBasedHash();
 
-		$options['nonce'] = $this->collaborators->getHashService()->getSessionBasedHash();
+        $parameters['nonce'] = isset($options['nonce']) ? $options['nonce'] : $this->collaborators->getHashService()->getSessionBasedHash();
 
-		$options['response_type'] = 'code';
+        $parameters['response_type'] = 'code';
 
-		$options['scope'] = array_merge($this->getDefaultScopes(),$options['scope']);
-		if(is_array($options['scope'])) {
+        $parameters['scope'] = isset($options['scope']) ? $options['scope'] : $this->getDefaultScopes();
+
+		if(is_array($parameters['scope'])) {
 			$separator = $this->getScopeSeparator();
-			$options['scope'] = implode($separator, $options['scope']);
+            $parameters['scope'] = implode($separator, $parameters['scope']);
 		}
 
-		$options['redirect_uri'] = $this->options->getRedirectUri();
-		$options['client_id'] = $this->options->getClientId();
+        $parameters['redirect_uri'] = $this->options->getRedirectUri();
+        $parameters['client_id'] = $this->options->getClientId();
 
-		return $options;
+		return $parameters;
 	}
 
 	/**
