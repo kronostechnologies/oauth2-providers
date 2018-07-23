@@ -30,17 +30,19 @@ jobs:
       - save_cache:
           key: *composer_install_cache_key
           paths: vendor
-    phpunit:
-      working_directory: ~/
-      docker:
+  phpunit:
+    docker:
       - image: php:5.6-cli-alpine
-        command: /sbin/init
-      steps:
+    steps:
       - checkout
       - restore_cache:
           name: "Restoring composer install cache"
           key: *composer_install_cache_key
-      - run: vendor/bin/phpunit
+      - run:
+          name: "phpunit"
+          command: ./vendor/phpunit/phpunit/phpunit --log-junit phpunit/junit.xml
+      - store_test_results:
+          path: phpunit
 workflows:
   version: 2
   composer_and_phpunit:
