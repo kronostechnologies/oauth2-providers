@@ -15,7 +15,7 @@ interface OpenidServiceInterface {
 	 * @param string $code
 	 * @return array
 	 */
-	public function getAccessTokenByAuthorizationCode($code);
+	public function getTokenByAuthorizationCode($code);
 
     /**
      * Requests and creates an id token.

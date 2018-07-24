@@ -147,7 +147,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @param string $authorization_code
 	 * @return array
 	 */
-	public function getAccessTokenByAuthorizationCode($authorization_code) {
+	public function getTokenByAuthorizationCode($authorization_code) {
 		return $this->getTokenParsedResponse('authorization_code', [
 			'code' => $authorization_code
 		]);

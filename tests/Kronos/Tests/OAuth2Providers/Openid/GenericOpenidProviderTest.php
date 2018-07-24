@@ -269,7 +269,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 		$this->expectException(IdentityProviderException::class);
 		$this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-		$this->provider->getAccessTokenByAuthorizationCode( self::AN_AUTHORIZATION_CODE_ARRAY);
+		$this->provider->getTokenByAuthorizationCode( self::AN_AUTHORIZATION_CODE_ARRAY);
 	}
 
 	public function test_InvalidCode_getIdTokenByAuthorizationCode_ShouldThrow() {
@@ -288,7 +288,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 		$this->expectException(IdentityProviderException::class);
 		$this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-		$this->provider->getAccessTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
+		$this->provider->getTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
 	}
 
 	public function test_ValidState_validateState_ShouldReturnTrue() {
