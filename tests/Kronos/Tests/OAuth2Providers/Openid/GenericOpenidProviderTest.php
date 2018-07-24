@@ -92,7 +92,8 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 	const A_NONCE_STRING = 'SOME_NONCE_1234';
 	const DEFAULT_OPENID_SCOPE = 'openid';
 	const DEFAULT_RESPONSE_TYPE = 'code';
-	const DEFAULT_APPROVAL_PROMPT = 'auto';
+	const CUSTOM_SCOPE = 'profile';
+
 	const AN_AUTHORIZATION_GRANT = 'authorization_code';
 	const AN_AUTHORIZATION_CODE = 'some_code_1234';
 	const AN_AUTHORIZATION_CODE_ARRAY = ['code' => self::AN_AUTHORIZATION_CODE];
@@ -185,18 +186,15 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 			'state' => $state,
 			'nonce' => $nonce,
 			'response_type' => self::DEFAULT_RESPONSE_TYPE,
-			'approval_prompt' => self::DEFAULT_APPROVAL_PROMPT,
-			'scope' => $scope,
-			'redirect_uri' => urlencode(self::VALID_OPTIONS['redirectUri']),
+            'scope' => $scope,
+			'redirect_uri' => self::VALID_OPTIONS['redirectUri'],
 			'client_id' => self::VALID_OPTIONS['clientId']
 		];
 
 		$authorizationUrl = array_shift($authorizationUrlValues) . '?';
-		foreach($authorizationUrlValues as $key => $value) {
-			$authorizationUrl .= $key . '=' . $value . '&';
-		}
+        $authorizationUrl .= http_build_query($authorizationUrlValues, null, '&', \PHP_QUERY_RFC3986);
 
-		return rtrim($authorizationUrl, '&');
+		return $authorizationUrl;
 	}
 
 
@@ -235,63 +233,25 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function test_GrantAndCode_getIdToken_ShouldFetchAndCreateIdToken() {
-		$this->response->expects($this->exactly(3))
-			->method('getBody')
-			->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY, self::ID_TOKEN_RESPONSE_BODY, self::A_KEYS_RESPONSE_BODY);
-		$this->httpClient->expects($this->exactly(3))
-			->method('send')
-			->willReturn($this->response);
+    public function test_customScope_getAuthorizationUrl_ShouldReturnDefaultAuthorizationUrlWithRandomNonceAndStateAndCustomScope() {
+        $this->response->expects($this->once())
+            ->method('getBody')
+            ->willReturn(self::OPENID_CONFIG_RESPONSE_BODY);
+        $this->httpClient->expects($this->once())
+            ->method('send')
+            ->willReturn($this->response);
 
-		$testIdToken = new IdToken(self::ID_TOKEN_RESPONSE_ARRAY, 'sub');
+        $this->hashService->expects($this->exactly(2))
+            ->method('getSessionBasedHash')
+            ->willReturnOnConsecutiveCalls(self::A_STATE_STRING, self::A_NONCE_STRING);
 
-		$this->idTokenFactory->expects($this->once())
-			->method('createIdToken')
-			->with(self::A_VALID_TOKEN, self::A_DECODED_KEYS_ARRAY, self::VALID_OPTIONS['clientId'], self::OPENID_CONFIG_ARRAY['issuer'])
-			->willReturn($testIdToken);
+        $this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
 
-		$this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
+        $actual = $this->provider->getAuthorizationUrl(['scope'=> self::CUSTOM_SCOPE]);
+        $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING, self::CUSTOM_SCOPE);
 
-		$idToken = $this->provider->getIdToken(self::AN_AUTHORIZATION_GRANT, self::AN_AUTHORIZATION_CODE_ARRAY);
-
-		$expected = $testIdToken;
-		$actual = $idToken;
-
-		$this->assertEquals($expected, $actual);
-	}
-
-
-	public function test_GrantNoCode_getIdToken_ShouldThrow() {
-		$this->response->expects($this->once())
-			->method('getBody')
-			->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY);
-		$this->httpClient->expects($this->exactly(1))
-			->method('send')
-			->willReturn($this->response);
-
-		$this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
-
-		$this->expectException(BadMethodCallException::class);
-		$this->expectExceptionMessage('Required parameter not passed: "code"');
-
-		$this->provider->getIdToken(self::AN_AUTHORIZATION_GRANT);
-	}
-
-	public function test_InvalidGrant_getIdToken_ShouldThrow() {
-		$this->response->expects($this->once())
-			->method('getBody')
-			->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY);
-		$this->httpClient->expects($this->exactly(1))
-			->method('send')
-			->willReturn($this->response);
-
-		$this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
-
-		$this->expectException(InvalidGrantException::class);
-		$this->expectExceptionMessage('Grant "League\OAuth2\Client\Grant\\' . self::AN_INVALID_GRANT_STRING . '" must extend AbstractGrant');
-
-		$this->provider->getIdToken(self::AN_INVALID_GRANT_STRING);
-	}
+        $this->assertEquals($expected, $actual);
+    }
 
 	public function test_InvalidCode_getIdToken_ShouldThrow() {
 		$this->response->expects($this->exactly(2))
@@ -309,32 +269,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 		$this->expectException(IdentityProviderException::class);
 		$this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-		$this->provider->getIdToken(self::AN_AUTHORIZATION_GRANT, self::AN_AUTHORIZATION_CODE_ARRAY);
-	}
-
-	public function test_WithCode_getIdTokenByAuthorizationCode_ShouldFetchAndCreateIdToken() {
-		$this->response->expects($this->exactly(3))
-			->method('getBody')
-			->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY, self::ID_TOKEN_RESPONSE_BODY, self::A_KEYS_RESPONSE_BODY);
-		$this->httpClient->expects($this->exactly(3))
-			->method('send')
-			->willReturn($this->response);
-
-		$testIdToken = new IdToken(self::ID_TOKEN_RESPONSE_ARRAY, 'sub');
-
-		$this->idTokenFactory->expects($this->once())
-			->method('createIdToken')
-			->with(self::A_VALID_TOKEN, self::A_DECODED_KEYS_ARRAY, self::VALID_OPTIONS['clientId'], self::OPENID_CONFIG_ARRAY['issuer'])
-			->willReturn($testIdToken);
-
-		$this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
-
-		$idToken = $this->provider->getIdTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
-
-		$expected = $testIdToken;
-		$actual = $idToken;
-
-		$this->assertEquals($expected, $actual);
+		$this->provider->getTokenByAuthorizationCode( self::AN_AUTHORIZATION_CODE_ARRAY);
 	}
 
 	public function test_InvalidCode_getIdTokenByAuthorizationCode_ShouldThrow() {
@@ -353,7 +288,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 		$this->expectException(IdentityProviderException::class);
 		$this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-		$this->provider->getIdTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
+		$this->provider->getTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
 	}
 
 	public function test_ValidState_validateState_ShouldReturnTrue() {

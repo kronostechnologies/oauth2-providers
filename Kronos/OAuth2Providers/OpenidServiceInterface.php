@@ -13,7 +13,21 @@ interface OpenidServiceInterface {
 
 	/**
 	 * @param string $code
-	 * @return IdTokenInterface
+	 * @return array
 	 */
-	public function getIdTokenByAuthorizationCode($code);
+	public function getTokenByAuthorizationCode($code);
+
+    /**
+     * Requests and creates an id token.
+     *
+     * @param string $idTokenJWT id token received from authorization code exchange
+     * @return IdTokenInterface
+     */
+    public function parseIdToken($idTokenJWT);
+
+    /**
+     * @param $accessToken
+     * @return array
+     */
+    public function getUserInfo($accessToken);
 }
