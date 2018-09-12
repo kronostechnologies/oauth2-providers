@@ -5,11 +5,16 @@ namespace Kronos\OAuth2Providers\Outlook;
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
+use Kronos\OAuth2Providers\State\SessionBasedHashService;
+use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
+use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Token\AccessToken;
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
 class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, OAuthRefreshableInterface {
+
+    use StateServiceAwareTrait;
 
 	const SCOPE_EMAIL =  "wl.emails";
 	const SCOPE_BASIC_PROFILE = "wl.basic";
@@ -19,6 +24,12 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 	const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
 
 	protected $defaultAuthorizationUrlOptions = ['display'=>'popup'];
+
+    /**
+     * @var StateServiceInterface
+     */
+    protected $stateService;
+
 
 	/**
 	 * @param string $clientId
@@ -33,6 +44,11 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 			'clientSecret'      => $clientSecret,
 			'redirectUri'       => $redirectUri
 		],$collaborators);
+
+        if (empty($collaborators['stateService'])) {
+            $collaborators['stateService'] = new SessionBasedHashService();
+        }
+        $this->setStateService($collaborators['stateService']);
 	}
 
 	/**
@@ -47,8 +63,6 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 	 * @return string
 	 */
 	public function getAuthorizationUrl(array $options = []) {
-		$options['state'] = $this->getSessionState();
-
 		return parent::getAuthorizationUrl(
 			array_merge($this->defaultAuthorizationUrlOptions,$options)
 		);
@@ -98,30 +112,6 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 		}
 
 		return $this->getNewAccessTokenByRefreshToken($refresh_token);
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getSessionState(){
-		$session_id = session_id();
-		$salt = bin2hex(random_bytes(4));
-		$state = $salt . '_'. sha1($session_id . $salt);
-		return $state;
-	}
-
-	/**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state){
-		$session_id = session_id();
-		list($salt, $hash) = explode('_', $state);
-		if($hash == sha1($session_id . $salt)){
-			return true;
-		}
-		return false;
-
 	}
 
 }

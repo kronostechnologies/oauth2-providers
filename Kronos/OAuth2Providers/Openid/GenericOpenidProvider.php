@@ -104,9 +104,9 @@ class GenericOpenidProvider implements OpenidServiceInterface {
      */
 	protected function getAuthorizationParameters($options = []) {
 
-		$parameters['state'] = isset($options['state']) ? $options['state'] : $this->collaborators->getHashService()->getSessionBasedHash();
+		$parameters['state'] = isset($options['state']) ? $options['state'] : $this->collaborators->getStateService()->generateState();
 
-        $parameters['nonce'] = isset($options['nonce']) ? $options['nonce'] : $this->collaborators->getHashService()->getSessionBasedHash();
+        $parameters['nonce'] = isset($options['nonce']) ? $options['nonce'] : $this->collaborators->getNonceService()->generateNonce();
 
         $parameters['response_type'] = 'code';
 
@@ -523,6 +523,14 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * @return bool
 	 */
 	public function validateSate($state) {
-		return $this->collaborators->getHashService()->validateSessionBasedHash($state);
+		return $this->collaborators->getStateService()->validateState($state);
 	}
+
+    /**
+     * @param string $nonce
+     * @return bool
+     */
+    public function validateNonce($nonce) {
+        return $this->collaborators->getNonceService()->validateNonce($nonce);
+    }
 }

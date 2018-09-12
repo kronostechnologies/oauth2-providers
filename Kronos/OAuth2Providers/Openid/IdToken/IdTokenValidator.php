@@ -2,18 +2,19 @@
 
 namespace Kronos\OAuth2Providers\Openid\IdToken;
 
-use Kronos\OAuth2Providers\SessionBasedHashService;
+use Kronos\OAuth2Providers\State\NonceServiceInterface;
+use Kronos\OAuth2Providers\State\SessionBasedHashService;
 use RuntimeException;
 
 class IdTokenValidator {
 
 	/**
-	 * @var SessionBasedHashService
+	 * @var NonceServiceInterface
 	 */
-	protected $hashService;
+	protected $nonceValidator;
 
-	public function __construct(SessionBasedHashService $sessionBasedHashService = null) {
-		$this->hashService = empty($sessionBasedHashService) ? new SessionBasedHashService() : $sessionBasedHashService;
+	public function __construct(NonceServiceInterface $sessionBasedHashService = null) {
+		$this->nonceValidator = empty($sessionBasedHashService) ? new SessionBasedHashService() : $sessionBasedHashService;
 	}
 
 	public function validateIdTokenClaims(array $idTokenClaims, $clientId, $issuer) {
@@ -25,7 +26,7 @@ class IdTokenValidator {
 			throw new RuntimeException('The issuer is invalid!');
 		}
 
-		if(!$this->hashService->validateSessionBasedHash($idTokenClaims['nonce'])) {
+		if(!$this->nonceValidator->validateNonce($idTokenClaims['nonce'])) {
 			throw new RuntimeException('The nonce is invalid!');
 		}
 	}
