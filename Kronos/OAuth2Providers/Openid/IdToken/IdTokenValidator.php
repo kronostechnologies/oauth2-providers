@@ -13,8 +13,8 @@ class IdTokenValidator {
 	 */
 	protected $nonceValidator;
 
-	public function __construct(NonceServiceInterface $sessionBasedHashService = null) {
-		$this->nonceValidator = empty($sessionBasedHashService) ? new SessionBasedHashService() : $sessionBasedHashService;
+	public function __construct(NonceServiceInterface $nonceValidator = null) {
+		$this->nonceValidator = empty($nonceValidator) ? new SessionBasedHashService() : $nonceValidator;
 	}
 
 	public function validateIdTokenClaims(array $idTokenClaims, $clientId, $issuer) {

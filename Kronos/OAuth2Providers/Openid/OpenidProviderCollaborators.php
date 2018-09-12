@@ -4,6 +4,8 @@ namespace Kronos\OAuth2Providers\Openid;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
+use Kronos\OAuth2Providers\Openid\IdToken\IdTokenParser;
+use Kronos\OAuth2Providers\Openid\IdToken\IdTokenValidator;
 use Kronos\OAuth2Providers\State\NonceServiceInterface;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
 use Kronos\OAuth2Providers\State\SessionBasedHashService;
@@ -59,7 +61,7 @@ class OpenidProviderCollaborators
         $this->httpClient = $httpClient ?: new HttpClient();
         $this->stateService = $stateService ?: new SessionBasedHashService();
         $this->nonceService = $nonceService ?: new SessionBasedHashService();
-        $this->idTokenFactory = $idTokenFactory ?: new IdTokenFactory();
+        $this->idTokenFactory = $idTokenFactory ?: new IdTokenFactory(new IdTokenParser(), new IdTokenValidator($this->nonceService));
     }
 
     /**
