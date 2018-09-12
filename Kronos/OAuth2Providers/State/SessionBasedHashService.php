@@ -10,7 +10,7 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
     /**
      * @param int $saltLength
      */
-    public function __construct($saltLength = 32)
+    public function __construct($saltLength = 4)
     {
         $this->saltLength = $saltLength;
     }
@@ -37,9 +37,8 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
 
 
     protected function generateHash() {
-        $salt_length = 32;
 		$session_id = session_id();
-		$salt = bin2hex(random_bytes($salt_length));
+		$salt = bin2hex(random_bytes($this->saltLength));
 		$random_str = $salt . '_' . sha1($session_id . $salt);
 		return $random_str;
 	}

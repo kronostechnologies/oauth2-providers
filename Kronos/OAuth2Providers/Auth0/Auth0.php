@@ -3,6 +3,9 @@
 namespace Kronos\OAuth2Providers\Auth0;
 
 use Kronos\OAuth2Providers\OAuthServiceInterface;
+use Kronos\OAuth2Providers\State\SessionBasedHashService;
+use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
+use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
@@ -13,6 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 
 	use BearerAuthorizationTrait;
+	use StateServiceAwareTrait;
 
 	const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
 
@@ -20,9 +24,14 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 	const DEFAULT_SCOPE_PROFILE = 'profile';
 	const DEFAULT_SCOPES = [self::DEFAULT_SCOPE_OPENID, self::DEFAULT_SCOPE_PROFILE];
 
-	protected $_base_authorization_url;
-	protected $_base_access_token_url;
-	protected $_resource_owner_details_url;
+	protected $baseAuthorizationUrl;
+	protected $baseAccessTokenUrl;
+	protected $resourceOwnerDetailsUrl;
+
+    /**
+     * @var StateServiceInterface
+     */
+    protected $stateService;
 
 	/**
 	 * Constructs an OAuth 2.0 service provider.
@@ -48,9 +57,14 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 
 		parent::__construct($options, $collaborators);
 
-		$this->_base_authorization_url = $options['base_authorization_url'];
-		$this->_base_access_token_url = $options['base_access_token_url'];
-		$this->_resource_owner_details_url = $options['resource_owner_details_url'];
+		$this->baseAuthorizationUrl = $options['baseAuthorizationUrl'] ?: $options['base_authorization_url'];
+		$this->baseAccessTokenUrl = $options['baseAccessTokenUrl'] ?: $options['base_access_token_url'];
+		$this->resourceOwnerDetailsUrl = $options['resourceOwnerDetailsUrl'] ?: $options['resource_owner_details_url'];
+
+        if (empty($collaborators['stateService'])) {
+            $collaborators['stateService'] = new SessionBasedHashService();
+        }
+        $this->setStateService($collaborators['stateService']);
 	}
 
 	/**
@@ -61,7 +75,7 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 	 * @return string
 	 */
 	public function getBaseAuthorizationUrl() {
-		return $this->_base_authorization_url;
+		return $this->baseAuthorizationUrl;
 	}
 
 	/**
@@ -73,7 +87,7 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 	 * @return string
 	 */
 	public function getBaseAccessTokenUrl(array $params) {
-		return $this->_base_access_token_url;
+		return $this->baseAccessTokenUrl;
 	}
 
 	/**
@@ -83,7 +97,7 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 	 * @return string
 	 */
 	public function getResourceOwnerDetailsUrl(AccessToken $token) {
-		return $this->_resource_owner_details_url;
+		return $this->resourceOwnerDetailsUrl;
 	}
 
 	/**
@@ -143,45 +157,4 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 		}
 	}
 
-	/**
-	 * Hack, returns sessionState, as per other providers.
-	 *
-	 * @param  int $length not used
-	 * @return string
-	 */
-	protected function getRandomState($length = 32) {
-		return $this->getSessionState();
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getSessionState() {
-		if(isset($this->state)) {
-			return $this->state;
-		}
-
-		$session_id = session_id();
-		$salt = bin2hex(random_bytes(4));
-		$state = $salt . '_' . sha1($session_id . $salt);
-
-		$this->state = $state;
-
-		return $this->state;
-	}
-
-	/**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state) {
-		$session_id = session_id();
-		list($salt, $hash) = explode('_', $state);
-
-		if($hash == sha1($session_id . $salt)) {
-			return true;
-		}
-
-		return false;
-	}
 }
