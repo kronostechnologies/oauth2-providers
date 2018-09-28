@@ -5,15 +5,25 @@ namespace Kronos\OAuth2Providers\MicrosoftGraph;
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
+use Kronos\OAuth2Providers\State\SessionBasedHashService;
+use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
+use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Token\AccessToken;
 
 class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provider\MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface {
 
+    use StateServiceAwareTrait;
+
 	/**
 	 * @var string[]
 	 */
 	protected $defaultAuthorizationUrlOptions = ['prompt'=>'consent'];
+
+    /**
+     * @var StateServiceInterface
+     */
+    protected $stateService;
 
 	/**
 	 * @param string $clientId
@@ -28,6 +38,11 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 			'redirectUri'       => $redirectUri,
 			'accessType'        => 'offline',
 		],$collaborators);
+
+        if (empty($collaborators['stateService'])) {
+            $collaborators['stateService'] = new SessionBasedHashService();
+        }
+        $this->setStateService($collaborators['stateService']);
 	}
 
 	/**
@@ -35,8 +50,6 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	 * @return string
 	 */
 	public function getAuthorizationUrl(array $options = []) {
-		$options['state'] = $this->getSessionState();
-
 		return parent::getAuthorizationUrl(
 			array_merge($this->defaultAuthorizationUrlOptions,$options)
 		);
@@ -89,34 +102,11 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	}
 
 	/**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state) {
-		$session_id = session_id();
-		list($salt, $hash) = explode('_', $state);
-		if($hash == sha1($session_id . $salt)){
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * @param array $response
 	 * @param AccessToken $token
 	 * @return MicrosoftGraphUser
 	 */
 	protected function createResourceOwner(array $response, AccessToken $token) {
 		return new MicrosoftGraphUser($response);
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getSessionState(){
-		$session_id = session_id();
-		$salt = bin2hex(random_bytes(4));
-		$state = $salt . '_'. sha1($session_id . $salt);
-		return $state;
 	}
 }

@@ -4,80 +4,111 @@ namespace Kronos\OAuth2Providers\Openid;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\ClientInterface as HttpClientInterface;
+use Kronos\OAuth2Providers\Openid\IdToken\IdTokenParser;
+use Kronos\OAuth2Providers\Openid\IdToken\IdTokenValidator;
+use Kronos\OAuth2Providers\State\NonceServiceInterface;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
-use Kronos\OAuth2Providers\SessionBasedHashService;
-use League\OAuth2\Client\Grant\AbstractGrant;
+use Kronos\OAuth2Providers\State\SessionBasedHashService;
+use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant\GrantFactory;
 use League\OAuth2\Client\Tool\RequestFactory;
 
-class OpenidProviderCollaborators {
+class OpenidProviderCollaborators
+{
 
-	/**
-	 * @var GrantFactory
-	 */
-	protected $grantFactory;
+    /**
+     * @var GrantFactory
+     */
+    protected $grantFactory;
 
-	/**
-	 * @var RequestFactory
-	 */
-	protected $requestFactory;
+    /**
+     * @var RequestFactory
+     */
+    protected $requestFactory;
 
-	/**
-	 * @var HttpClientInterface
-	 */
-	protected $httpClient;
+    /**
+     * @var HttpClientInterface
+     */
+    protected $httpClient;
 
-	/**
-	 * @var SessionBasedHashService
-	 */
-	protected $hashService;
+    /**
+     * @var StateServiceInterface
+     */
+    protected $stateService;
 
-	/**
-	 * @var IdTokenFactory
-	 */
-	protected $idTokenFactory;
+    /**
+     * @var NonceServiceInterface
+     */
+    protected $nonceService;
 
 
-	public function __construct(GrantFactory $grantFactory = null, RequestFactory $requestFactory = null, HttpClient $httpClient = null, SessionBasedHashService $hashService = null, IdTokenFactory $idTokenFactory = null) {
-		$this->grantFactory = $grantFactory ?: new GrantFactory();
-		$this->requestFactory = $requestFactory ?: new RequestFactory();
-		$this->httpClient = $httpClient ?: new HttpClient();
-		$this->hashService = $hashService ?: new SessionBasedHashService();
-		$this->idTokenFactory = $idTokenFactory ?: new IdTokenFactory();
-	}
+    /**
+     * @var IdTokenFactory
+     */
+    protected $idTokenFactory;
 
-	/**
-	 * @return GrantFactory
-	 */
-	public function getGrantFactory() {
-		return $this->grantFactory;
-	}
 
-	/**
-	 * @return RequestFactory
-	 */
-	public function getRequestFactory() {
-		return $this->requestFactory;
-	}
+    public function __construct(
+        GrantFactory $grantFactory = null,
+        RequestFactory $requestFactory = null,
+        HttpClient $httpClient = null,
+        StateServiceInterface $stateService = null,
+        NonceServiceInterface $nonceService = null,
+        IdTokenFactory $idTokenFactory = null
+    ) {
+        $this->grantFactory = $grantFactory ?: new GrantFactory();
+        $this->requestFactory = $requestFactory ?: new RequestFactory();
+        $this->httpClient = $httpClient ?: new HttpClient();
+        $this->stateService = $stateService ?: new SessionBasedHashService();
+        $this->nonceService = $nonceService ?: new SessionBasedHashService();
+        $this->idTokenFactory = $idTokenFactory ?: new IdTokenFactory(new IdTokenParser(), new IdTokenValidator($this->nonceService));
+    }
 
-	/**
-	 * @return HttpClientInterface
-	 */
-	public function getHttpClient() {
-		return $this->httpClient;
-	}
+    /**
+     * @return GrantFactory
+     */
+    public function getGrantFactory()
+    {
+        return $this->grantFactory;
+    }
 
-	/**
-	 * @return SessionBasedHashService
-	 */
-	public function getHashService() {
-		return $this->hashService;
-	}
+    /**
+     * @return RequestFactory
+     */
+    public function getRequestFactory()
+    {
+        return $this->requestFactory;
+    }
 
-	/**
-	 * @return IdTokenFactory
-	 */
-	public function getIdTokenFactory() {
-		return $this->idTokenFactory;
-	}
+    /**
+     * @return HttpClientInterface
+     */
+    public function getHttpClient()
+    {
+        return $this->httpClient;
+    }
+
+    /**
+     * @return StateServiceInterface
+     */
+    public function getStateService()
+    {
+        return $this->stateService;
+    }
+
+    /**
+     * @return NonceServiceInterface
+     */
+    public function getNonceService()
+    {
+        return $this->nonceService;
+    }
+
+    /**
+     * @return IdTokenFactory
+     */
+    public function getIdTokenFactory()
+    {
+        return $this->idTokenFactory;
+    }
 }

@@ -2,8 +2,9 @@
 
 namespace Kronos\Tests\OAuth2Providers\Openid\IdToken;
 
+use Kronos\OAuth2Providers\State\NonceServiceInterface;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenValidator;
-use Kronos\OAuth2Providers\SessionBasedHashService;
+use Kronos\OAuth2Providers\State\SessionBasedHashService;
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
@@ -31,7 +32,7 @@ class IdTokenValidatorTest extends PHPUnit_Framework_TestCase {
 	private $hashService;
 
 	public function setUp() {
-		$this->hashService = $this->getMockBuilder(SessionBasedHashService::class)
+		$this->hashService = $this->getMockBuilder(NonceServiceInterface::class)
 			->disableOriginalConstructor()
 			->getMock();
 	}
@@ -56,7 +57,7 @@ class IdTokenValidatorTest extends PHPUnit_Framework_TestCase {
 
 	public function test_ValidParams_validateIdTokenClaims_ShouldDoNothing() {
 		$this->hashService->expects($this->once())
-			->method('validateSessionBasedHash')
+			->method('validateNonce')
 			->with(self::A_NONCE)
 			->willReturn(true);
 
@@ -84,7 +85,7 @@ class IdTokenValidatorTest extends PHPUnit_Framework_TestCase {
 
 	public function test_InvalidNonce_validateIdTokenClaims_ShouldThrowException() {
 		$this->hashService->expects($this->once())
-			->method('validateSessionBasedHash')
+			->method('validateNonce')
 			->with(self::A_NONCE)
 			->willReturn(false);
 
@@ -99,6 +100,6 @@ class IdTokenValidatorTest extends PHPUnit_Framework_TestCase {
 class TestableIdTokenValidator extends IdTokenValidator {
 
 	public function getHashService() {
-		return $this->hashService;
+		return $this->nonceValidator;
 	}
 }

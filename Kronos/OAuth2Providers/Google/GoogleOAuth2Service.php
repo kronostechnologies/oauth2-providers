@@ -5,17 +5,27 @@ namespace Kronos\OAuth2Providers\Google;
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
+use Kronos\OAuth2Providers\State\SessionBasedHashService;
+use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
+use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Token\AccessToken;
 
 class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAuthRefreshableInterface {
 
+    use StateServiceAwareTrait;
+
 	const USERINFO_EMAIL =  "https://www.googleapis.com/auth/userinfo.email";
 	const USERINFO_PROFILE = "https://www.googleapis.com/auth/userinfo.profile";
 	const MAIL_GOOGLE_COM =  "https://mail.google.com/";
 
 	protected $defaultAuthorizationUrlOptions = ['approval_prompt'=>'force'];
+
+    /**
+     * @var StateServiceInterface
+     */
+    protected $stateService;
 
 
 	/**
@@ -32,6 +42,11 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 			'redirectUri'       => $redirectUri,
 			'accessType'        => 'offline',
 		],$collaborators);
+
+        if (empty($collaborators['stateService'])) {
+            $collaborators['stateService'] = new SessionBasedHashService();
+        }
+        $this->setStateService($collaborators['stateService']);
 	}
 
 	/**
@@ -57,8 +72,6 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 	 * @return string
 	 */
 	public function getAuthorizationUrl(array $options = []) {
-		$options['state'] = $this->getSessionState();
-
 		return parent::getAuthorizationUrl(
 			array_merge($this->defaultAuthorizationUrlOptions,$options)
 		);
@@ -118,30 +131,4 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 	protected function createResourceOwner(array $response, AccessToken $token) {
 		return new GoogleUser($response);
 	}
-
-	/**
-	 * @return string
-	 */
-	protected function getSessionState(){
-		$session_id = session_id();
-		$salt = bin2hex(random_bytes(4));
-		$state = $salt . '_'. sha1($session_id . $salt);
-
-		return $state;
-	}
-
-	/**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state){
-		$session_id = session_id();
-		list($salt, $hash) = explode('_', $state);
-		if($hash == sha1($session_id . $salt)){
-			return true;
-		}
-		return false;
-
-	}
-
 }

@@ -2,6 +2,9 @@
 namespace Kronos\OAuth2Providers\Basic;
 
 use Kronos\OAuth2Providers\OAuthServiceInterface;
+use Kronos\OAuth2Providers\State\SessionBasedHashService;
+use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
+use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
@@ -9,10 +12,17 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class Basic extends AbstractProvider implements OAuthServiceInterface {
 
+    use StateServiceAwareTrait;
+
 	const STANDARD_AUTH_URL_PATH = 'oauth2/auth';
 	const STANDARD_ACCESS_TOKEN_URL_PATH = 'oauth2/token';
 
 	protected $authServerBaseUrl;
+
+    /**
+     * @var StateServiceInterface
+     */
+    protected $stateService;
 
 	/**
 	 * Basic constructor.
@@ -22,7 +32,7 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface {
 	 * @param string $authServerBaseUrl
 	 * @param array $collaborators
 	 */
-	public function __construct($clientId, $clientSecret, $redirectUri,$authServerBaseUrl, array $collaborators = []) {
+	public function __construct($clientId, $clientSecret, $redirectUri, $authServerBaseUrl, array $collaborators = []) {
 
 		parent::__construct([
 			'clientId'          => $clientId,
@@ -30,16 +40,11 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface {
 			'redirectUri'       => $redirectUri,
 			'authServerBaseUrl' => $authServerBaseUrl,
 		], $collaborators);
-	}
 
-	/**
-	 * @param array $options
-	 * @return string
-	 */
-	public function getAuthorizationUrl(array $options = []) {
-		$options['state'] = $this->getSessionState();
-
-		return parent::getAuthorizationUrl($options);
+        if (empty($collaborators['stateService'])) {
+            $collaborators['stateService'] = new SessionBasedHashService();
+        }
+        $this->setStateService($collaborators['stateService']);
 	}
 
 	/**
@@ -71,31 +76,6 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface {
 		if($response->getStatusCode()!= 200){
 			throw new IdentityProviderException($data['error'], $response->getStatusCode(), $data);
 		}
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getSessionState(){
-		$session_id = session_id();
-		$salt = bin2hex(random_bytes(4));
-		$state = $salt . '_'. sha1($session_id . $salt);
-
-		return $state;
-	}
-
-	/**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state){
-		$session_id = session_id();
-		list($salt, $hash) = explode('_', $state);
-		if($hash == sha1($session_id . $salt)){
-			return true;
-		}
-		return false;
-
 	}
 
 }
