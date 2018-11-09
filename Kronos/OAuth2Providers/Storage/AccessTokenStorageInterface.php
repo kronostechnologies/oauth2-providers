@@ -13,7 +13,7 @@ interface AccessTokenStorageInterface {
 	public function retrieveAccessToken($refresh_token);
 
 	/**
-	 * @param $refresh_token
+	 * @param AccessToken $accessToken
 	 */
 	public function storeAccessToken(AccessToken $accessToken);
 }

@@ -114,4 +114,19 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 		return $this->getNewAccessTokenByRefreshToken($refresh_token);
 	}
 
+    /**
+     * @return StateServiceInterface
+     */
+    public function getStateService()
+    {
+        return $this->stateService;
+    }
+
+    /**
+     * @param StateServiceInterface $stateService
+     */
+    public function setStateService(StateServiceInterface $stateService)
+    {
+        $this->stateService = $stateService;
+    }
 }

@@ -131,4 +131,20 @@ class GoogleOAuth2Service extends Google  implements OAuthServiceInterface, OAut
 	protected function createResourceOwner(array $response, AccessToken $token) {
 		return new GoogleUser($response);
 	}
+
+    /**
+     * @return StateServiceInterface
+     */
+    public function getStateService()
+    {
+        return $this->stateService;
+    }
+
+    /**
+     * @param StateServiceInterface $stateService
+     */
+    public function setStateService(StateServiceInterface $stateService)
+    {
+        $this->stateService = $stateService;
+    }
 }

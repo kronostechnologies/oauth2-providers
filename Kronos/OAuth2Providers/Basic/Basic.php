@@ -62,10 +62,11 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface {
 		return $this->authServerBaseUrl.static::STANDARD_ACCESS_TOKEN_URL_PATH;
 	}
 
-	/**
-	 * @param string $code
-	 * @return AccessToken
-	 */
+    /**
+     * @param string $code
+     * @param array $options
+     * @return AccessToken
+     */
 	public function getAccessTokenByAuthorizationCode($code, array $options = []) {
 		return $this->getAccessToken('authorization_code', array_merge([
 			'code' => $code
@@ -78,4 +79,19 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface {
 		}
 	}
 
+    /**
+     * @return StateServiceInterface
+     */
+    public function getStateService()
+    {
+        return $this->stateService;
+    }
+
+    /**
+     * @param StateServiceInterface $stateService
+     */
+    public function setStateService(StateServiceInterface $stateService)
+    {
+        $this->stateService = $stateService;
+    }
 }

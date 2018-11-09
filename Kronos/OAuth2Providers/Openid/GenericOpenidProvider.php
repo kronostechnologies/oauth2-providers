@@ -227,12 +227,14 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 		return $this->getRequest($method, $url, null,$options);
 	}
 
-	/**
-	 * Sends a request and returns the parsed response.
-	 *
-	 * @param  RequestInterface $request
-	 * @return mixed
-	 */
+    /**
+     * Sends a request and returns the parsed response.
+     *
+     * @param  RequestInterface $request
+     * @return mixed
+     * @throws IdentityProviderException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
 	protected function getParsedResponse(RequestInterface $request) {
 		try {
 			$response = $this->getResponse($request);
@@ -302,15 +304,16 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 		return $this->collaborators->getRequestFactory()->getRequestWithOptions($method, $url, $options);
 	}
 
-	/**
-	 * Sends a request instance and returns a response instance.
-	 *
-	 * WARNING: This method does not attempt to catch exceptions caused by HTTP
-	 * errors! It is recommended to wrap this method in a try/catch block.
-	 *
-	 * @param  RequestInterface $request
-	 * @return ResponseInterface
-	 */
+    /**
+     * Sends a request instance and returns a response instance.
+     *
+     * WARNING: This method does not attempt to catch exceptions caused by HTTP
+     * errors! It is recommended to wrap this method in a try/catch block.
+     *
+     * @param  RequestInterface $request
+     * @return ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
 	protected function getResponse(RequestInterface $request) {
 		return $this->collaborators->getHttpClient()->send($request);
 	}
@@ -437,7 +440,7 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 	 * The provider that was used to fetch the response can be used to provide
 	 * additional context.
 	 *
-	 * @param  string $idToken idToken jwt
+	 * @param  string $idTokenJWT idToken jwt
 	 * @return IdTokenInterface
 	 */
 	protected function createIdToken($idTokenJWT) {

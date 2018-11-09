@@ -112,11 +112,12 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 		return self::DEFAULT_SCOPES;
 	}
 
-	/**
-	 * Requests an access token using an 'authorization_code' grant.
-	 * @param string $authorization_code
-	 * @return AccessToken
-	 */
+    /**
+     * Requests an access token using an 'authorization_code' grant.
+     * @param string $code
+     * @param array $options
+     * @return AccessToken
+     */
 	public function getAccessTokenByAuthorizationCode($code, array $options = []) {
 		return $this->getAccessToken('authorization_code', array_merge([
 			'code' => $code
@@ -157,4 +158,19 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface {
 		}
 	}
 
+    /**
+     * @return StateServiceInterface
+     */
+    public function getStateService()
+    {
+        return $this->stateService;
+    }
+
+    /**
+     * @param StateServiceInterface $stateService
+     */
+    public function setStateService(StateServiceInterface $stateService)
+    {
+        $this->stateService = $stateService;
+    }
 }

@@ -109,4 +109,20 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 	protected function createResourceOwner(array $response, AccessToken $token) {
 		return new MicrosoftGraphUser($response);
 	}
+
+    /**
+     * @return StateServiceInterface
+     */
+    public function getStateService()
+    {
+        return $this->stateService;
+    }
+
+    /**
+     * @param StateServiceInterface $stateService
+     */
+    public function setStateService(StateServiceInterface $stateService)
+    {
+        $this->stateService = $stateService;
+    }
 }
