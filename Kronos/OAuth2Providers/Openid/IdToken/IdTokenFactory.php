@@ -39,7 +39,7 @@ class IdTokenFactory implements IdTokenFactoryInterface
      * @param null $userIdKey
      * @return IdTokenInterface
      */
-    public function createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey = null)
+    public function createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey = null): IdTokenInterface
     {
         $idTokenClaims = $this->idTokenParser->parseIdToken($idTokenString, $keys);
         $this->idTokenValidator->validateIdTokenClaims($idTokenClaims, $clientId, $issuer);

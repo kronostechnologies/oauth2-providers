@@ -10,6 +10,7 @@ use Kronos\OAuth2Providers\State\SessionBasedHashService;
 use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
 use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 
@@ -64,8 +65,9 @@ class MicrosoftGraphOAuth2Service extends MicrosoftGraph implements OAuthService
      * @param string $code
      * @param array $options
      * @return AccessTokenInterface
+     * @throws IdentityProviderException
      */
-    public function getAccessTokenByAuthorizationCode($code, array $options = [])
+    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface
     {
         return $this->getAccessToken('authorization_code', array_merge([
             'code' => $code,
@@ -75,8 +77,9 @@ class MicrosoftGraphOAuth2Service extends MicrosoftGraph implements OAuthService
     /**
      * @param string $refresh_token
      * @return AccessTokenInterface
+     * @throws IdentityProviderException
      */
-    protected function getNewAccessTokenByRefreshToken($refresh_token)
+    protected function getNewAccessTokenByRefreshToken($refresh_token): AccessTokenInterface
     {
         $options = [];
         $grant = new Grant\RefreshToken();
@@ -97,8 +100,9 @@ class MicrosoftGraphOAuth2Service extends MicrosoftGraph implements OAuthService
      * @param string $refresh_token
      * @return AccessToken
      * @throws InvalidRefreshTokenException
+     * @throws IdentityProviderException
      */
-    public function retrieveAccessToken($refresh_token)
+    public function retrieveAccessToken($refresh_token): AccessTokenInterface
     {
         if (empty($refresh_token)) {
             throw new InvalidRefreshTokenException($refresh_token);
@@ -120,7 +124,7 @@ class MicrosoftGraphOAuth2Service extends MicrosoftGraph implements OAuthService
     /**
      * @return StateServiceInterface
      */
-    public function getStateService()
+    public function getStateService(): StateServiceInterface
     {
         return $this->stateService;
     }

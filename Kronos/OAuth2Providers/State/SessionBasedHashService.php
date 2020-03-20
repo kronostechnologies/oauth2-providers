@@ -11,33 +11,33 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
     /**
      * @param int $saltLength
      */
-    public function __construct($saltLength = 4)
+    public function __construct(int $saltLength = 4)
     {
         $this->saltLength = $saltLength;
     }
 
-    public function generateNonce()
+    public function generateNonce(): string
     {
         return $this->generateHash();
     }
 
-    public function validateNonce($nonce)
+    public function validateNonce($nonce): bool
     {
         return $this->validateHash($nonce);
     }
 
-    public function generateState()
+    public function generateState(): string
     {
         return $this->generateHash();
     }
 
-    public function validateState($state)
+    public function validateState($state): bool
     {
         return $this->validateHash($state);
     }
 
 
-    protected function generateHash()
+    protected function generateHash(): string
     {
         $session_id = session_id();
         $salt = bin2hex(random_bytes($this->saltLength));
@@ -45,7 +45,7 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
     }
 
 
-    protected function validateHash($state)
+    protected function validateHash($state): bool
     {
         $session_id = session_id();
         [$salt, $hash] = explode('_', $state);
@@ -60,7 +60,7 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
     /**
      * @return int
      */
-    public function getSaltLength()
+    public function getSaltLength(): int
     {
         return $this->saltLength;
     }

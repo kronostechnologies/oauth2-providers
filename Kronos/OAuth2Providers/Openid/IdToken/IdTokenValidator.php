@@ -19,7 +19,7 @@ class IdTokenValidator
         $this->nonceValidator = $nonceValidator ?? new SessionBasedHashService();
     }
 
-    public function validateIdTokenClaims(array $idTokenClaims, $clientId, $issuer)
+    public function validateIdTokenClaims(array $idTokenClaims, $clientId, $issuer): void
     {
         if ($clientId !== $idTokenClaims['aud']) {
             throw new RuntimeException('The audience is invalid!');

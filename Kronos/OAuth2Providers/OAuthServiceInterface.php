@@ -4,10 +4,12 @@ namespace Kronos\OAuth2Providers;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
 interface OAuthServiceInterface
 {
     /**
+     * Be carefull, interface shared with AbstractProvider
      * @param AccessToken $access_token
      * @return ResourceOwnerInterface
      */
@@ -18,7 +20,7 @@ interface OAuthServiceInterface
      * @param array $options Additionnal options to pass getAccessToken()
      * @return AccessToken
      */
-    public function getAccessTokenByAuthorizationCode($code, array $options = []);
+    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface;
 
     /**
      * @param array $options Additionnal options
@@ -30,5 +32,5 @@ interface OAuthServiceInterface
      * @param string $state
      * @return bool
      */
-    public function validateSate($state);
+    public function validateSate($state): bool;
 }

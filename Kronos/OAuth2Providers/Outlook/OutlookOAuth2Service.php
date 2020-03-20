@@ -10,7 +10,6 @@ use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
 use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
@@ -78,8 +77,9 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
      * @param string $code
      * @param array $options Additionnal options to pass getAccessToken()
      * @return AccessTokenInterface
+     * @throws IdentityProviderException
      */
-    public function getAccessTokenByAuthorizationCode($code, array $options = [])
+    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface
     {
         return $this->getAccessToken('authorization_code', array_merge([
             'code' => $code
@@ -91,7 +91,7 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
      * @return AccessTokenInterface
      * @throws IdentityProviderException
      */
-    protected function getNewAccessTokenByRefreshToken($refresh_token)
+    protected function getNewAccessTokenByRefreshToken($refresh_token): AccessTokenInterface
     {
         $options = [];
         $grant = new Grant\RefreshToken();
@@ -110,10 +110,11 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 
     /**
      * @param string $refresh_token
-     * @return AccessToken
+     * @return AccessTokenInterface
      * @throws InvalidRefreshTokenException
+     * @throws IdentityProviderException
      */
-    public function retrieveAccessToken($refresh_token)
+    public function retrieveAccessToken($refresh_token): AccessTokenInterface
     {
         if (empty($refresh_token)) {
             throw new InvalidRefreshTokenException($refresh_token);
@@ -125,7 +126,7 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
     /**
      * @return StateServiceInterface
      */
-    public function getStateService()
+    public function getStateService(): StateServiceInterface
     {
         return $this->stateService;
     }
@@ -133,7 +134,7 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
     /**
      * @param StateServiceInterface $stateService
      */
-    public function setStateService(StateServiceInterface $stateService)
+    public function setStateService(StateServiceInterface $stateService): void
     {
         $this->stateService = $stateService;
     }

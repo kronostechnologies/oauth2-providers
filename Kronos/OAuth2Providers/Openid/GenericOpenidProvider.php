@@ -113,11 +113,8 @@ class GenericOpenidProvider implements OpenidServiceInterface
     {
 
         $parameters['state'] = $options['state'] ?? $this->collaborators->getStateService()->generateState();
-
         $parameters['nonce'] = $options['nonce'] ?? $this->collaborators->getNonceService()->generateNonce();
-
         $parameters['response_type'] = 'code';
-
         $parameters['scope'] = $options['scope'] ?? $this->getDefaultScopes();
 
         if (is_array($parameters['scope'])) {
@@ -138,7 +135,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param string $query The HTTP query string
      * @return string The resulting URL
      */
-    protected function appendQuery($url, $query)
+    protected function appendQuery($url, $query): string
     {
         $query = trim($query, '?&');
 
@@ -153,13 +150,15 @@ class GenericOpenidProvider implements OpenidServiceInterface
     /**
      * Requests an id token using an 'authorization_code' grant.
      *
-     * @param string $authorization_code
+     * @param string $code
      * @return array
+     * @throws GuzzleException
+     * @throws IdentityProviderException
      */
-    public function getTokenByAuthorizationCode($authorization_code)
+    public function getTokenByAuthorizationCode(string $code): array
     {
         return $this->getTokenParsedResponse('authorization_code', [
-            'code' => $authorization_code
+            'code' => $code
         ]);
     }
 
@@ -168,8 +167,10 @@ class GenericOpenidProvider implements OpenidServiceInterface
      *
      * @param string $idTokenJWT id token received from authorization code exchange
      * @return IdTokenInterface
+     * @throws GuzzleException
+     * @throws IdentityProviderException
      */
-    public function parseIdToken($idTokenJWT)
+    public function parseIdToken($idTokenJWT): IdTokenInterface
     {
         return $this->createIdToken($idTokenJWT);
     }
@@ -177,8 +178,10 @@ class GenericOpenidProvider implements OpenidServiceInterface
     /**
      * @param $accessToken
      * @return array
+     * @throws GuzzleException
+     * @throws IdentityProviderException
      */
-    public function getUserInfo($accessToken)
+    public function getUserInfo($accessToken): array
     {
         $request = $this->getRequest('GET', $this->openidConfiguration['userinfo_endpoint'], $accessToken);
         return $this->getParsedResponse($request);
@@ -190,8 +193,10 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param $grant
      * @param array $options
      * @return array
+     * @throws GuzzleException
+     * @throws IdentityProviderException
      */
-    protected function getTokenParsedResponse($grant, array $options = [])
+    protected function getTokenParsedResponse($grant, array $options = []): array
     {
         $grant = $this->verifyGrant($grant);
 
@@ -213,7 +218,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param AbstractGrant|string $grant
      * @return AbstractGrant
      */
-    protected function verifyGrant($grant)
+    protected function verifyGrant($grant): AbstractGrant
     {
         if (is_string($grant)) {
             return $this->collaborators->getGrantFactory()->getGrant($grant);
@@ -229,7 +234,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param array $params Query string parameters
      * @return RequestInterface
      */
-    protected function getTokenRequest(array $params)
+    protected function getTokenRequest(array $params): RequestInterface
     {
         $method = 'POST';
         $url = $this->getTokenEndpoint();
@@ -266,7 +271,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      *
      * @return string
      */
-    protected function getTokenEndpoint()
+    protected function getTokenEndpoint(): string
     {
         return $this->openidConfiguration['token_endpoint'];
     }
@@ -277,7 +282,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param array $params
      * @return array
      */
-    protected function getTokenOptions(array $params)
+    protected function getTokenOptions(array $params): array
     {
         $options = ['headers' => ['content-type' => 'application/x-www-form-urlencoded']];
         $options['body'] = $this->buildQueryString($params);
@@ -294,7 +299,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param array $options
      * @return RequestInterface
      */
-    protected function getRequest($method, $url, $token, array $options = [])
+    protected function getRequest($method, $url, $token, array $options = []): RequestInterface
     {
         return $this->createRequest($method, $url, $token, $options);
     }
@@ -308,7 +313,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param array $options
      * @return RequestInterface
      */
-    protected function createRequest($method, $url, $token, array $options)
+    protected function createRequest($method, $url, $token, array $options): RequestInterface
     {
         $defaults = [
             'headers' => $this->getHeaders($token),
@@ -381,7 +386,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @return void
      * @throws IdentityProviderException
      */
-    protected function checkResponse(ResponseInterface $response, $data)
+    protected function checkResponse(ResponseInterface $response, $data): void
     {
         if (isset($data['odata.error']) || isset($data['error'])) {
             if (isset($data['odata.error']['message']['value'])) {
@@ -408,7 +413,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param mixed|null $token object or string
      * @return array
      */
-    protected function getHeaders($token = null)
+    protected function getHeaders($token = null): array
     {
         if ($token) {
             return array_merge(
@@ -427,7 +432,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @return array Parsed JSON data
      * @throws UnexpectedValueException if the content could not be parsed
      */
-    protected function parseJson($content)
+    protected function parseJson($content): array
     {
         $content = json_decode($content, true);
 
@@ -447,7 +452,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param ResponseInterface $response
      * @return string Semi-colon separated join of content-type headers.
      */
-    protected function getContentType(ResponseInterface $response)
+    protected function getContentType(ResponseInterface $response): string
     {
         return implode(';', (array)$response->getHeader('content-type'));
     }
@@ -460,8 +465,10 @@ class GenericOpenidProvider implements OpenidServiceInterface
      *
      * @param string $idTokenJWT idToken jwt
      * @return IdTokenInterface
+     * @throws GuzzleException
+     * @throws IdentityProviderException
      */
-    protected function createIdToken($idTokenJWT)
+    protected function createIdToken($idTokenJWT): IdTokenInterface
     {
         return $this->collaborators->getIdTokenFactory()->createIdToken($idTokenJWT, $this->getJwtVerificationKeys(),
             $this->options->getClientId(), $this->openidConfiguration['issuer']);
@@ -474,7 +481,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      *
      * @return array
      */
-    protected function getDefaultHeaders()
+    protected function getDefaultHeaders(): array
     {
         return [];
     }
@@ -485,7 +492,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param mixed|null $token Either a string or an access token instance
      * @return array
      */
-    protected function getAuthorizationHeaders($token = null)
+    protected function getAuthorizationHeaders($token = null): array
     {
         return ['Authorization' => 'Bearer ' . $token];
     }
@@ -494,8 +501,10 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * Get JWT verification keys.
      *
      * @return array
+     * @throws GuzzleException
+     * @throws IdentityProviderException
      */
-    protected function getJwtVerificationKeys()
+    protected function getJwtVerificationKeys(): array
     {
         $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('GET',
             $this->openidConfiguration['jwks_uri']);
@@ -538,8 +547,10 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * Fetches the Openid Configuration from the openid configuration URL.
      *
      * @return array
+     * @throws GuzzleException
+     * @throws IdentityProviderException
      */
-    protected function fetchOpenidConfiguration()
+    protected function fetchOpenidConfiguration(): array
     {
         $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get',
             $this->options->getOpenidConfigurationUrl(), []);
@@ -550,7 +561,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param string $state
      * @return bool
      */
-    public function validateSate($state)
+    public function validateSate($state): bool
     {
         return $this->collaborators->getStateService()->validateState($state);
     }
@@ -559,7 +570,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param string $nonce
      * @return bool
      */
-    public function validateNonce($nonce)
+    public function validateNonce($nonce): bool
     {
         return $this->collaborators->getNonceService()->validateNonce($nonce);
     }

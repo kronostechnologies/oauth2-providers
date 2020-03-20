@@ -23,5 +23,5 @@ interface IdTokenFactoryInterface
      * @param null $userIdKey
      * @return IdTokenInterface
      */
-    public function createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey);
+    public function createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey): IdTokenInterface;
 }

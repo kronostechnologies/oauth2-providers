@@ -8,7 +8,6 @@ use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
 use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -74,7 +73,7 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface
      * @return AccessTokenInterface
      * @throws IdentityProviderException
      */
-    public function getAccessTokenByAuthorizationCode($code, array $options = [])
+    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface
     {
         return $this->getAccessToken('authorization_code', array_merge([
             'code' => $code
@@ -91,7 +90,7 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface
     /**
      * @return StateServiceInterface
      */
-    public function getStateService()
+    public function getStateService(): StateServiceInterface
     {
         return $this->stateService;
     }

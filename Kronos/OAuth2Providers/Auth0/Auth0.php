@@ -126,7 +126,7 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface
      * @return AccessTokenInterface
      * @throws IdentityProviderException
      */
-    public function getAccessTokenByAuthorizationCode($code, array $options = [])
+    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface
     {
         return $this->getAccessToken('authorization_code', array_merge([
             'code' => $code
@@ -172,7 +172,7 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface
     /**
      * @return StateServiceInterface
      */
-    public function getStateService()
+    public function getStateService(): StateServiceInterface
     {
         return $this->stateService;
     }
