@@ -6,11 +6,11 @@ use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenParser;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenValidator;
-use PHPUnit_Framework_MockObject_MockObject;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
+class IdTokenFactoryTest extends TestCase {
 
 
 	const AN_ID_TOKEN_STRING = 'AN_ID_TOKEN_STRING';
@@ -31,21 +31,17 @@ class IdTokenFactoryTest extends PHPUnit_Framework_TestCase {
 	const A_VALIDATOR_EXCEPTION_MESSAGE = 'The audience is invalid!';
 
 	/**
-	 * @var PHPUnit_Framework_MockObject_MockObject|IdTokenParser
+	 * @var MockObject|IdTokenParser
 	 */
 	private $parser;
 	/**
-	 * @var PHPUnit_Framework_MockObject_MockObject|IdTokenValidator
+	 * @var MockObject|IdTokenValidator
 	 */
 	private $validator;
 
-	public function setUp() {
-		$this->parser = $this->getMockBuilder(IdTokenParser::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$this->validator = $this->getMockBuilder(IdTokenValidator::class)
-			->disableOriginalConstructor()
-			->getMock();
+	public function setUp(): void {
+		$this->parser = $this->createMock(IdTokenParser::class);
+		$this->validator = $this->createMock(IdTokenValidator::class);
 	}
 
 	public function test_WithArgument_New_ShouldSetServices(){

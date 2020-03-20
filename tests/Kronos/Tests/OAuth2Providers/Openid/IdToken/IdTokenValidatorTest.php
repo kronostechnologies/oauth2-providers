@@ -5,11 +5,11 @@ namespace Kronos\Tests\OAuth2Providers\Openid\IdToken;
 use Kronos\OAuth2Providers\State\NonceServiceInterface;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenValidator;
 use Kronos\OAuth2Providers\State\SessionBasedHashService;
-use PHPUnit_Framework_MockObject_MockObject;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-class IdTokenValidatorTest extends PHPUnit_Framework_TestCase {
+class IdTokenValidatorTest extends TestCase {
 
 	const A_PARSED_CLAIMS_ARRAY = [
 		'azp' => '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com',
@@ -27,11 +27,12 @@ class IdTokenValidatorTest extends PHPUnit_Framework_TestCase {
 	const A_NONCE = '6664b3eb64d51bb14201580a6d26133d73d3a9665fdc5bc835becb67ebb41dac_0cc53e6f653397930fde563275f42868fc0f9978';
 
 	/**
-	 * @var PHPUnit_Framework_MockObject_MockObject
+	 * @var MockObject
 	 */
 	private $hashService;
 
-	public function setUp() {
+	public function setUp(): void
+    {
 		$this->hashService = $this->getMockBuilder(NonceServiceInterface::class)
 			->disableOriginalConstructor()
 			->getMock();

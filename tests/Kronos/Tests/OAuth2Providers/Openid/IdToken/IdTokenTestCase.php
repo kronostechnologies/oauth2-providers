@@ -5,11 +5,10 @@ namespace Kronos\Tests\OAuth2Providers\Openid\IdToken;
 use InvalidArgumentException;
 use Kronos\OAuth2Providers\Openid\GenericOpenidProvider;
 use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
-use PHPUnit_Framework_MockObject_MockObject;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\MockObject\MockObject;
 use RuntimeException;
 
-class IdTokenTestCase extends PHPUnit_Framework_TestCase {
+class IdTokenTestCase extends \PHPUnit\Framework\TestCase {
 
 	const VALID_JWT_KEYS = ['keys' => '123456'];
 	const USER_ID = '107963962148033347052';
@@ -35,11 +34,12 @@ class IdTokenTestCase extends PHPUnit_Framework_TestCase {
 	private $id_token;
 
 	/**
-	 * @var PHPUnit_Framework_MockObject_MockObject|GenericOpenidProvider
+	 * @var MockObject|GenericOpenidProvider
 	 */
 	private $provider;
 
-	public function setUp() {
+	public function setUp(): void
+    {
 		$this->provider = $this->getMockBuilder(GenericOpenidProvider::class)
 			->setMethods(['getJwtVerificationKeys', 'validateNonce', 'getClientId', 'getOpenidConfiguration'])
 			->getMock();

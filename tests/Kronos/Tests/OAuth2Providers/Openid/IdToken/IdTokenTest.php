@@ -3,9 +3,9 @@
 namespace Kronos\Tests\OAuth2Providers\Openid\IdToken;
 
 use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class IdTokenTest extends PHPUnit_Framework_TestCase {
+class IdTokenTest extends TestCase {
 
 	const A_CLAIMS_ARRAY = [
 		'aud' => '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com',
