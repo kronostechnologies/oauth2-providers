@@ -17,42 +17,44 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UnexpectedValueException;
 
-class GenericOpenidProvider implements OpenidServiceInterface {
+class GenericOpenidProvider implements OpenidServiceInterface
+{
 
-	use ArrayAccessorTrait;
-	use QueryBuilderTrait;
+    use ArrayAccessorTrait;
+    use QueryBuilderTrait;
 
-	/**
-	 * @var OpenidProviderOptions
-	 */
-	protected $options;
+    /**
+     * @var OpenidProviderOptions
+     */
+    protected $options;
 
-	/**
-	 * @var array
-	 */
-	protected $openidConfiguration;
+    /**
+     * @var array
+     */
+    protected $openidConfiguration;
 
-	/**
-	 * @var OpenidProviderCollaborators
-	 */
-	protected $collaborators;
+    /**
+     * @var OpenidProviderCollaborators
+     */
+    protected $collaborators;
 
-	/**
-	 * Constructs an Openid Connect service provider.
-	 *
-	 * @param OpenidProviderOptions $options
-	 * @param OpenidProviderCollaborators $collaborators
-	 */
-	public function __construct(OpenidProviderOptions $options, OpenidProviderCollaborators $collaborators) {
-		$this->collaborators = $collaborators ?: new OpenidProviderCollaborators();
-		$this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer);
+    /**
+     * Constructs an Openid Connect service provider.
+     *
+     * @param OpenidProviderOptions $options
+     * @param OpenidProviderCollaborators $collaborators
+     */
+    public function __construct(OpenidProviderOptions $options, OpenidProviderCollaborators $collaborators)
+    {
+        $this->collaborators = $collaborators ?: new OpenidProviderCollaborators();
+        $this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer);
 
-		if(!$options) {
-			throw new InvalidArgumentException('$option argument must be a valid OpenidProviderOptions instance');
-		}
-		$this->options = $options;
-		$this->openidConfiguration = $this->fetchOpenidConfiguration();
-	}
+        if (!$options) {
+            throw new InvalidArgumentException('$option argument must be a valid OpenidProviderOptions instance');
+        }
+        $this->options = $options;
+        $this->openidConfiguration = $this->fetchOpenidConfiguration();
+    }
 
     /**
      * Builds the authorization URL.
@@ -60,41 +62,45 @@ class GenericOpenidProvider implements OpenidServiceInterface {
      * @param array $options
      * @return string Authorization URL
      */
-	public function getAuthorizationUrl($options = []) {
-		$url = $this->getAuthorizationEndpoint();
-		$params = $this->getAuthorizationParameters($options);
-		$query = $this->buildQueryString($params);
+    public function getAuthorizationUrl($options = [])
+    {
+        $url = $this->getAuthorizationEndpoint();
+        $params = $this->getAuthorizationParameters($options);
+        $query = $this->buildQueryString($params);
 
-		return $this->appendQuery($url, $query);
-	}
+        return $this->appendQuery($url, $query);
+    }
 
-	/**
-	 * Returns the base URL for authorizing a client.
-	 *
-	 * @return string
-	 */
-	protected function getAuthorizationEndpoint() {
-		return $this->openidConfiguration['authorization_endpoint'];
-	}
+    /**
+     * Returns the base URL for authorizing a client.
+     *
+     * @return string
+     */
+    protected function getAuthorizationEndpoint()
+    {
+        return $this->openidConfiguration['authorization_endpoint'];
+    }
 
-	/**
-	 * Returns the default scopes used by this provider.
-	 *
-	 * @return array
-	 */
-	protected function getDefaultScopes() {
-		return ['openid'];
-	}
+    /**
+     * Returns the default scopes used by this provider.
+     *
+     * @return array
+     */
+    protected function getDefaultScopes()
+    {
+        return ['openid'];
+    }
 
-	/**
-	 * Returns the string that should be used to separate scopes when building
-	 * the URL for requesting an id token.
-	 *
-	 * @return string Scope separator, defaults to ' '
-	 */
-	protected function getScopeSeparator() {
-		return ' ';
-	}
+    /**
+     * Returns the string that should be used to separate scopes when building
+     * the URL for requesting an id token.
+     *
+     * @return string Scope separator, defaults to ' '
+     */
+    protected function getScopeSeparator()
+    {
+        return ' ';
+    }
 
     /**
      * Returns authorization parameters.
@@ -102,9 +108,10 @@ class GenericOpenidProvider implements OpenidServiceInterface {
      * @param array $options
      * @return array Authorization parameters
      */
-	protected function getAuthorizationParameters($options = []) {
+    protected function getAuthorizationParameters($options = [])
+    {
 
-		$parameters['state'] = isset($options['state']) ? $options['state'] : $this->collaborators->getStateService()->generateState();
+        $parameters['state'] = isset($options['state']) ? $options['state'] : $this->collaborators->getStateService()->generateState();
 
         $parameters['nonce'] = isset($options['nonce']) ? $options['nonce'] : $this->collaborators->getNonceService()->generateNonce();
 
@@ -112,197 +119,208 @@ class GenericOpenidProvider implements OpenidServiceInterface {
 
         $parameters['scope'] = isset($options['scope']) ? $options['scope'] : $this->getDefaultScopes();
 
-		if(is_array($parameters['scope'])) {
-			$separator = $this->getScopeSeparator();
+        if (is_array($parameters['scope'])) {
+            $separator = $this->getScopeSeparator();
             $parameters['scope'] = implode($separator, $parameters['scope']);
-		}
+        }
 
         $parameters['redirect_uri'] = $this->options->getRedirectUri();
         $parameters['client_id'] = $this->options->getClientId();
 
-		return $parameters;
-	}
+        return $parameters;
+    }
 
-	/**
-	 * Appends a query string to a URL.
-	 *
-	 * @param  string $url The URL to append the query to
-	 * @param  string $query The HTTP query string
-	 * @return string The resulting URL
-	 */
-	protected function appendQuery($url, $query) {
-		$query = trim($query, '?&');
+    /**
+     * Appends a query string to a URL.
+     *
+     * @param string $url The URL to append the query to
+     * @param string $query The HTTP query string
+     * @return string The resulting URL
+     */
+    protected function appendQuery($url, $query)
+    {
+        $query = trim($query, '?&');
 
-		if($query) {
-			$glue = strstr($url, '?') === false ? '?' : '&';
-			return $url . $glue . $query;
-		}
+        if ($query) {
+            $glue = strstr($url, '?') === false ? '?' : '&';
+            return $url . $glue . $query;
+        }
 
-		return $url;
-	}
+        return $url;
+    }
 
-	/**
-	 * Requests an id token using an 'authorization_code' grant.
-	 *
-	 * @param string $authorization_code
-	 * @return array
-	 */
-	public function getTokenByAuthorizationCode($authorization_code) {
-		return $this->getTokenParsedResponse('authorization_code', [
-			'code' => $authorization_code
-		]);
-	}
+    /**
+     * Requests an id token using an 'authorization_code' grant.
+     *
+     * @param string $authorization_code
+     * @return array
+     */
+    public function getTokenByAuthorizationCode($authorization_code)
+    {
+        return $this->getTokenParsedResponse('authorization_code', [
+            'code' => $authorization_code
+        ]);
+    }
 
-	/**
-	 * Requests and creates an id token.
-	 *
-	 * @param string $idTokenJWT id token received from authorization code exchange
-	 * @return IdTokenInterface
-	 */
-	public function parseIdToken($idTokenJWT) {
-		return $this->createIdToken($idTokenJWT);
-	}
+    /**
+     * Requests and creates an id token.
+     *
+     * @param string $idTokenJWT id token received from authorization code exchange
+     * @return IdTokenInterface
+     */
+    public function parseIdToken($idTokenJWT)
+    {
+        return $this->createIdToken($idTokenJWT);
+    }
 
     /**
      * @param $accessToken
      * @return array
      */
-    public function getUserInfo($accessToken) {
-        $request = $this->getRequest('GET', $this->openidConfiguration['userinfo_endpoint'],$accessToken);
+    public function getUserInfo($accessToken)
+    {
+        $request = $this->getRequest('GET', $this->openidConfiguration['userinfo_endpoint'], $accessToken);
         $response = $this->getParsedResponse($request);
 
         return $response;
     }
 
-	/**
-	 * Requests an id token and returns the parsed response.
-	 *
-	 * @param $grant
-	 * @param array $options
-	 * @return array
-	 */
-	protected function getTokenParsedResponse($grant, array $options = []) {
-		$grant = $this->verifyGrant($grant);
+    /**
+     * Requests an id token and returns the parsed response.
+     *
+     * @param $grant
+     * @param array $options
+     * @return array
+     */
+    protected function getTokenParsedResponse($grant, array $options = [])
+    {
+        $grant = $this->verifyGrant($grant);
 
-		$params = [
-			'client_id' => $this->options->getClientId(),
-			'client_secret' => $this->options->getClientSecret(),
-			'redirect_uri' => $this->options->getRedirectUri()
-		];
+        $params = [
+            'client_id' => $this->options->getClientId(),
+            'client_secret' => $this->options->getClientSecret(),
+            'redirect_uri' => $this->options->getRedirectUri()
+        ];
 
-		$params = $grant->prepareRequestParameters($params, $options);
-		$request = $this->getTokenRequest($params);
-		$response = $this->getParsedResponse($request);
+        $params = $grant->prepareRequestParameters($params, $options);
+        $request = $this->getTokenRequest($params);
+        $response = $this->getParsedResponse($request);
 
-		return $response;
-	}
+        return $response;
+    }
 
-	/**
-	 * Checks that a provided grant is valid, or attempts to produce one if the
-	 * provided grant is a string.
-	 *
-	 * @param  AbstractGrant|string $grant
-	 * @return AbstractGrant
-	 */
-	protected function verifyGrant($grant) {
-		if(is_string($grant)) {
-			return $this->collaborators->getGrantFactory()->getGrant($grant);
-		}
+    /**
+     * Checks that a provided grant is valid, or attempts to produce one if the
+     * provided grant is a string.
+     *
+     * @param AbstractGrant|string $grant
+     * @return AbstractGrant
+     */
+    protected function verifyGrant($grant)
+    {
+        if (is_string($grant)) {
+            return $this->collaborators->getGrantFactory()->getGrant($grant);
+        }
 
-		$this->collaborators->getGrantFactory()->checkGrant($grant);
-		return $grant;
-	}
+        $this->collaborators->getGrantFactory()->checkGrant($grant);
+        return $grant;
+    }
 
-	/**
-	 * Returns a prepared request for requesting an id token.
-	 *
-	 * @param array $params Query string parameters
-	 * @return RequestInterface
-	 */
-	protected function getTokenRequest(array $params) {
-		$method = 'POST';
-		$url = $this->getTokenEndpoint();
-		$options = $this->getTokenOptions($params);
+    /**
+     * Returns a prepared request for requesting an id token.
+     *
+     * @param array $params Query string parameters
+     * @return RequestInterface
+     */
+    protected function getTokenRequest(array $params)
+    {
+        $method = 'POST';
+        $url = $this->getTokenEndpoint();
+        $options = $this->getTokenOptions($params);
 
-		return $this->getRequest($method, $url, null,$options);
-	}
+        return $this->getRequest($method, $url, null, $options);
+    }
 
     /**
      * Sends a request and returns the parsed response.
      *
-     * @param  RequestInterface $request
+     * @param RequestInterface $request
      * @return mixed
      * @throws IdentityProviderException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-	protected function getParsedResponse(RequestInterface $request) {
-		try {
-			$response = $this->getResponse($request);
-		}
-		catch(BadResponseException $e) {
-			$response = $e->getResponse();
-		}
+    protected function getParsedResponse(RequestInterface $request)
+    {
+        try {
+            $response = $this->getResponse($request);
+        } catch (BadResponseException $e) {
+            $response = $e->getResponse();
+        }
 
-		$parsed = $this->parseResponse($response);
+        $parsed = $this->parseResponse($response);
 
-		$this->checkResponse($response, $parsed);
+        $this->checkResponse($response, $parsed);
 
-		return $parsed;
-	}
+        return $parsed;
+    }
 
-	/**
-	 * Returns the base URL for requesting an access token.
-	 *
-	 * @return string
-	 */
-	protected function getTokenEndpoint() {
-		return $this->openidConfiguration['token_endpoint'];
-	}
+    /**
+     * Returns the base URL for requesting an access token.
+     *
+     * @return string
+     */
+    protected function getTokenEndpoint()
+    {
+        return $this->openidConfiguration['token_endpoint'];
+    }
 
-	/**
-	 * Builds request options used for requesting an id token.
-	 *
-	 * @param  array $params
-	 * @return array
-	 */
-	protected function getTokenOptions(array $params) {
-		$options = ['headers' => ['content-type' => 'application/x-www-form-urlencoded']];
-		$options['body'] = $this->buildQueryString($params);
+    /**
+     * Builds request options used for requesting an id token.
+     *
+     * @param array $params
+     * @return array
+     */
+    protected function getTokenOptions(array $params)
+    {
+        $options = ['headers' => ['content-type' => 'application/x-www-form-urlencoded']];
+        $options['body'] = $this->buildQueryString($params);
 
-		return $options;
-	}
+        return $options;
+    }
 
-	/**
-	 * Returns a PSR-7 request instance.
-	 *
-	 * @param  string $method
-	 * @param  string $url
-     * @param  string $token
-	 * @param  array $options
-	 * @return RequestInterface
-	 */
-	protected function getRequest($method, $url, $token, array $options = []) {
-		return $this->createRequest($method, $url, $token, $options);
-	}
+    /**
+     * Returns a PSR-7 request instance.
+     *
+     * @param string $method
+     * @param string $url
+     * @param string $token
+     * @param array $options
+     * @return RequestInterface
+     */
+    protected function getRequest($method, $url, $token, array $options = [])
+    {
+        return $this->createRequest($method, $url, $token, $options);
+    }
 
-	/**
-	 * Creates a PSR-7 request instance.
-	 *
-	 * @param  string $method
-	 * @param  string $url
-	 * @param  IdTokenInterface|string|null $token
-	 * @param  array $options
-	 * @return RequestInterface
-	 */
-	protected function createRequest($method, $url, $token, array $options) {
-		$defaults = [
-			'headers' => $this->getHeaders($token),
-		];
+    /**
+     * Creates a PSR-7 request instance.
+     *
+     * @param string $method
+     * @param string $url
+     * @param IdTokenInterface|string|null $token
+     * @param array $options
+     * @return RequestInterface
+     */
+    protected function createRequest($method, $url, $token, array $options)
+    {
+        $defaults = [
+            'headers' => $this->getHeaders($token),
+        ];
 
-		$options = array_merge_recursive($defaults, $options);
+        $options = array_merge_recursive($defaults, $options);
 
-		return $this->collaborators->getRequestFactory()->getRequestWithOptions($method, $url, $options);
-	}
+        return $this->collaborators->getRequestFactory()->getRequestWithOptions($method, $url, $options);
+    }
 
     /**
      * Sends a request instance and returns a response instance.
@@ -310,230 +328,244 @@ class GenericOpenidProvider implements OpenidServiceInterface {
      * WARNING: This method does not attempt to catch exceptions caused by HTTP
      * errors! It is recommended to wrap this method in a try/catch block.
      *
-     * @param  RequestInterface $request
+     * @param RequestInterface $request
      * @return ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-	protected function getResponse(RequestInterface $request) {
-		return $this->collaborators->getHttpClient()->send($request);
-	}
+    protected function getResponse(RequestInterface $request)
+    {
+        return $this->collaborators->getHttpClient()->send($request);
+    }
 
-	/**
-	 * Parses the response according to its content-type header.
-	 *
-	 * @throws UnexpectedValueException
-	 * @param  ResponseInterface $response
-	 * @return array|string
-	 */
-	protected function parseResponse(ResponseInterface $response) {
-		$content = (string)$response->getBody();
-		$type = $this->getContentType($response);
+    /**
+     * Parses the response according to its content-type header.
+     *
+     * @param ResponseInterface $response
+     * @return array|string
+     * @throws UnexpectedValueException
+     */
+    protected function parseResponse(ResponseInterface $response)
+    {
+        $content = (string)$response->getBody();
+        $type = $this->getContentType($response);
 
-		if(strpos($type, 'urlencoded') !== false) {
-			parse_str($content, $parsed);
-			return $parsed;
-		}
+        if (strpos($type, 'urlencoded') !== false) {
+            parse_str($content, $parsed);
+            return $parsed;
+        }
 
-		// Attempt to parse the string as JSON regardless of content type,
-		// since some providers use non-standard content types. Only throw an
-		// exception if the JSON could not be parsed when it was expected to.
-		try {
-			return $this->parseJson($content);
-		}
-		catch(UnexpectedValueException $e) {
-			if(strpos($type, 'json') !== false) {
-				throw $e;
-			}
+        // Attempt to parse the string as JSON regardless of content type,
+        // since some providers use non-standard content types. Only throw an
+        // exception if the JSON could not be parsed when it was expected to.
+        try {
+            return $this->parseJson($content);
+        } catch (UnexpectedValueException $e) {
+            if (strpos($type, 'json') !== false) {
+                throw $e;
+            }
 
-			if($response->getStatusCode() == 500) {
-				throw new UnexpectedValueException(
-					'An OpenId server error was encountered that did not contain a JSON body',
-					0,
-					$e
-				);
-			}
+            if ($response->getStatusCode() == 500) {
+                throw new UnexpectedValueException(
+                    'An OpenId server error was encountered that did not contain a JSON body',
+                    0,
+                    $e
+                );
+            }
 
-			return $content;
-		}
-	}
+            return $content;
+        }
+    }
 
-	/**
-	 * Checks a provider response for errors.
-	 *
-	 * @throws IdentityProviderException
-	 * @param  ResponseInterface $response
-	 * @param  array|string $data Parsed response data
-	 * @return void
-	 */
-	protected function checkResponse(ResponseInterface $response, $data) {
-		if(isset($data['odata.error']) || isset($data['error'])) {
-			if(isset($data['odata.error']['message']['value'])) {
-				$message = $data['odata.error']['message']['value'];
-			}
-			elseif(isset($data['error']['message'])) {
-				$message = $data['error']['message'];
-			}
-			else {
-				$message = $response->getReasonPhrase();
-			}
+    /**
+     * Checks a provider response for errors.
+     *
+     * @param ResponseInterface $response
+     * @param array|string $data Parsed response data
+     * @return void
+     * @throws IdentityProviderException
+     */
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
+        if (isset($data['odata.error']) || isset($data['error'])) {
+            if (isset($data['odata.error']['message']['value'])) {
+                $message = $data['odata.error']['message']['value'];
+            } elseif (isset($data['error']['message'])) {
+                $message = $data['error']['message'];
+            } else {
+                $message = $response->getReasonPhrase();
+            }
 
-			throw new IdentityProviderException(
-				$message,
-				$response->getStatusCode(),
-				$response
-			);
-		}
-	}
+            throw new IdentityProviderException(
+                $message,
+                $response->getStatusCode(),
+                $response
+            );
+        }
+    }
 
-	/**
-	 * Returns all headers used by this provider for a request.
-	 *
-	 * The request will be authenticated if an id token is provided.
-	 *
-	 * @param  mixed|null $token object or string
-	 * @return array
-	 */
-	protected function getHeaders($token = null) {
-		if($token) {
-			return array_merge(
-				$this->getDefaultHeaders(),
-				$this->getAuthorizationHeaders($token)
-			);
-		}
+    /**
+     * Returns all headers used by this provider for a request.
+     *
+     * The request will be authenticated if an id token is provided.
+     *
+     * @param mixed|null $token object or string
+     * @return array
+     */
+    protected function getHeaders($token = null)
+    {
+        if ($token) {
+            return array_merge(
+                $this->getDefaultHeaders(),
+                $this->getAuthorizationHeaders($token)
+            );
+        }
 
-		return $this->getDefaultHeaders();
-	}
+        return $this->getDefaultHeaders();
+    }
 
-	/**
-	 * Attempts to parse a JSON response.
-	 *
-	 * @param  string $content JSON content from response body
-	 * @return array Parsed JSON data
-	 * @throws UnexpectedValueException if the content could not be parsed
-	 */
-	protected function parseJson($content) {
-		$content = json_decode($content, true);
+    /**
+     * Attempts to parse a JSON response.
+     *
+     * @param string $content JSON content from response body
+     * @return array Parsed JSON data
+     * @throws UnexpectedValueException if the content could not be parsed
+     */
+    protected function parseJson($content)
+    {
+        $content = json_decode($content, true);
 
-		if(json_last_error() !== JSON_ERROR_NONE) {
-			throw new UnexpectedValueException(sprintf(
-				"Failed to parse JSON response: %s",
-				json_last_error_msg()
-			));
-		}
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new UnexpectedValueException(sprintf(
+                "Failed to parse JSON response: %s",
+                json_last_error_msg()
+            ));
+        }
 
-		return $content;
-	}
+        return $content;
+    }
 
-	/**
-	 * Returns the content type header of a response.
-	 *
-	 * @param  ResponseInterface $response
-	 * @return string Semi-colon separated join of content-type headers.
-	 */
-	protected function getContentType(ResponseInterface $response) {
-		return join(';', (array)$response->getHeader('content-type'));
-	}
+    /**
+     * Returns the content type header of a response.
+     *
+     * @param ResponseInterface $response
+     * @return string Semi-colon separated join of content-type headers.
+     */
+    protected function getContentType(ResponseInterface $response)
+    {
+        return join(';', (array)$response->getHeader('content-type'));
+    }
 
-	/**
-	 * Creates an id token from a response.
-	 *
-	 * The provider that was used to fetch the response can be used to provide
-	 * additional context.
-	 *
-	 * @param  string $idTokenJWT idToken jwt
-	 * @return IdTokenInterface
-	 */
-	protected function createIdToken($idTokenJWT) {
-		return $this->collaborators->getIdTokenFactory()->createIdToken($idTokenJWT, $this->getJwtVerificationKeys(), $this->options->getClientId(), $this->openidConfiguration['issuer']);
-	}
+    /**
+     * Creates an id token from a response.
+     *
+     * The provider that was used to fetch the response can be used to provide
+     * additional context.
+     *
+     * @param string $idTokenJWT idToken jwt
+     * @return IdTokenInterface
+     */
+    protected function createIdToken($idTokenJWT)
+    {
+        return $this->collaborators->getIdTokenFactory()->createIdToken($idTokenJWT, $this->getJwtVerificationKeys(),
+            $this->options->getClientId(), $this->openidConfiguration['issuer']);
+    }
 
-	/**
-	 * Returns the default headers used by this provider.
-	 *
-	 * Typically this is used to set 'Accept' or 'Content-Type' headers.
-	 *
-	 * @return array
-	 */
-	protected function getDefaultHeaders() {
-		return [];
-	}
+    /**
+     * Returns the default headers used by this provider.
+     *
+     * Typically this is used to set 'Accept' or 'Content-Type' headers.
+     *
+     * @return array
+     */
+    protected function getDefaultHeaders()
+    {
+        return [];
+    }
 
-	/**
-	 * Returns authorization headers for the 'bearer' grant.
-	 *
-	 * @param  mixed|null $token Either a string or an access token instance
-	 * @return array
-	 */
-	protected function getAuthorizationHeaders($token = null) {
-		return ['Authorization' => 'Bearer ' . $token];
-	}
+    /**
+     * Returns authorization headers for the 'bearer' grant.
+     *
+     * @param mixed|null $token Either a string or an access token instance
+     * @return array
+     */
+    protected function getAuthorizationHeaders($token = null)
+    {
+        return ['Authorization' => 'Bearer ' . $token];
+    }
 
-	/**
-	 * Get JWT verification keys.
-	 *
-	 * @return array
-	 */
-	protected function getJwtVerificationKeys() {
-		$request = $this->collaborators->getRequestFactory()->getRequestWithOptions('GET', $this->openidConfiguration['jwks_uri']);
-		$response = $this->getParsedResponse($request);
+    /**
+     * Get JWT verification keys.
+     *
+     * @return array
+     */
+    protected function getJwtVerificationKeys()
+    {
+        $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('GET',
+            $this->openidConfiguration['jwks_uri']);
+        $response = $this->getParsedResponse($request);
 
-		$keys = [];
+        $keys = [];
 
-		if(!empty($response['keys'])) {
-			foreach($response['keys'] as $i => $keyinfo) {
-				$keys[$keyinfo['kid']] = $this->decodeKey($keyinfo);
-			}
-		}
+        if (!empty($response['keys'])) {
+            foreach ($response['keys'] as $i => $keyinfo) {
+                $keys[$keyinfo['kid']] = $this->decodeKey($keyinfo);
+            }
+        }
 
-		return $keys;
-	}
+        return $keys;
+    }
 
-	/**
-	 * Decodes a JWT verification key.
-	 *
-	 * @param $keyinfo array
-	 * @return bool|string
-	 */
-	protected function decodeKey($keyinfo) {
-		$modulus = $keyinfo['n'];
-		$exponent = $keyinfo['e'];
-		$rsa = new RSA();
+    /**
+     * Decodes a JWT verification key.
+     *
+     * @param $keyinfo array
+     * @return bool|string
+     */
+    protected function decodeKey($keyinfo)
+    {
+        $modulus = $keyinfo['n'];
+        $exponent = $keyinfo['e'];
+        $rsa = new RSA();
 
-		$modulus = new BigInteger(JWT::urlsafeB64Decode($modulus), 256);
-		$exponent = new BigInteger(JWT::urlsafeB64Decode($exponent), 256);
+        $modulus = new BigInteger(JWT::urlsafeB64Decode($modulus), 256);
+        $exponent = new BigInteger(JWT::urlsafeB64Decode($exponent), 256);
 
-		$publicKey = $rsa->_convertPublicKey($modulus, $exponent);
-		$rsa->loadKey($publicKey);
-		$rsa->setPublicKey();
+        $publicKey = $rsa->_convertPublicKey($modulus, $exponent);
+        $rsa->loadKey($publicKey);
+        $rsa->setPublicKey();
 
-		return $rsa->getPublicKey();
-	}
+        return $rsa->getPublicKey();
+    }
 
-	/**
-	 * Fetches the Openid Configuration from the openid configuration URL.
-	 *
-	 * @return array
-	 */
-	protected function fetchOpenidConfiguration() {
-		$request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get', $this->options->getOpenidConfigurationUrl(), []);
-		$response = $this->getParsedResponse($request);
+    /**
+     * Fetches the Openid Configuration from the openid configuration URL.
+     *
+     * @return array
+     */
+    protected function fetchOpenidConfiguration()
+    {
+        $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get',
+            $this->options->getOpenidConfigurationUrl(), []);
+        $response = $this->getParsedResponse($request);
 
-		return $response;
-	}
+        return $response;
+    }
 
-	/**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state) {
-		return $this->collaborators->getStateService()->validateState($state);
-	}
+    /**
+     * @param string $state
+     * @return bool
+     */
+    public function validateSate($state)
+    {
+        return $this->collaborators->getStateService()->validateState($state);
+    }
 
     /**
      * @param string $nonce
      * @return bool
      */
-    public function validateNonce($nonce) {
+    public function validateNonce($nonce)
+    {
         return $this->collaborators->getNonceService()->validateNonce($nonce);
     }
 }

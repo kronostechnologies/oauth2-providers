@@ -1,6 +1,7 @@
 <?php
 
 namespace Kronos\Tests\OAuth2Providers\Openid;
+
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\BadResponseException;
 use Kronos\OAuth2Providers\Openid\GenericOpenidProvider;

@@ -2,10 +2,11 @@
 
 namespace Kronos\OAuth2Providers\State;
 
-class SessionBasedHashService implements StateServiceInterface, NonceServiceInterface {
+class SessionBasedHashService implements StateServiceInterface, NonceServiceInterface
+{
 
 
-    private $saltLength=32;
+    private $saltLength = 32;
 
     /**
      * @param int $saltLength
@@ -36,24 +37,26 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
     }
 
 
-    protected function generateHash() {
-		$session_id = session_id();
-		$salt = bin2hex(random_bytes($this->saltLength));
-		$random_str = $salt . '_' . sha1($session_id . $salt);
-		return $random_str;
-	}
+    protected function generateHash()
+    {
+        $session_id = session_id();
+        $salt = bin2hex(random_bytes($this->saltLength));
+        $random_str = $salt . '_' . sha1($session_id . $salt);
+        return $random_str;
+    }
 
 
-    protected function validateHash($state) {
-		$session_id = session_id();
-		list($salt, $hash) = explode('_', $state);
+    protected function validateHash($state)
+    {
+        $session_id = session_id();
+        list($salt, $hash) = explode('_', $state);
 
-		if($hash == sha1($session_id . $salt)) {
-			return true;
-		}
+        if ($hash == sha1($session_id . $salt)) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
     /**
      * @return int

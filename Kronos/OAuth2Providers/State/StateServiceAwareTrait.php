@@ -18,10 +18,11 @@ trait StateServiceAwareTrait
     }
 
     /**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state){
-	    return $this->getStateService()->validateState($state);
-	}
+     * @param string $state
+     * @return bool
+     */
+    public function validateSate($state)
+    {
+        return $this->getStateService()->validateState($state);
+    }
 }
