@@ -83,6 +83,6 @@ class Office365User implements ResourceOwnerInterface
      */
     public function getProperty($property, $default = null)
     {
-        return isset($this->response[$property]) ? $this->response[$property] : $default;
+        return $this->response[$property] ?? $default;
     }
 }

@@ -47,7 +47,7 @@ class IdToken implements JsonSerializable, IdTokenInterface
      */
     public function getUserId()
     {
-        return isset($this->idTokenClaims[$this->userIdKey]) ? $this->idTokenClaims[$this->userIdKey] : null;
+        return $this->idTokenClaims[$this->userIdKey] ?? null;
     }
 
     /**
@@ -57,7 +57,7 @@ class IdToken implements JsonSerializable, IdTokenInterface
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return $this->idTokenClaims;
     }

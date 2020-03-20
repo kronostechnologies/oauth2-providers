@@ -10,7 +10,7 @@ use League\OAuth2\Client\Token\AccessToken;
 class Office365OAuth2Service extends MicrosoftGraphOAuth2Service implements OAuthServiceInterface, OAuthRefreshableInterface
 {
 
-    const ACCESS_TOKEN_RESOURCE = 'https://outlook.office365.com';
+    public const ACCESS_TOKEN_RESOURCE = 'https://outlook.office365.com';
 
     protected $apiUrlBase = 'https://outlook.office.com/api';
     protected $apiVersion = 'v2.0';

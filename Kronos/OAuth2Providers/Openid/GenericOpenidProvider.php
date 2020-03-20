@@ -4,6 +4,7 @@ namespace Kronos\OAuth2Providers\Openid;
 
 use Firebase\JWT\JWT;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenInterface;
 use Kronos\OAuth2Providers\OpenidServiceInterface;
@@ -111,13 +112,13 @@ class GenericOpenidProvider implements OpenidServiceInterface
     protected function getAuthorizationParameters($options = [])
     {
 
-        $parameters['state'] = isset($options['state']) ? $options['state'] : $this->collaborators->getStateService()->generateState();
+        $parameters['state'] = $options['state'] ?? $this->collaborators->getStateService()->generateState();
 
-        $parameters['nonce'] = isset($options['nonce']) ? $options['nonce'] : $this->collaborators->getNonceService()->generateNonce();
+        $parameters['nonce'] = $options['nonce'] ?? $this->collaborators->getNonceService()->generateNonce();
 
         $parameters['response_type'] = 'code';
 
-        $parameters['scope'] = isset($options['scope']) ? $options['scope'] : $this->getDefaultScopes();
+        $parameters['scope'] = $options['scope'] ?? $this->getDefaultScopes();
 
         if (is_array($parameters['scope'])) {
             $separator = $this->getScopeSeparator();
@@ -180,9 +181,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
     public function getUserInfo($accessToken)
     {
         $request = $this->getRequest('GET', $this->openidConfiguration['userinfo_endpoint'], $accessToken);
-        $response = $this->getParsedResponse($request);
-
-        return $response;
+        return $this->getParsedResponse($request);
     }
 
     /**
@@ -204,9 +203,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
 
         $params = $grant->prepareRequestParameters($params, $options);
         $request = $this->getTokenRequest($params);
-        $response = $this->getParsedResponse($request);
-
-        return $response;
+        return $this->getParsedResponse($request);
     }
 
     /**
@@ -247,7 +244,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      * @param RequestInterface $request
      * @return mixed
      * @throws IdentityProviderException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     protected function getParsedResponse(RequestInterface $request)
     {
@@ -330,7 +327,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      *
      * @param RequestInterface $request
      * @return ResponseInterface
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     protected function getResponse(RequestInterface $request)
     {
@@ -436,7 +433,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new UnexpectedValueException(sprintf(
-                "Failed to parse JSON response: %s",
+                'Failed to parse JSON response: %s',
                 json_last_error_msg()
             ));
         }
@@ -452,7 +449,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
      */
     protected function getContentType(ResponseInterface $response)
     {
-        return join(';', (array)$response->getHeader('content-type'));
+        return implode(';', (array)$response->getHeader('content-type'));
     }
 
     /**
@@ -546,9 +543,7 @@ class GenericOpenidProvider implements OpenidServiceInterface
     {
         $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get',
             $this->options->getOpenidConfigurationUrl(), []);
-        $response = $this->getParsedResponse($request);
-
-        return $response;
+        return $this->getParsedResponse($request);
     }
 
     /**

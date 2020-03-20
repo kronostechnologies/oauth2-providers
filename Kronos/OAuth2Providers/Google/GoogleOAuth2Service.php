@@ -11,15 +11,16 @@ use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
 class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuthRefreshableInterface
 {
 
     use StateServiceAwareTrait;
 
-    const USERINFO_EMAIL = "https://www.googleapis.com/auth/userinfo.email";
-    const USERINFO_PROFILE = "https://www.googleapis.com/auth/userinfo.profile";
-    const MAIL_GOOGLE_COM = "https://mail.google.com/";
+    public const USERINFO_EMAIL = 'https://www.googleapis.com/auth/userinfo.email';
+    public const USERINFO_PROFILE = 'https://www.googleapis.com/auth/userinfo.profile';
+    public const MAIL_GOOGLE_COM = 'https://mail.google.com/';
 
     protected $defaultAuthorizationUrlOptions = ['approval_prompt' => 'force'];
 
@@ -84,7 +85,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
     /**
      * @param string $code
      * @param array $options Additionnal options to pass getAccessToken()
-     * @return AccessToken
+     * @return AccessTokenInterface
      */
     public function getAccessTokenByAuthorizationCode($code, array $options = [])
     {
@@ -95,7 +96,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
 
     /**
      * @param string $refresh_token
-     * @return AccessToken
+     * @return AccessTokenInterface
      */
     protected function getNewAccessTokenByRefreshToken($refresh_token)
     {
@@ -111,9 +112,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
-        $token = $this->createAccessToken($prepared, $grant);
-
-        return $token;
+        return $this->createAccessToken($prepared, $grant);
     }
 
     /**

@@ -16,7 +16,7 @@ class IdTokenValidator
 
     public function __construct(NonceServiceInterface $nonceValidator = null)
     {
-        $this->nonceValidator = empty($nonceValidator) ? new SessionBasedHashService() : $nonceValidator;
+        $this->nonceValidator = $nonceValidator ?? new SessionBasedHashService();
     }
 
     public function validateIdTokenClaims(array $idTokenClaims, $clientId, $issuer)

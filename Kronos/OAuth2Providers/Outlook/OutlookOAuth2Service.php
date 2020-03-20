@@ -9,7 +9,9 @@ use Kronos\OAuth2Providers\State\SessionBasedHashService;
 use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
 use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
 class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, OAuthRefreshableInterface
@@ -17,12 +19,12 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 
     use StateServiceAwareTrait;
 
-    const SCOPE_EMAIL = "wl.emails";
-    const SCOPE_BASIC_PROFILE = "wl.basic";
-    const SCOPE_IMAP = "wl.imap";
-    const OFFLINE_ACCESS = 'wl.offline_access';
+    public const SCOPE_EMAIL = 'wl.emails';
+    public const SCOPE_BASIC_PROFILE = 'wl.basic';
+    public const SCOPE_IMAP = 'wl.imap';
+    public const OFFLINE_ACCESS = 'wl.offline_access';
 
-    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
+    public const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
 
     protected $defaultAuthorizationUrlOptions = ['display' => 'popup'];
 
@@ -75,7 +77,7 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
     /**
      * @param string $code
      * @param array $options Additionnal options to pass getAccessToken()
-     * @return AccessToken
+     * @return AccessTokenInterface
      */
     public function getAccessTokenByAuthorizationCode($code, array $options = [])
     {
@@ -86,7 +88,8 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
 
     /**
      * @param string $refresh_token
-     * @return AccessToken
+     * @return AccessTokenInterface
+     * @throws IdentityProviderException
      */
     protected function getNewAccessTokenByRefreshToken($refresh_token)
     {
@@ -102,9 +105,7 @@ class OutlookOAuth2Service extends Microsoft implements OAuthServiceInterface, O
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
-        $token = $this->createAccessToken($prepared, $grant);
-
-        return $token;
+        return $this->createAccessToken($prepared, $grant);
     }
 
     /**

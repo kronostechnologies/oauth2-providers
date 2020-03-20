@@ -10,6 +10,7 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
@@ -19,11 +20,11 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface
     use BearerAuthorizationTrait;
     use StateServiceAwareTrait;
 
-    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
+    public const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
 
-    const DEFAULT_SCOPE_OPENID = 'openid';
-    const DEFAULT_SCOPE_PROFILE = 'profile';
-    const DEFAULT_SCOPES = [self::DEFAULT_SCOPE_OPENID, self::DEFAULT_SCOPE_PROFILE];
+    public const DEFAULT_SCOPE_OPENID = 'openid';
+    public const DEFAULT_SCOPE_PROFILE = 'profile';
+    public const DEFAULT_SCOPES = [self::DEFAULT_SCOPE_OPENID, self::DEFAULT_SCOPE_PROFILE];
 
     protected $baseAuthorizationUrl;
     protected $baseAccessTokenUrl;
@@ -122,7 +123,8 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface
      * Requests an access token using an 'authorization_code' grant.
      * @param string $code
      * @param array $options
-     * @return AccessToken
+     * @return AccessTokenInterface
+     * @throws IdentityProviderException
      */
     public function getAccessTokenByAuthorizationCode($code, array $options = [])
     {

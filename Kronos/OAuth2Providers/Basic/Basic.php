@@ -9,6 +9,7 @@ use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class Basic extends AbstractProvider implements OAuthServiceInterface
@@ -16,8 +17,8 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface
 
     use StateServiceAwareTrait;
 
-    const STANDARD_AUTH_URL_PATH = 'oauth2/auth';
-    const STANDARD_ACCESS_TOKEN_URL_PATH = 'oauth2/token';
+    public const STANDARD_AUTH_URL_PATH = 'oauth2/auth';
+    public const STANDARD_ACCESS_TOKEN_URL_PATH = 'oauth2/token';
 
     protected $authServerBaseUrl;
 
@@ -70,7 +71,8 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface
     /**
      * @param string $code
      * @param array $options
-     * @return AccessToken
+     * @return AccessTokenInterface
+     * @throws IdentityProviderException
      */
     public function getAccessTokenByAuthorizationCode($code, array $options = [])
     {

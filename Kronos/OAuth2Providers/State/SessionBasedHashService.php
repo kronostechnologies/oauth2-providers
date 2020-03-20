@@ -6,7 +6,7 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
 {
 
 
-    private $saltLength = 32;
+    private $saltLength;
 
     /**
      * @param int $saltLength
@@ -41,17 +41,16 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
     {
         $session_id = session_id();
         $salt = bin2hex(random_bytes($this->saltLength));
-        $random_str = $salt . '_' . sha1($session_id . $salt);
-        return $random_str;
+        return $salt . '_' . sha1($session_id . $salt);
     }
 
 
     protected function validateHash($state)
     {
         $session_id = session_id();
-        list($salt, $hash) = explode('_', $state);
+        [$salt, $hash] = explode('_', $state);
 
-        if ($hash == sha1($session_id . $salt)) {
+        if ($hash === sha1($session_id . $salt)) {
             return true;
         }
 

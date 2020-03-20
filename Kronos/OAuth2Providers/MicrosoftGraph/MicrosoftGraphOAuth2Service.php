@@ -2,6 +2,7 @@
 
 namespace Kronos\OAuth2Providers\MicrosoftGraph;
 
+use EightyOneSquare\OAuth2\Client\Provider\MicrosoftGraph;
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\OAuthRefreshableInterface;
 use Kronos\OAuth2Providers\OAuthServiceInterface;
@@ -10,8 +11,9 @@ use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
 use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
-class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provider\MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface
+class MicrosoftGraphOAuth2Service extends MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface
 {
 
     use StateServiceAwareTrait;
@@ -61,7 +63,7 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
     /**
      * @param string $code
      * @param array $options
-     * @return AccessToken
+     * @return AccessTokenInterface
      */
     public function getAccessTokenByAuthorizationCode($code, array $options = [])
     {
@@ -72,7 +74,7 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
 
     /**
      * @param string $refresh_token
-     * @return AccessToken
+     * @return AccessTokenInterface
      */
     protected function getNewAccessTokenByRefreshToken($refresh_token)
     {
@@ -88,9 +90,7 @@ class MicrosoftGraphOAuth2Service extends \EightyOneSquare\OAuth2\Client\Provide
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
-        $token = $this->createAccessToken($prepared, $grant);
-
-        return $token;
+        return $this->createAccessToken($prepared, $grant);
     }
 
     /**
