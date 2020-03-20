@@ -1,56 +1,35 @@
 version: 2
 aliases:
   # Variables
-  - &composer_install_cache_key v4-composer-install-{{ checksum "composer.lock" }}
+  - &composer_install_cache_key v5-composer-install-{{ checksum "composer.lock" }}
 
 jobs:
-  checkout_code:
+  phpunit-7-2:
     docker:
-      - image: node:9
+      - image: circleci/php:7.2-node-browsers
     steps:
       - checkout
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-  composer_install:
-    docker:
-      - image: composer:1.6
-    steps:
-      - attach_workspace:
-          at: .
+      - run: sudo composer self-update
       - restore_cache:
           keys:
             - *composer_install_cache_key
-      - run: mkdir -p ~/.ssh/ && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-      - run: test -d vendor || composer install -n --prefer-dist
-      - run:
-          name: "Cleanup .git folders"
-          command: 'find . -type d -name .git -exec rm -rf "{}" +'
+      - run: composer install -n --prefer-dist --ignore-platform-reqs
       - save_cache:
+          paths:
+            - ./vendor
           key: *composer_install_cache_key
-          paths: vendor
-  phpunit:
-    docker:
-      - image: php:5.6-cli-alpine
-    steps:
-      - checkout
-      - restore_cache:
-          name: "Restoring composer install cache"
-          key: *composer_install_cache_key
+      - run: sudo pecl install pcov
       - run:
           name: "phpunit"
-          command: ./vendor/phpunit/phpunit/phpunit --log-junit phpunit/junit.xml
+          command: php -d pcov.enabled=1 -d pcov.directory=. ./vendor/bin/phpunit --coverage-clover ~/php-test-coverage.xml --log-junit ~/test-results/phpunit/junit.xml
       - store_test_results:
-          path: phpunit
+          path: '~/test-results'
+      - store_artifacts:
+          path: '~/php-test-coverage.xml'
+          destination: 'php-test-coverage.clover.xml'
+
 workflows:
   version: 2
-  composer_and_phpunit:
+  build_and_deploy:
     jobs:
-    - checkout_code
-    - composer_install:
-        requires:
-        - checkout_code
-    - phpunit:
-        requires:
-        - composer_install
+      - phpunit-7-2
