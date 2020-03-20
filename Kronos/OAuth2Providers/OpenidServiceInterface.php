@@ -4,31 +4,13 @@ namespace Kronos\OAuth2Providers;
 
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenInterface;
 
-interface OpenidServiceInterface
+interface OpenidServiceInterface extends OAuthServiceInterface
 {
-
-    /**
-     * @return string url for hand shake
-     */
-    public function getAuthorizationUrl();
-
-    /**
-     * @param string $code
-     * @return array
-     */
-    public function getTokenByAuthorizationCode(string $code): array;
-
     /**
      * Requests and creates an id token.
      *
      * @param string $idTokenJWT id token received from authorization code exchange
      * @return IdTokenInterface
      */
-    public function parseIdToken($idTokenJWT): IdTokenInterface;
-
-    /**
-     * @param $accessToken
-     * @return array
-     */
-    public function getUserInfo($accessToken): array;
+    public function parseIdToken(string $idTokenJWT): IdTokenInterface;
 }
