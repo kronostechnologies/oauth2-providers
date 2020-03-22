@@ -4,8 +4,9 @@ namespace Kronos\Tests\OAuth2Providers\Openid;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\BadResponseException;
-use Kronos\OAuth2Providers\Openid\GenericOpenidProvider;
+use GuzzleHttp\Psr7\Uri;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
+use Kronos\OAuth2Providers\Openid\OpenIdProvider;
 use Kronos\OAuth2Providers\Openid\OpenidProviderCollaborators;
 use Kronos\OAuth2Providers\Openid\OpenidProviderOptions;
 use Kronos\OAuth2Providers\State\NonceServiceInterface;
@@ -16,9 +17,10 @@ use League\OAuth2\Client\Tool\RequestFactory;
 use \PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use function GuzzleHttp\Psr7\parse_query;
 use const PHP_QUERY_RFC3986;
 
-class GenericOpenidProviderTest extends TestCase
+class OpenIdProviderTest extends TestCase
 {
 
     const VALID_OPTIONS = [
@@ -140,7 +142,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     protected $collaborators;
 
     /**
-     * @var TestableGenericOpenidProvider
+     * @var OpenIdProvider
      */
     protected $provider;
 
@@ -180,8 +182,9 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             'uri' => self::OPENID_CONFIG_ARRAY['authorization_endpoint'],
             'state' => $state,
             'nonce' => $nonce,
-            'response_type' => self::DEFAULT_RESPONSE_TYPE,
             'scope' => $scope,
+            'response_type' => self::DEFAULT_RESPONSE_TYPE,
+            'approval_prompt' => 'auto',
             'redirect_uri' => self::VALID_OPTIONS['redirectUri'],
             'client_id' => self::VALID_OPTIONS['clientId']
         ];
@@ -202,7 +205,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->method('send')
             ->willReturn($this->response);
 
-        $this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
+        $this->provider = new OpenIdProvider($this->options, $this->collaborators);
 
         $expected = self::OPENID_CONFIG_ARRAY;
         $actual = $this->provider->getOpenidConfiguration();
@@ -227,12 +230,12 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->method('generateNonce')
             ->willReturn(self::A_NONCE_STRING);
 
-        $this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
+        $this->provider = new OpenIdProvider($this->options, $this->collaborators);
 
         $actual = $this->provider->getAuthorizationUrl();
         $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertUriEquals($expected, $actual);
     }
 
     public function test_customScope_getAuthorizationUrl_ShouldReturnDefaultAuthorizationUrlWithRandomNonceAndStateAndCustomScope(
@@ -253,12 +256,12 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->method('generateNonce')
             ->willReturn(self::A_NONCE_STRING);
 
-        $this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
+        $this->provider = new OpenIdProvider($this->options, $this->collaborators);
 
         $actual = $this->provider->getAuthorizationUrl(['scope' => self::CUSTOM_SCOPE]);
         $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING, self::CUSTOM_SCOPE);
 
-        $this->assertEquals($expected, $actual);
+        self::assertUriEquals($expected, $actual);
     }
 
     public function test_InvalidCode_getIdToken_ShouldThrow()
@@ -273,12 +276,12 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->method('send')
             ->willReturn($this->response);
 
-        $this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
+        $this->provider = new OpenIdProvider($this->options, $this->collaborators);
 
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-        $this->provider->getTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE);
+        $this->provider->getAccessTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE);
     }
 
     public function test_InvalidCode_getIdTokenByAuthorizationCode_ShouldThrow()
@@ -293,12 +296,12 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->method('send')
             ->willReturn($this->response);
 
-        $this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
+        $this->provider = new OpenIdProvider($this->options, $this->collaborators);
 
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-        $this->provider->getTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
+        $this->provider->getAccessTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
     }
 
     public function test_ValidState_validateState_ShouldReturnTrue()
@@ -314,7 +317,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->with(self::A_STATE_STRING)
             ->willReturn(true);
 
-        $this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
+        $this->provider = new OpenIdProvider($this->options, $this->collaborators);
 
         $this->assertTrue($this->provider->validateSate(self::A_STATE_STRING));
     }
@@ -332,17 +335,19 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->with(self::A_STATE_STRING)
             ->willReturn(false);
 
-        $this->provider = new TestableGenericOpenidProvider($this->options, $this->collaborators);
+        $this->provider = new OpenIdProvider($this->options, $this->collaborators);
 
         $this->assertFalse($this->provider->validateSate(self::A_STATE_STRING));
     }
-}
 
-class TestableGenericOpenidProvider extends GenericOpenidProvider
-{
-
-    public function getOpenidConfiguration()
+    private static function assertUriEquals($expected, $actual)
     {
-        return $this->openidConfiguration;
+        $expectedUri = new Uri($expected);
+        $actualUri = new Uri($actual);
+        self::assertEquals($expectedUri->getHost(), $actualUri->getHost());
+        self::assertEquals($expectedUri->getPath(), $actualUri->getPath());
+        $expectedQuery = parse_query($expectedUri->getQuery());
+        $actualQuery = parse_query($actualUri->getQuery());
+        self::assertEquals($expectedQuery, $actualQuery);
     }
 }
