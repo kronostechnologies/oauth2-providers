@@ -2,48 +2,54 @@
 
 namespace Kronos\OAuth2Providers\Openid;
 
-class OpenidProviderOptions {
+class OpenidProviderOptions
+{
 
-	protected $clientId;
+    protected $clientId;
 
-	protected $clientSecret;
+    protected $clientSecret;
 
-	protected $redirectUri;
+    protected $redirectUri;
 
-	protected $openidConfigurationUrl;
+    protected $openidConfigurationUrl;
 
-	public function __construct(array $options) {
-		$this->clientId = $options['clientId'];
-		$this->clientSecret = $options['clientSecret'];
-		$this->redirectUri = $options['redirectUri'];
-		$this->openidConfigurationUrl = $options['openidConfigurationUrl'];
-	}
+    public function __construct(array $options)
+    {
+        $this->clientId = $options['clientId'];
+        $this->clientSecret = $options['clientSecret'];
+        $this->redirectUri = $options['redirectUri'];
+        $this->openidConfigurationUrl = $options['openidConfigurationUrl'];
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getClientId() {
-		return $this->clientId;
-	}
+    /**
+     * @return mixed
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getClientSecret() {
-		return $this->clientSecret;
-	}
+    /**
+     * @return mixed
+     */
+    public function getClientSecret()
+    {
+        return $this->clientSecret;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getRedirectUri() {
-		return $this->redirectUri;
-	}
+    /**
+     * @return mixed
+     */
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getOpenidConfigurationUrl() {
-		return $this->openidConfigurationUrl;
-	}
+    /**
+     * @return mixed
+     */
+    public function getOpenidConfigurationUrl()
+    {
+        return $this->openidConfigurationUrl;
+    }
 }

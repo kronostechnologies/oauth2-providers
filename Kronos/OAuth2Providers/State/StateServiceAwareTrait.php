@@ -10,7 +10,7 @@ trait StateServiceAwareTrait
     /**
      * @return StateServiceInterface
      */
-    abstract protected function getStateService();
+    abstract protected function getStateService(): StateServiceInterface;
 
     protected function getRandomState($length = 32)
     {
@@ -18,10 +18,11 @@ trait StateServiceAwareTrait
     }
 
     /**
-	 * @param string $state
-	 * @return bool
-	 */
-	public function validateSate($state){
-	    return $this->getStateService()->validateState($state);
-	}
+     * @param string $state
+     * @return bool
+     */
+    public function validateSate($state): bool
+    {
+        return $this->getStateService()->validateState($state);
+    }
 }

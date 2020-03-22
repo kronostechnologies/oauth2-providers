@@ -61,7 +61,8 @@ class OpenidProviderCollaborators
         $this->httpClient = $httpClient ?: new HttpClient();
         $this->stateService = $stateService ?: new SessionBasedHashService();
         $this->nonceService = $nonceService ?: new SessionBasedHashService();
-        $this->idTokenFactory = $idTokenFactory ?: new IdTokenFactory(new IdTokenParser(), new IdTokenValidator($this->nonceService));
+        $this->idTokenFactory = $idTokenFactory ?: new IdTokenFactory(new IdTokenParser(),
+            new IdTokenValidator($this->nonceService));
     }
 
     /**

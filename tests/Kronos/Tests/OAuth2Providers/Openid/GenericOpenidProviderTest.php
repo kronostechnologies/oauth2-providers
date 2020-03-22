@@ -1,6 +1,7 @@
 <?php
 
 namespace Kronos\Tests\OAuth2Providers\Openid;
+
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\BadResponseException;
 use Kronos\OAuth2Providers\Openid\GenericOpenidProvider;
@@ -12,11 +13,12 @@ use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant\GrantFactory;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Tool\RequestFactory;
-use PHPUnit_Framework_MockObject_MockObject;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use const PHP_QUERY_RFC3986;
 
-class GenericOpenidProviderTest extends PHPUnit_Framework_TestCase
+class GenericOpenidProviderTest extends TestCase
 {
 
     const VALID_OPTIONS = [
@@ -98,42 +100,42 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     const AN_INVALID_GRANT_STRING = 'InvalidGrant';
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|GrantFactory
+     * @var MockObject|GrantFactory
      */
     protected $grantFactory;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|RequestFactory
+     * @var MockObject|RequestFactory
      */
     protected $requestFactory;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|HttpClient
+     * @var MockObject|HttpClient
      */
     protected $httpClient;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|StateServiceInterface
+     * @var MockObject|StateServiceInterface
      */
     protected $stateService;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|NonceServiceInterface
+     * @var MockObject|NonceServiceInterface
      */
     protected $nonceService;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|IdTokenFactory
+     * @var MockObject|IdTokenFactory
      */
     protected $idTokenFactory;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|OpenidProviderOptions
+     * @var MockObject|OpenidProviderOptions
      */
     protected $options;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|OpenidProviderCollaborators
+     * @var MockObject|OpenidProviderCollaborators
      */
     protected $collaborators;
 
@@ -144,41 +146,24 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|ResponseInterface
+     * @var MockObject|ResponseInterface
      */
     protected $response;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|BadResponseException
+     * @var MockObject|BadResponseException
      */
     protected $badResponseException;
 
 
-    public function setUp()
+    public function setUp(): void
     {
-        $this->grantFactory = $this->getMockBuilder(GrantFactory::class)
-            ->setMethods(null)
-            ->getMock();
-
-        $this->requestFactory = $this->getMockBuilder(RequestFactory::class)
-            ->setMethods(null)
-            ->getMock();
-
-        $this->httpClient = $this->getMockBuilder(HttpClient::class)
-            ->setMethods(['send'])
-            ->getMock();
-
-        $this->stateService = $this->getMockBuilder(StateServiceInterface::class)
-            ->setMethods(['generateState', 'validateState'])
-            ->getMock();
-
-        $this->nonceService = $this->getMockBuilder(NonceServiceInterface::class)
-            ->setMethods(['generateNonce', 'validateNonce'])
-            ->getMock();
-
-        $this->idTokenFactory = $this->getMockBuilder(IdTokenFactory::class)
-            ->setMethods(['createIdToken'])
-            ->getMock();
+        $this->grantFactory = new GrantFactory();
+        $this->requestFactory = new RequestFactory();
+        $this->httpClient = $this->createMock(HttpClient::class);
+        $this->stateService = $this->createMock(StateServiceInterface::class);
+        $this->nonceService = $this->createMock(NonceServiceInterface::class);
+        $this->idTokenFactory = $this->createMock(IdTokenFactory::class);
 
         $this->options = new OpenidProviderOptions(self::VALID_OPTIONS);
 
@@ -202,7 +187,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
         ];
 
         $authorizationUrl = array_shift($authorizationUrlValues) . '?';
-        $authorizationUrl .= http_build_query($authorizationUrlValues, null, '&', \PHP_QUERY_RFC3986);
+        $authorizationUrl .= http_build_query($authorizationUrlValues, null, '&', PHP_QUERY_RFC3986);
 
         return $authorizationUrl;
     }
@@ -293,7 +278,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-        $this->provider->getTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY);
+        $this->provider->getTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE);
     }
 
     public function test_InvalidCode_getIdTokenByAuthorizationCode_ShouldThrow()
