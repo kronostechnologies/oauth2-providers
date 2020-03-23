@@ -89,6 +89,11 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
         return ['openid'];
     }
 
+    protected function getScopeSeparator()
+    {
+        return ' ';
+    }
+
     protected function getAuthorizationParameters(array $options)
     {
         $options['state'] = $options['state'] ?? $this->collaborators->getStateService()->generateState();
