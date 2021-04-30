@@ -22,7 +22,7 @@
     }
   ],
   "require": {
-    "php": ">=7.2",
+    "php": ">=7.4",
     "league/oauth2-client": "^2.4.1",
     "league/oauth2-google":"^3.0.2",
     "kronos/oauth2-microsoft-graph": "^0.2.0",
