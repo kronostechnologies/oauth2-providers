@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  eq: equisoft/build-tools@0.0.4
+  eq: equisoft/build-tools@0.0.20
 
 workflows:
   version: 2
@@ -9,3 +9,4 @@ workflows:
     jobs:
       - eq/phpunit:
           checkout: true
+          executor: eq/php-7-4
