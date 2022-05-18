@@ -17,8 +17,6 @@ class IdTokenParser
      */
     public function parseIdToken($idTokenString, $keys)
     {
-        $idTokenClaims = null;
-
         try {
             $tks = explode('.', $idTokenString);
 
@@ -28,7 +26,7 @@ class IdTokenParser
                 throw new RuntimeException('Unsigned id_token');
             }
         } catch (RuntimeException $e) {
-            throw new RuntimeException('Unable to parse the id_token!');
+            throw new RuntimeException('Unable to parse the id_token!', 0, $e);
         }
 
         return $idTokenClaims;
