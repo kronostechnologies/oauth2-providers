@@ -8,6 +8,7 @@
 >
     <projectFiles>
         <directory name="Kronos/OAuth2Providers" />
+        <directory name="tests" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>

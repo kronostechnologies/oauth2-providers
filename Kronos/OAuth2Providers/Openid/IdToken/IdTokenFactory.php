@@ -36,7 +36,7 @@ class IdTokenFactory implements IdTokenFactoryInterface
      * @param $keys
      * @param $clientId
      * @param $issuer
-     * @param null $userIdKey
+     * @param $userIdKey
      * @return IdTokenInterface
      */
     public function createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey = null): IdTokenInterface

@@ -32,11 +32,11 @@ class IdTokenFactoryTest extends TestCase
     const A_VALIDATOR_EXCEPTION_MESSAGE = 'The audience is invalid!';
 
     /**
-     * @var MockObject|IdTokenParser
+     * @var MockObject&IdTokenParser
      */
     private $parser;
     /**
-     * @var MockObject|IdTokenValidator
+     * @var MockObject&IdTokenValidator
      */
     private $validator;
 

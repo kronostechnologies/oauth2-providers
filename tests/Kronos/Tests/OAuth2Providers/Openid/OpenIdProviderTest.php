@@ -102,42 +102,42 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     const AN_INVALID_GRANT_STRING = 'InvalidGrant';
 
     /**
-     * @var MockObject|GrantFactory
+     * @var GrantFactory
      */
     protected $grantFactory;
 
     /**
-     * @var MockObject|RequestFactory
+     * @var RequestFactory
      */
     protected $requestFactory;
 
     /**
-     * @var MockObject|HttpClient
+     * @var MockObject&HttpClient
      */
     protected $httpClient;
 
     /**
-     * @var MockObject|StateServiceInterface
+     * @var MockObject&StateServiceInterface
      */
     protected $stateService;
 
     /**
-     * @var MockObject|NonceServiceInterface
+     * @var MockObject&NonceServiceInterface
      */
     protected $nonceService;
 
     /**
-     * @var MockObject|IdTokenFactory
+     * @var MockObject&IdTokenFactory
      */
     protected $idTokenFactory;
 
     /**
-     * @var MockObject|OpenidProviderOptions
+     * @var OpenidProviderOptions
      */
     protected $options;
 
     /**
-     * @var MockObject|OpenidProviderCollaborators
+     * @var OpenidProviderCollaborators
      */
     protected $collaborators;
 
@@ -146,14 +146,13 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
      */
     protected $provider;
 
-
     /**
-     * @var MockObject|ResponseInterface
+     * @var MockObject&ResponseInterface
      */
     protected $response;
 
     /**
-     * @var MockObject|BadResponseException
+     * @var MockObject&BadResponseException
      */
     protected $badResponseException;
 
@@ -169,8 +168,14 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
         $this->options = new OpenidProviderOptions(self::VALID_OPTIONS);
 
-        $this->collaborators = new OpenidProviderCollaborators($this->grantFactory, $this->requestFactory,
-            $this->httpClient, $this->stateService, $this->nonceService, $this->idTokenFactory);
+        $this->collaborators = new OpenidProviderCollaborators(
+            $this->grantFactory,
+            $this->requestFactory,
+            $this->httpClient,
+            $this->stateService,
+            $this->nonceService,
+            $this->idTokenFactory
+        );
 
         $this->response = $this->getMockForAbstractClass(ResponseInterface::class);
     }
@@ -190,7 +195,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
         ];
 
         $authorizationUrl = array_shift($authorizationUrlValues) . '?';
-        $authorizationUrl .= http_build_query($authorizationUrlValues, null, '&', PHP_QUERY_RFC3986);
+        $authorizationUrl .= http_build_query($authorizationUrlValues, '', '&', PHP_QUERY_RFC3986);
 
         return $authorizationUrl;
     }
@@ -198,10 +203,10 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_OptionsAndCollaborators_New_ShouldFetchOpenidConfig()
     {
-        $this->response->expects($this->once())
+        $this->response
             ->method('getBody')
             ->willReturn(self::OPENID_CONFIG_RESPONSE_BODY);
-        $this->httpClient->expects($this->once())
+        $this->httpClient
             ->method('send')
             ->willReturn($this->response);
 
@@ -215,18 +220,18 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     public function test__getAuthorizationUrl_ShouldReturnDefaultAuthorizationUrlWithRandomNonceAndStateAndDefaultScope(
     )
     {
-        $this->response->expects($this->once())
+        $this->response
             ->method('getBody')
             ->willReturn(self::OPENID_CONFIG_RESPONSE_BODY);
-        $this->httpClient->expects($this->once())
+        $this->httpClient
             ->method('send')
             ->willReturn($this->response);
 
-        $this->stateService->expects($this->once())
+        $this->stateService
             ->method('generateState')
             ->willReturn(self::A_STATE_STRING);
 
-        $this->nonceService->expects($this->once())
+        $this->nonceService
             ->method('generateNonce')
             ->willReturn(self::A_NONCE_STRING);
 
@@ -241,18 +246,18 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     public function test_customScope_getAuthorizationUrl_ShouldReturnDefaultAuthorizationUrlWithRandomNonceAndStateAndCustomScope(
     )
     {
-        $this->response->expects($this->once())
+        $this->response
             ->method('getBody')
             ->willReturn(self::OPENID_CONFIG_RESPONSE_BODY);
-        $this->httpClient->expects($this->once())
+        $this->httpClient
             ->method('send')
             ->willReturn($this->response);
 
-        $this->stateService->expects($this->once())
+        $this->stateService
             ->method('generateState')
             ->willReturn(self::A_STATE_STRING);
 
-        $this->nonceService->expects($this->once())
+        $this->nonceService
             ->method('generateNonce')
             ->willReturn(self::A_NONCE_STRING);
 
@@ -266,13 +271,13 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_InvalidCode_getIdToken_ShouldThrow()
     {
-        $this->response->expects($this->exactly(2))
+        $this->response
             ->method('getBody')
             ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY, self::AN_ERROR_RESPONSE_BODY);
-        $this->response->expects($this->once())
+        $this->response
             ->method('getStatusCode')
             ->willReturn(self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
-        $this->httpClient->expects($this->exactly(2))
+        $this->httpClient
             ->method('send')
             ->willReturn($this->response);
 
@@ -286,13 +291,13 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_InvalidCode_getIdTokenByAuthorizationCode_ShouldThrow()
     {
-        $this->response->expects($this->exactly(2))
+        $this->response
             ->method('getBody')
             ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY, self::AN_ERROR_RESPONSE_BODY);
-        $this->response->expects($this->once())
+        $this->response
             ->method('getStatusCode')
             ->willReturn(self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
-        $this->httpClient->expects($this->exactly(2))
+        $this->httpClient
             ->method('send')
             ->willReturn($this->response);
 
@@ -306,13 +311,13 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_ValidState_validateState_ShouldReturnTrue()
     {
-        $this->response->expects($this->once())
+        $this->response
             ->method('getBody')
             ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY);
-        $this->httpClient->expects($this->exactly(1))
+        $this->httpClient
             ->method('send')
             ->willReturn($this->response);
-        $this->stateService->expects($this->once())
+        $this->stateService
             ->method('validateState')
             ->with(self::A_STATE_STRING)
             ->willReturn(true);
@@ -324,13 +329,13 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_InvalidState_validateState_ShouldReturnFalse()
     {
-        $this->response->expects($this->once())
+        $this->response
             ->method('getBody')
             ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY);
-        $this->httpClient->expects($this->exactly(1))
+        $this->httpClient
             ->method('send')
             ->willReturn($this->response);
-        $this->stateService->expects($this->once())
+        $this->stateService
             ->method('validateState')
             ->with(self::A_STATE_STRING)
             ->willReturn(false);
