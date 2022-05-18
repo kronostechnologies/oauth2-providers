@@ -98,7 +98,7 @@ class MicrosoftGraphOAuth2Service extends MicrosoftGraph implements OAuthService
 
     /**
      * @param string $refresh_token
-     * @return AccessToken
+     * @return AccessTokenInterface
      * @throws InvalidRefreshTokenException
      * @throws IdentityProviderException
      */
