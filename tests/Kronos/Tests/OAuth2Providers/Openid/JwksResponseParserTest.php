@@ -19,6 +19,7 @@ class JwksResponseParserTest extends TestCase
     {
         $result = $this->parser->getVerificationKeys(Fixtures::JWKS_RESPONSE);
 
-        self::assertEquals(Fixtures::JWKS_KEY_STRINGS, $result);
+        self::assertCount(1, $result);
+        self::assertArrayHasKey(Fixtures::KEYID, $result);
     }
 }

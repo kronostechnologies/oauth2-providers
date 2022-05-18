@@ -2,6 +2,8 @@
 
 namespace Kronos\OAuth2Providers\Openid\IdToken;
 
+use Firebase\JWT\Key;
+
 class IdTokenFactory implements IdTokenFactoryInterface
 {
 
@@ -33,7 +35,7 @@ class IdTokenFactory implements IdTokenFactoryInterface
      * Creates an instance of IdTokenInterface
      *
      * @param $idTokenString
-     * @param $keys
+     * @param array<string, Key> $keys
      * @param $clientId
      * @param $issuer
      * @param $userIdKey
