@@ -13,8 +13,8 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
-use phpseclib3\Crypt\RSA;
-use phpseclib3\Math\BigInteger;
+use phpseclib\Crypt\RSA;
+use phpseclib\Math\BigInteger;
 use Psr\Http\Message\ResponseInterface;
 
 class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
