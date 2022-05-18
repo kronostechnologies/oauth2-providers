@@ -19,6 +19,7 @@ class Office365OAuth2Service extends MicrosoftGraphOAuth2Service
 
     /**
      * @inheritdoc
+     * @psalm-suppress ParamNameMismatch
      */
     public function getAccessToken($grant = 'authorization_code', array $options = [])
     {
@@ -31,6 +32,8 @@ class Office365OAuth2Service extends MicrosoftGraphOAuth2Service
 
     /**
      * @inheritdoc
+     * @psalm-suppress ImplementedReturnTypeMismatch Yeah, this design is broken
+     * @return Office365User
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {

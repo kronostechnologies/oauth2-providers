@@ -28,7 +28,7 @@ class IdTokenValidatorTest extends TestCase
     const A_NONCE = '6664b3eb64d51bb14201580a6d26133d73d3a9665fdc5bc835becb67ebb41dac_0cc53e6f653397930fde563275f42868fc0f9978';
 
     /**
-     * @var MockObject
+     * @var MockObject&NonceServiceInterface
      */
     private $hashService;
 
@@ -67,8 +67,7 @@ class IdTokenValidatorTest extends TestCase
             ->willReturn(true);
 
         $validator = new TestableIdTokenValidator($this->hashService);
-        $validator->validateIdTokenClaims(self::A_PARSED_CLAIMS_ARRAY, self::A_CLIENT_ID, self::AN_ISSUER,
-            self::A_NONCE);
+        $validator->validateIdTokenClaims(self::A_PARSED_CLAIMS_ARRAY, self::A_CLIENT_ID, self::AN_ISSUER);
 
         $this->assertTrue(true);
     }
@@ -79,7 +78,7 @@ class IdTokenValidatorTest extends TestCase
         $this->expectExceptionMessage('The audience is invalid!');
 
         $validator = new TestableIdTokenValidator($this->hashService);
-        $validator->validateIdTokenClaims(self::A_PARSED_CLAIMS_ARRAY, '', self::AN_ISSUER, self::A_NONCE);
+        $validator->validateIdTokenClaims(self::A_PARSED_CLAIMS_ARRAY, '', self::AN_ISSUER);
     }
 
     public function test_InvalidIssuer_validateIdTokenClaims_ShouldThrowException()
@@ -88,7 +87,7 @@ class IdTokenValidatorTest extends TestCase
         $this->expectExceptionMessage('The issuer is invalid!');
 
         $validator = new TestableIdTokenValidator($this->hashService);
-        $validator->validateIdTokenClaims(self::A_PARSED_CLAIMS_ARRAY, self::A_CLIENT_ID, '', self::A_NONCE);
+        $validator->validateIdTokenClaims(self::A_PARSED_CLAIMS_ARRAY, self::A_CLIENT_ID, '');
     }
 
     public function test_InvalidNonce_validateIdTokenClaims_ShouldThrowException()
@@ -102,7 +101,7 @@ class IdTokenValidatorTest extends TestCase
         $this->expectExceptionMessage('The nonce is invalid!');
 
         $validator = new TestableIdTokenValidator($this->hashService);
-        $validator->validateIdTokenClaims(self::A_PARSED_CLAIMS_ARRAY, self::A_CLIENT_ID, self::AN_ISSUER, '');
+        $validator->validateIdTokenClaims(self::A_PARSED_CLAIMS_ARRAY, self::A_CLIENT_ID, self::AN_ISSUER);
     }
 }
 

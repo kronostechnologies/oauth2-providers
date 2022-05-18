@@ -4,13 +4,6 @@ namespace Kronos\OAuth2Providers\Openid\IdToken;
 
 interface IdTokenFactoryInterface
 {
-
-    /**
-     * IdTokenFactoryInterface constructor.
-     *
-     * @param IdTokenParser|null $idTokenParser
-     * @param IdTokenValidator|null $idTokenValidator
-     */
     public function __construct(IdTokenParser $idTokenParser, IdTokenValidator $idTokenValidator);
 
     /**

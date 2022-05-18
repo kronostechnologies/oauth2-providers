@@ -83,7 +83,7 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface
     protected function checkResponse(ResponseInterface $response, $data)
     {
         if ($response->getStatusCode() != 200) {
-            throw new IdentityProviderException($data['error'], $response->getStatusCode(), $data);
+            throw new IdentityProviderException($data['error'] ?? '', $response->getStatusCode(), $data);
         }
     }
 

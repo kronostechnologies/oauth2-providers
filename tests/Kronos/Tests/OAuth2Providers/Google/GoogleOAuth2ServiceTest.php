@@ -30,17 +30,17 @@ class GoogleOAuth2ServiceTest extends TestCase
     private $expectedBaseRessourceOwnerDetailsUrl = 'https://www.googleapis.com/oauth2/v2/userinfo?';
 
     /**
-     * @var MockObject
+     * @var MockObject&Client
      */
     private $httpClient;
 
     /**
-     * @var MockObject
+     * @var MockObject&AccessToken
      */
     private $anAccessToken;
 
     /**
-     * @var MockObject
+     * @var MockObject&ResponseInterface
      */
     private $httpResponse;
 

@@ -47,10 +47,6 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
     {
         $this->collaborators = $collaborators;
         $this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer);
-
-        if (!$options) {
-            throw new InvalidArgumentException('$option argument must be a valid OpenidProviderOptions instance');
-        }
         $this->options = $options;
 
         $this->setHttpClient($collaborators->getHttpClient());
@@ -112,10 +108,15 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
                 $message = $response->getReasonPhrase();
             }
 
+            $responseArray = [
+                'headers' => $response->getHeaders(),
+                'body' => (string)$response->getBody()
+            ];
+
             throw new IdentityProviderException(
                 $message,
                 $response->getStatusCode(),
-                $response
+                $responseArray
             );
         }
     }
@@ -236,6 +237,10 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
         $modulus = new BigInteger(JWT::urlsafeB64Decode($modulus), 256);
         $exponent = new BigInteger(JWT::urlsafeB64Decode($exponent), 256);
 
+        /**
+         * @psalm-suppress UndefinedDocblockClass broken annotation in library
+         * @psalm-suppress InvalidArgument
+         */
         $publicKey = $rsa->_convertPublicKey($modulus, $exponent);
         $rsa->loadKey($publicKey);
         $rsa->setPublicKey();
