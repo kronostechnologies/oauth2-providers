@@ -12,7 +12,8 @@
   ],
   "autoload": {
     "psr-4": {
-      "Kronos\\OAuth2Providers\\": "Kronos/OAuth2Providers"
+      "Kronos\\OAuth2Providers\\": "Kronos/OAuth2Providers",
+      "Kronos\\Tests\\OAuth2Providers\\": "tests/Kronos/Tests/OAuth2Providers"
     }
   },
   "repositories": [
