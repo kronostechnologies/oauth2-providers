@@ -82,7 +82,7 @@ class GoogleOAuth2ServiceTest extends TestCase
     {
         $url = $this->googleOAuth2Service->getAuthorizationUrl();
 
-        $this->assertRegExp('/state=[a-z0-9]{8}_[a-z0-9]+/', $url);
+        $this->assertMatchesRegularExpression('/state=[a-z0-9]{8}_[a-z0-9]+/', $url);
     }
 
     public function test_askingForAuthorizationUrlWithCustomOptions_getAuthorizationUrl_ShouldContainsOptionsPassedInParameters(
