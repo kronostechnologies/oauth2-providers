@@ -2,10 +2,12 @@
 
 namespace Kronos\Tests\OAuth2Providers\Openid\IdToken;
 
+use Firebase\JWT\Key;
 use Kronos\OAuth2Providers\Openid\IdToken\IdToken;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenParser;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenValidator;
+use Kronos\Tests\OAuth2Providers\Openid\Fixtures;
 use \PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -40,10 +42,17 @@ class IdTokenFactoryTest extends TestCase
      */
     private $validator;
 
+    /**
+     * @var array<string,Key>
+     */
+    private $keys = [];
+
     public function setUp(): void
     {
         $this->parser = $this->createMock(IdTokenParser::class);
         $this->validator = $this->createMock(IdTokenValidator::class);
+        $key = $this->createMock(Key::class);
+        $this->keys = [Fixtures::KEYID => $key];
     }
 
     public function test_WithArgument_New_ShouldSetServices()
@@ -70,14 +79,13 @@ class IdTokenFactoryTest extends TestCase
     public function test_ValidArguments_createIdToken_ShouldReturnIdToken()
     {
         $idTokenString = self::AN_ID_TOKEN_STRING;
-        $keys = self::A_KEYS_ARRAY;
         $clientId = self:: A_CLIENT_ID;
         $issuer = self::AN_ISSUER;
         $userIdKey = self::A_USER_ID_KEY;
 
         $this->parser->expects($this->once())
             ->method('parseIdToken')
-            ->with($idTokenString, $keys)
+            ->with($idTokenString, $this->keys)
             ->willReturn(self::A_PARSED_CLAIMS_ARRAY);
 
         $this->validator->expects($this->once())
@@ -85,7 +93,7 @@ class IdTokenFactoryTest extends TestCase
             ->with(self::A_PARSED_CLAIMS_ARRAY, $clientId, $issuer);
 
         $factory = new TestableIdTokenFactory($this->parser, $this->validator);
-        $idToken = $factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey);
+        $idToken = $factory->createIdToken($idTokenString, $this->keys, $clientId, $issuer, $userIdKey);
 
         $this->assertInstanceOf(IdToken::class, $idToken);
 
@@ -101,7 +109,6 @@ class IdTokenFactoryTest extends TestCase
     public function test_ParseError_createIdToken_ShouldThrow()
     {
         $idTokenString = self::AN_ID_TOKEN_STRING;
-        $keys = self::A_KEYS_ARRAY;
         $clientId = self:: A_CLIENT_ID;
         $issuer = self::AN_ISSUER;
         $userIdKey = self::A_USER_ID_KEY;
@@ -111,7 +118,7 @@ class IdTokenFactoryTest extends TestCase
 
         $this->parser->expects($this->once())
             ->method('parseIdToken')
-            ->with($idTokenString, $keys)
+            ->with($idTokenString, $this->keys)
             ->willThrowException($exception);
 
         $factory = new TestableIdTokenFactory($this->parser, $this->validator);
@@ -119,20 +126,19 @@ class IdTokenFactoryTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(self::A_PARSER_EXCEPTION_MESSAGE);
 
-        $factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey);
+        $factory->createIdToken($idTokenString, $this->keys, $clientId, $issuer, $userIdKey);
     }
 
     public function test_ValidateError_createIdToken_ShouldThrow()
     {
         $idTokenString = self::AN_ID_TOKEN_STRING;
-        $keys = self::A_KEYS_ARRAY;
         $clientId = self:: A_CLIENT_ID;
         $issuer = self::AN_ISSUER;
         $userIdKey = self::A_USER_ID_KEY;
 
         $this->parser->expects($this->once())
             ->method('parseIdToken')
-            ->with($idTokenString, $keys)
+            ->with($idTokenString, $this->keys)
             ->willReturn(self::A_PARSED_CLAIMS_ARRAY);
 
         $exception = new RuntimeException(self::A_VALIDATOR_EXCEPTION_MESSAGE);
@@ -147,7 +153,7 @@ class IdTokenFactoryTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(self::A_VALIDATOR_EXCEPTION_MESSAGE);
 
-        $factory->createIdToken($idTokenString, $keys, $clientId, $issuer, $userIdKey);
+        $factory->createIdToken($idTokenString, $this->keys, $clientId, $issuer, $userIdKey);
     }
 }
 

@@ -3,6 +3,7 @@
 namespace Kronos\OAuth2Providers\Openid\IdToken;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use RuntimeException;
 
 class IdTokenParser
@@ -12,10 +13,10 @@ class IdTokenParser
      * Returns the array of claims parsed from a raw JWT id token.
      *
      * @param string $idTokenString
-     * @param array $keys
+     * @param array<string, Key> $keys
      * @return array
      */
-    public function parseIdToken($idTokenString, $keys)
+    public function parseIdToken(string $idTokenString, array $keys): array
     {
         try {
             $tks = explode('.', $idTokenString);
@@ -34,6 +35,6 @@ class IdTokenParser
 
     protected function decodeJWT($idTokenString, $keys)
     {
-        return (array)JWT::decode($idTokenString, $keys, ['RS256']);
+        return (array)JWT::decode($idTokenString, $keys);
     }
 }
