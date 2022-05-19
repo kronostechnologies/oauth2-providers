@@ -12,22 +12,17 @@ use Psr\Http\Message\ResponseInterface;
 
 class GoogleOAuth2ServiceTest extends TestCase
 {
-
-    const A_CLIENT_ID = 'A_CLIENT_ID';
-    const A_SECRET = 'A_SECRET';
-    const A_REDIRECT_URI = 'A_REDIRECT_URI';
-
-    const A_CUSTOME_OPTION_NAME = 'a_custom_option_name';
-    const A_CUSTOME_OPTION_VALUE = 'a_custom_option_value';
-
-    const A_CODE = 'A_CODE';
-
-    const A_REFRESH_TOKEN = 'A_REFRESH_TOKEN';
+    private const A_CLIENT_ID = 'A_CLIENT_ID';
+    private const A_SECRET = 'A_SECRET';
+    private const A_REDIRECT_URI = 'A_REDIRECT_URI';
+    private const A_CUSTOME_OPTION_NAME = 'a_custom_option_name';
+    private const A_CUSTOME_OPTION_VALUE = 'a_custom_option_value';
+    private const A_REFRESH_TOKEN = 'A_REFRESH_TOKEN';
 
     /**
      * @var string
      */
-    private $expectedBaseRessourceOwnerDetailsUrl = 'https://www.googleapis.com/oauth2/v2/userinfo?';
+    private const EXPECTED_BASE_RESOURCEOWNER_DETAIL_URL = 'https://openidconnect.googleapis.com/v1/userinfo';
 
     /**
      * @var MockObject&Client
@@ -68,7 +63,7 @@ class GoogleOAuth2ServiceTest extends TestCase
 
         $url = $this->googleOAuth2Service->getResourceOwnerDetailsUrl($this->anAccessToken);
 
-        $this->assertStringStartsWith($this->expectedBaseRessourceOwnerDetailsUrl, $url);
+        $this->assertStringStartsWith(self::EXPECTED_BASE_RESOURCEOWNER_DETAIL_URL, $url);
     }
 
     public function test_askingForAuthorizationUrl_getAuthorizationUrl_ShouldContainsDefaultOption()
