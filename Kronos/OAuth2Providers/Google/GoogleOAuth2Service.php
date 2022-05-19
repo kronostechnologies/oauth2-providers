@@ -63,17 +63,6 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
     }
 
     /**
-     * @param AccessToken $token
-     * @return string
-     */
-    public function getResourceOwnerDetailsUrl(AccessToken $token): string
-    {
-        return 'https://www.googleapis.com/oauth2/v2/userinfo?' . http_build_query([
-                'alt' => 'json',
-            ]);
-    }
-
-    /**
      * @param array $options
      * @return string
      */
