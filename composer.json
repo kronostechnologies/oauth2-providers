@@ -27,7 +27,8 @@
     "league/oauth2-client": "^2.6.1",
     "league/oauth2-google":"^4.0.0",
     "kronos/oauth2-microsoft-graph": "^0.3.0",
-    "firebase/php-jwt": "^6.2"
+    "firebase/php-jwt": "^6.2",
+    "guzzlehttp/psr7": "^1.8.5 || ^2.2.1"
   },
   "require-dev": {
     "phpunit/phpunit": "9.5.20",

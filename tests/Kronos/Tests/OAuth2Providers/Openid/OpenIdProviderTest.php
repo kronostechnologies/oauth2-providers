@@ -4,6 +4,7 @@ namespace Kronos\Tests\OAuth2Providers\Openid;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Uri;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
 use Kronos\OAuth2Providers\Openid\OpenIdProvider;
@@ -17,7 +18,6 @@ use League\OAuth2\Client\Tool\RequestFactory;
 use \PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use function GuzzleHttp\Psr7\parse_query;
 use const PHP_QUERY_RFC3986;
 
 class OpenIdProviderTest extends TestCase
@@ -351,8 +351,8 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
         $actualUri = new Uri($actual);
         self::assertEquals($expectedUri->getHost(), $actualUri->getHost());
         self::assertEquals($expectedUri->getPath(), $actualUri->getPath());
-        $expectedQuery = parse_query($expectedUri->getQuery());
-        $actualQuery = parse_query($actualUri->getQuery());
+        $expectedQuery = Query::parse($expectedUri->getQuery());
+        $actualQuery = Query::parse($actualUri->getQuery());
         self::assertEquals($expectedQuery, $actualQuery);
     }
 }

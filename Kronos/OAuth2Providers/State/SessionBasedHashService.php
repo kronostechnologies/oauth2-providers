@@ -5,11 +5,13 @@ namespace Kronos\OAuth2Providers\State;
 class SessionBasedHashService implements StateServiceInterface, NonceServiceInterface
 {
 
-
-    private $saltLength;
+    /**
+     * @var positive-int
+     */
+    private int $saltLength;
 
     /**
-     * @param int $saltLength
+     * @param positive-int $saltLength
      */
     public function __construct(int $saltLength = 4)
     {
@@ -58,7 +60,7 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
     }
 
     /**
-     * @return int
+     * @return positive-int
      */
     public function getSaltLength(): int
     {
@@ -66,9 +68,9 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
     }
 
     /**
-     * @param int $saltLength
+     * @param positive-int $saltLength
      */
-    public function setSaltLength($saltLength)
+    public function setSaltLength(int $saltLength)
     {
         $this->saltLength = $saltLength;
     }
