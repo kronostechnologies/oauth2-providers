@@ -2,9 +2,7 @@
 
 namespace Kronos\OAuth2Providers\Openid\IdToken;
 
-use JsonSerializable;
-
-class IdToken implements JsonSerializable, IdTokenInterface
+class IdToken implements IdTokenInterface
 {
 
     /**
@@ -56,6 +54,8 @@ class IdToken implements JsonSerializable, IdTokenInterface
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
      * @since 5.4.0
+     * @noinspection PhpMissingReturnTypeInspection On peut pas mettre le mixed en php7.4
+     * @noinspection PhpHierarchyChecksInspection
      */
     public function jsonSerialize()
     {
