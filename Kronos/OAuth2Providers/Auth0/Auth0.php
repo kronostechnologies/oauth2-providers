@@ -123,10 +123,10 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface
      * Requests an access token using an 'authorization_code' grant.
      * @param string $code
      * @param array $options
-     * @return AccessTokenInterface
+     * @return AccessToken
      * @throws IdentityProviderException
      */
-    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface
+    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessToken
     {
         return $this->getAccessToken('authorization_code', array_merge([
             'code' => $code

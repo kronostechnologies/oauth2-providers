@@ -18,9 +18,9 @@ interface OAuthServiceInterface
     /**
      * @param string $code
      * @param array $options Additionnal options to pass getAccessToken()
-     * @return AccessTokenInterface
+     * @return AccessToken
      */
-    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface;
+    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessToken;
 
     /**
      * @param array $options Additionnal options
