@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4636fcd5c5cb09fe1ef753727ff7e134",
+    "content-hash": "95993415691fdda27e56d781ea4bc4da",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -292,26 +292,28 @@
         },
         {
             "name": "kronos/oauth2-microsoft-graph",
-            "version": "v0.2.0",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kronostechnologies/oauth2-microsoft-graph.git",
-                "reference": "523eb96b4373b47e3fdf0525c17b7354221a4272"
+                "reference": "acffc1cfbf40b029b95e6ac9df7ef967a12f49fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kronostechnologies/oauth2-microsoft-graph/zipball/523eb96b4373b47e3fdf0525c17b7354221a4272",
-                "reference": "523eb96b4373b47e3fdf0525c17b7354221a4272",
+                "url": "https://api.github.com/repos/kronostechnologies/oauth2-microsoft-graph/zipball/acffc1cfbf40b029b95e6ac9df7ef967a12f49fe",
+                "reference": "acffc1cfbf40b029b95e6ac9df7ef967a12f49fe",
                 "shasum": ""
             },
             "require": {
-                "league/oauth2-client": "^2.4.1",
-                "php": ">=7.2.0"
+                "league/oauth2-client": "^2.6.1",
+                "php": "^7.4 || ^8.1"
             },
             "require-dev": {
+                "cyclonedx/cyclonedx-php-composer": "3.10.0",
                 "mockery/mockery": "^1.3.1",
-                "phpunit/phpunit": "^8",
-                "squizlabs/php_codesniffer": "~2.0"
+                "phpunit/phpunit": "9.5.20",
+                "squizlabs/php_codesniffer": "~2.0",
+                "vimeo/psalm": "4.23.0"
             },
             "type": "library",
             "extra": {
@@ -350,10 +352,7 @@
                 "oauth",
                 "oauth2"
             ],
-            "support": {
-                "source": "https://github.com/kronostechnologies/oauth2-microsoft-graph/tree/v0.2.0"
-            },
-            "time": "2020-03-20T12:07:05+00:00"
+            "time": "2022-05-19T01:02:24+00:00"
         },
         {
             "name": "league/oauth2-client",

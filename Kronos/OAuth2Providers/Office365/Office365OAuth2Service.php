@@ -7,17 +7,14 @@ use League\OAuth2\Client\Token\AccessToken;
 
 class Office365OAuth2Service extends MicrosoftGraphOAuth2Service
 {
-
     public const ACCESS_TOKEN_RESOURCE = 'https://outlook.office365.com';
 
     protected $apiUrlBase = 'https://outlook.office.com/api';
     protected $apiVersion = 'v2.0';
     protected $pathOAuth2 = '/oauth2'; // Need OAuth V1.0 for EWS
 
-
     /**
      * @inheritdoc
-     * @psalm-suppress ParamNameMismatch
      */
     public function getAccessToken($grant = 'authorization_code', array $options = [])
     {
