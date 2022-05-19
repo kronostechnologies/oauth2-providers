@@ -75,7 +75,7 @@ class GoogleOAuth2ServiceTest extends TestCase
     {
         $url = $this->googleOAuth2Service->getAuthorizationUrl();
 
-        $this->assertStringContainsString('approval_prompt=force', $url);
+        $this->assertStringContainsString('prompt=consent', $url);
     }
 
     public function test_askingForAuthorizationUrl_getAuthorizationUrl_ShouldContainsStateParameterWithValidSalt()

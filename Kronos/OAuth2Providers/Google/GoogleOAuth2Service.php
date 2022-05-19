@@ -11,6 +11,7 @@ use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Grant;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\Google;
+use League\OAuth2\Client\Provider\GoogleUser;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 
@@ -23,7 +24,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
     public const USERINFO_PROFILE = 'https://www.googleapis.com/auth/userinfo.profile';
     public const MAIL_GOOGLE_COM = 'https://mail.google.com/';
 
-    protected $defaultAuthorizationUrlOptions = ['approval_prompt' => 'force'];
+    protected $defaultAuthorizationUrlOptions = ['prompt' => 'consent'];
 
     /**
      * @var StateServiceInterface
@@ -56,7 +57,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
     /**
      * @return string[]
      */
-    protected function getDefaultScopes()
+    protected function getDefaultScopes(): array
     {
         return [self::USERINFO_PROFILE, self::USERINFO_EMAIL, self::MAIL_GOOGLE_COM];
     }
@@ -65,7 +66,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
      * @param AccessToken $token
      * @return string
      */
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
         return 'https://www.googleapis.com/oauth2/v2/userinfo?' . http_build_query([
                 'alt' => 'json',
@@ -138,7 +139,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
      * @param AccessToken $token
      * @return GoogleUser
      */
-    protected function createResourceOwner(array $response, AccessToken $token)
+    protected function createResourceOwner(array $response, AccessToken $token): GoogleUser
     {
         return new GoogleUser($response);
     }
@@ -146,7 +147,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
     /**
      * @return StateServiceInterface
      */
-    public function getStateService(): \Kronos\OAuth2Providers\State\StateServiceInterface
+    public function getStateService(): StateServiceInterface
     {
         return $this->stateService;
     }
