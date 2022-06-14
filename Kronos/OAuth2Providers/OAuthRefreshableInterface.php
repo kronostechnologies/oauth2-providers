@@ -7,7 +7,6 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
 
 interface OAuthRefreshableInterface
 {
-
     /**
      * @param string $refresh_token
      * @return AccessTokenInterface

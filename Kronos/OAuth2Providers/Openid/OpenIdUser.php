@@ -1,15 +1,13 @@
 <?php
 
-
 namespace Kronos\OAuth2Providers\Openid;
-
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
 class OpenIdUser implements ResourceOwnerInterface
 {
     /**
-     * Informations returned by the userinfo endpoint
+     * Information returned by the userinfo endpoint
      * @var array
      */
     private $userInfoResponse;
@@ -28,5 +26,4 @@ class OpenIdUser implements ResourceOwnerInterface
     {
         return $this->userInfoResponse;
     }
-
 }

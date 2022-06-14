@@ -13,7 +13,6 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class Basic extends AbstractProvider implements OAuthServiceInterface
 {
-
     use StateServiceAwareTrait;
 
     public const STANDARD_AUTH_URL_PATH = 'oauth2/auth';
@@ -36,7 +35,6 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface
      */
     public function __construct($clientId, $clientSecret, $redirectUri, $authServerBaseUrl, array $collaborators = [])
     {
-
         parent::__construct([
             'clientId' => $clientId,
             'clientSecret' => $clientSecret,
@@ -47,6 +45,7 @@ abstract class Basic extends AbstractProvider implements OAuthServiceInterface
         if (empty($collaborators['stateService'])) {
             $collaborators['stateService'] = new SessionBasedHashService();
         }
+
         $this->setStateService($collaborators['stateService']);
     }
 

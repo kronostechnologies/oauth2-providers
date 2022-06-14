@@ -34,5 +34,4 @@ class Office365OAuth2Service extends MicrosoftGraphOAuth2Service
     {
         return new Office365User($response);
     }
-
 }

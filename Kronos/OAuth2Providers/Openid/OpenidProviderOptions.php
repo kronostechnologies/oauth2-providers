@@ -4,7 +4,6 @@ namespace Kronos\OAuth2Providers\Openid;
 
 class OpenidProviderOptions
 {
-
     protected $clientId;
 
     protected $clientSecret;

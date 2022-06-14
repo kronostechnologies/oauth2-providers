@@ -16,7 +16,6 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
 
 class MicrosoftGraphOAuth2Service extends MicrosoftGraph implements OAuthServiceInterface, OAuthRefreshableInterface
 {
-
     use StateServiceAwareTrait;
 
     /**
@@ -93,6 +92,7 @@ class MicrosoftGraphOAuth2Service extends MicrosoftGraph implements OAuthService
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
+
         return $this->createAccessToken($prepared, $grant);
     }
 

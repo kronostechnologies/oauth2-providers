@@ -16,7 +16,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class Auth0 extends AbstractProvider implements OAuthServiceInterface
 {
-
     use BearerAuthorizationTrait;
     use StateServiceAwareTrait;
 
@@ -57,7 +56,6 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface
      */
     public function __construct(array $options = [], array $collaborators = [])
     {
-
         parent::__construct($options, $collaborators);
 
         $this->baseAuthorizationUrl = $options['baseAuthorizationUrl'] ?: $options['base_authorization_url'];
@@ -67,6 +65,7 @@ class Auth0 extends AbstractProvider implements OAuthServiceInterface
         if (empty($collaborators['stateService'])) {
             $collaborators['stateService'] = new SessionBasedHashService();
         }
+
         $this->setStateService($collaborators['stateService']);
     }
 

@@ -9,7 +9,7 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
 interface OAuthServiceInterface
 {
     /**
-     * Be carefull, interface shared with AbstractProvider
+     * Be careful, interface shared with AbstractProvider
      * @param AccessToken $access_token
      * @return ResourceOwnerInterface
      */
@@ -17,14 +17,14 @@ interface OAuthServiceInterface
 
     /**
      * @param string $code
-     * @param array $options Additionnal options to pass getAccessToken()
+     * @param array $options Additional options to pass getAccessToken()
      * @return AccessTokenInterface
      */
     public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface;
 
     /**
-     * @param array $options Additionnal options
-     * @return string url for hand shake
+     * @param array $options Additional options
+     * @return string url for handshake
      */
     public function getAuthorizationUrl(array $options = []);
 

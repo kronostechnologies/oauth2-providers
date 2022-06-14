@@ -4,7 +4,6 @@ namespace Kronos\OAuth2Providers\Office365;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-
 class Office365User implements ResourceOwnerInterface
 {
     /**
@@ -61,7 +60,6 @@ class Office365User implements ResourceOwnerInterface
     {
         return $this->getProperty('EmailAddress');
     }
-
 
     /**
      * Returns the user principal name (UPN) of the user. This *should* map to

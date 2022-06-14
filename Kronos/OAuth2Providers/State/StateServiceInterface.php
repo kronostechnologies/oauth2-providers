@@ -1,12 +1,9 @@
 <?php
 
-
 namespace Kronos\OAuth2Providers\State;
-
 
 interface StateServiceInterface
 {
-
     /**
      * Generate a state value for the authorization code flow.
      * @return string
@@ -14,10 +11,9 @@ interface StateServiceInterface
     public function generateState(): string;
 
     /**
-     * Valide a state value retured by the authorization code flow.
+     * Valide a state value returned by the authorization code flow.
      * @param string $state
      * @return bool
      */
     public function validateState($state): bool;
-
 }

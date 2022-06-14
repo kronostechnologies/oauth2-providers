@@ -6,7 +6,6 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
 class Auth0User implements ResourceOwnerInterface
 {
-
     /**
      * @var array
      */

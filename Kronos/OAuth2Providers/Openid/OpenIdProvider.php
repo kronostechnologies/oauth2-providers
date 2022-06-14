@@ -42,7 +42,7 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
     public function __construct(OpenidProviderOptions $options, OpenidProviderCollaborators $collaborators)
     {
         $this->collaborators = $collaborators;
-        $this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer);
+        $this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer());
         $this->options = $options;
         $this->jwksResponseParser = new JwksResponseParser();
 
@@ -161,8 +161,12 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
      */
     protected function createIdToken(string $idTokenJWT): IdTokenInterface
     {
-        return $this->collaborators->getIdTokenFactory()->createIdToken($idTokenJWT, $this->getJwtVerificationKeys(),
-            $this->options->getClientId(), $this->openidConfiguration['issuer']);
+        return $this->collaborators->getIdTokenFactory()->createIdToken(
+            $idTokenJWT,
+            $this->getJwtVerificationKeys(),
+            $this->options->getClientId(),
+            $this->openidConfiguration['issuer']
+        );
     }
 
     /**
@@ -191,8 +195,9 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
      */
     protected function fetchOpenidConfiguration(): array
     {
-        $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get',
-            $this->options->getOpenidConfigurationUrl(), []);
+        $url = $this->options->getOpenidConfigurationUrl();
+        $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get', $url, []);
+
         return $this->getParsedResponse($request);
     }
 
@@ -208,6 +213,7 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
             ->getRequestFactory()
             ->getRequestWithOptions('GET', $this->openidConfiguration['jwks_uri']);
         $response = $this->getParsedResponse($request);
+
         return $this->jwksResponseParser->getVerificationKeys($response);
     }
 

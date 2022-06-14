@@ -7,21 +7,20 @@ use PHPUnit\Framework\TestCase;
 
 class IdTokenTest extends TestCase
 {
-
-    const A_CLAIMS_ARRAY = [
+    private const A_CLAIMS_ARRAY = [
         'aud' => '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com',
         'sub' => '107963962148033347052',
         'iat' => 1505328697,
         'exp' => 1505332297
     ];
 
-    const A_CLAIMS_ARRAY_WITHOUT_SUB = [
+    private const A_CLAIMS_ARRAY_WITHOUT_SUB = [
         'aud' => '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com',
         'iat' => 1505328697,
         'exp' => 1505332297
     ];
 
-    const A_NON_DEFAULT_USER_ID_KEY = 'aud';
+    private const A_NON_DEFAULT_USER_ID_KEY = 'aud';
 
     public function test_EmptyClaims_getClaims_ShouldReturnEmptyArray()
     {

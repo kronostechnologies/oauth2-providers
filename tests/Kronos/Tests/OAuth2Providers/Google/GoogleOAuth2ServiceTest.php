@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use Kronos\OAuth2Providers\Exceptions\InvalidRefreshTokenException;
 use Kronos\OAuth2Providers\Google\GoogleOAuth2Service;
 use League\OAuth2\Client\Token\AccessToken;
-use \PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
@@ -54,8 +54,12 @@ class GoogleOAuth2ServiceTest extends TestCase
         $this->httpClient = $this->createMock(Client::class);
         $this->httpClient->method('send')->willReturn($this->httpResponse);
 
-        $this->googleOAuth2Service = new GoogleOAuth2Service(self::A_CLIENT_ID, self::A_SECRET, self::A_REDIRECT_URI,
-            ['httpClient' => $this->httpClient]);
+        $this->googleOAuth2Service = new GoogleOAuth2Service(
+            self::A_CLIENT_ID,
+            self::A_SECRET,
+            self::A_REDIRECT_URI,
+            ['httpClient' => $this->httpClient]
+        );
     }
 
     public function test_AccessToken_getResourceOwnerDetailsUrl_ShouldReturnOAuth2V2UserinfoUrl()
@@ -80,10 +84,11 @@ class GoogleOAuth2ServiceTest extends TestCase
         $this->assertMatchesRegularExpression('/state=[a-z0-9]{8}_[a-z0-9]+/', $url);
     }
 
-    public function test_askingForAuthorizationUrlWithCustomOptions_getAuthorizationUrl_ShouldContainsOptionsPassedInParameters(
-    )
+    public function test_askingForAuthorizationUrlWithCustomOptions_getAuthorizationUrl_ShouldContainsOptionsPassedInParameters()
     {
-        $url = $this->googleOAuth2Service->getAuthorizationUrl([self::A_CUSTOME_OPTION_NAME => self::A_CUSTOME_OPTION_VALUE]);
+        $url = $this->googleOAuth2Service->getAuthorizationUrl([
+            self::A_CUSTOME_OPTION_NAME => self::A_CUSTOME_OPTION_VALUE,
+        ]);
 
         $this->assertStringContainsString(self::A_CUSTOME_OPTION_NAME . '=' . self::A_CUSTOME_OPTION_VALUE, $url);
     }

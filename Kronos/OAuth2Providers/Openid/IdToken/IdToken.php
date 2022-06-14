@@ -4,7 +4,6 @@ namespace Kronos\OAuth2Providers\Openid\IdToken;
 
 class IdToken implements IdTokenInterface
 {
-
     /**
      * @var string
      */
@@ -23,7 +22,6 @@ class IdToken implements IdTokenInterface
      */
     public function __construct(array $idTokenClaims, $userIdKey)
     {
-
         $this->idTokenClaims = $idTokenClaims;
         $this->userIdKey = $userIdKey;
     }

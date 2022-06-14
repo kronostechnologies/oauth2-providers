@@ -8,30 +8,28 @@ use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenParser;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenValidator;
 use Kronos\Tests\OAuth2Providers\Openid\Fixtures;
-use \PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 class IdTokenFactoryTest extends TestCase
 {
+    private const AN_ID_TOKEN_STRING = 'AN_ID_TOKEN_STRING';
+    private const A_KEYS_ARRAY = ['key1' => 'key1'];
+    private const A_CLIENT_ID = '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com';
+    private const AN_ISSUER = 'https://accounts.google.com';
+    private const A_NONCE = '6664b3eb64d51bb14201580a6d26133d73d3a9665fdc5bc835becb67ebb41dac_0cc53e6f653397930fde563275f42868fc0f9978';
+    private const A_USER_ID_KEY = 'sub';
+    private const A_USER_ID = '107963962148033347052';
 
-
-    const AN_ID_TOKEN_STRING = 'AN_ID_TOKEN_STRING';
-    const A_KEYS_ARRAY = ['key1' => 'key1'];
-    const A_CLIENT_ID = '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com';
-    const AN_ISSUER = 'https://accounts.google.com';
-    const A_NONCE = '6664b3eb64d51bb14201580a6d26133d73d3a9665fdc5bc835becb67ebb41dac_0cc53e6f653397930fde563275f42868fc0f9978';
-    const A_USER_ID_KEY = 'sub';
-    const A_USER_ID = '107963962148033347052';
-
-    const A_PARSED_CLAIMS_ARRAY = [
+    private const A_PARSED_CLAIMS_ARRAY = [
         'aud' => '164785310868-o1qkineh19d2fcvqsf3tqaclct9nm39d.apps.googleusercontent.com',
         'sub' => '107963962148033347052',
         'nonce' => '6664b3eb64d51bb14201580a6d26133d73d3a9665fdc5bc835becb67ebb41dac_0cc53e6f653397930fde563275f42868fc0f9978',
         'iss' => 'https://accounts.google.com',
     ];
-    const A_PARSER_EXCEPTION_MESSAGE = 'Unable to parse the id_token!';
-    const A_VALIDATOR_EXCEPTION_MESSAGE = 'The audience is invalid!';
+    private const A_PARSER_EXCEPTION_MESSAGE = 'Unable to parse the id_token!';
+    private const A_VALIDATOR_EXCEPTION_MESSAGE = 'The audience is invalid!';
 
     /**
      * @var MockObject&IdTokenParser
@@ -157,9 +155,9 @@ class IdTokenFactoryTest extends TestCase
     }
 }
 
+// phpcs:ignore
 class TestableIdTokenFactory extends IdTokenFactory
 {
-
     public function getParser()
     {
         return $this->idTokenParser;

@@ -17,7 +17,6 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
 
 class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuthRefreshableInterface
 {
-
     use StateServiceAwareTrait;
 
     public const USERINFO_EMAIL = 'https://www.googleapis.com/auth/userinfo.email';
@@ -31,7 +30,6 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
      */
     protected $stateService;
 
-
     /**
      * @param string $clientId
      * @param string $clientSecret
@@ -40,7 +38,6 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
      */
     public function __construct($clientId, $clientSecret, $redirectUri, array $collaborators = [])
     {
-
         parent::__construct([
             'clientId' => $clientId,
             'clientSecret' => $clientSecret,
@@ -51,6 +48,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
         if (empty($collaborators['stateService'])) {
             $collaborators['stateService'] = new SessionBasedHashService();
         }
+
         $this->setStateService($collaborators['stateService']);
     }
 
@@ -75,7 +73,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
 
     /**
      * @param string $code
-     * @param array $options Additionnal options to pass getAccessToken()
+     * @param array $options Additional options to pass getAccessToken()
      * @return AccessTokenInterface
      * @throws IdentityProviderException
      */
@@ -105,6 +103,7 @@ class GoogleOAuth2Service extends Google implements OAuthServiceInterface, OAuth
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
+
         return $this->createAccessToken($prepared, $grant);
     }
 

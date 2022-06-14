@@ -28,11 +28,11 @@ class Fixtures
     public const ID_TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlpXaUFCemk2b3gxZHpWdzJ0LWk1OF9XYTFpTXkyV0hhMk5KR2dOeW44aXcifQ.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsIm5iZiI6MTY1Mjg5ODU4NSwiZXhwIjo0Mjk0OTY3Mjk1LCJpYXQiOjE1MDY1Mjk3NDQsImp0aSI6ImlkMTIzNDU2IiwidHlwIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9yZWdpc3RlciJ9.vwpXHi4IarHSiFKhYdTweb2ein97ApqqgHhYmlUEccvQZgWUxDdVOOZAkgWmuBL8cT4t6DSW6ibyaaCbTdf8p3xi-AjrExr4Xd8_MiUhHGhFAoUqMaJWZHvxDa7fpvGbIQM2jbZxKA9Rg8qbCQVmKsyxytPcxiFP1XrXT8rfnJjNho_5MFFRmUPCun0w7XfBtpt2lcETSscjcfJmBvHvPOuztqggRrcB8R9m1RKwE9vZG0r34O0crh0ABrAIXocixm-2ZYjYJMqUF-NaGYD2wkNqfLYSwJu7WPAPEJAxZeiM8JS0LP4ie48yjcsVs1tQtAS7cvZ8Ns9zRS-zN3rpIA";
     public const ID_TOKEN_CLAIMS = [
         "iss" => 'https://jwt-idp.example.com',
-        "sub"=> "mailto:mike@example.com",
-        "nbf"=> 1652898585,
-        "iat"=> 1506529744,
+        "sub" => "mailto:mike@example.com",
+        "nbf" => 1652898585,
+        "iat" => 1506529744,
         "exp" => 4294967295,
-        "jti"=> "id123456",
-        "typ"=> "https://example.com/register"
+        "jti" => "id123456",
+        "typ" => "https://example.com/register"
     ];
 }

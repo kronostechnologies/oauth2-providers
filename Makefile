@@ -8,7 +8,7 @@ MKDIR_P = mkdir -p
 all: check test
 
 .PHONY: check
-check: psalm bom
+check: psalm phpcs bom
 
 .PHONY: bom
 bom:
@@ -19,6 +19,10 @@ bom:
 .PHONY: psalm
 psalm:
 	./vendor/bin/psalm $(PSALM_ARGS)
+
+.PHONY: phpcs
+phpcs:
+	./vendor/bin/phpcs --standard="./phpcs.xml" --colors -p -s .
 
 .PHONY: test
 test:
