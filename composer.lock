@@ -392,70 +392,6 @@
             "time": "2022-03-20T21:55:58+00:00"
         },
         {
-            "name": "kronos/oauth2-microsoft-graph",
-            "version": "v0.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kronostechnologies/oauth2-microsoft-graph.git",
-                "reference": "acffc1cfbf40b029b95e6ac9df7ef967a12f49fe"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kronostechnologies/oauth2-microsoft-graph/zipball/acffc1cfbf40b029b95e6ac9df7ef967a12f49fe",
-                "reference": "acffc1cfbf40b029b95e6ac9df7ef967a12f49fe",
-                "shasum": ""
-            },
-            "require": {
-                "league/oauth2-client": "^2.6.1",
-                "php": "^7.4 || ^8.1"
-            },
-            "require-dev": {
-                "cyclonedx/cyclonedx-php-composer": "3.10.0",
-                "mockery/mockery": "^1.3.1",
-                "phpunit/phpunit": "9.5.20",
-                "squizlabs/php_codesniffer": "~2.0",
-                "vimeo/psalm": "4.23.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "EightyOneSquare\\OAuth2\\Client\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "EightyOneSquare\\OAuth2\\Client\\Test\\": "test/src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Maarten van Zanten",
-                    "email": "info@81square.nl",
-                    "homepage": "https://github.com/81square"
-                }
-            ],
-            "description": "Microsoft Graph OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
-            "keywords": [
-                "authorisation",
-                "authorization",
-                "azure",
-                "client",
-                "microsoft",
-                "microsoft graph",
-                "oauth",
-                "oauth2"
-            ],
-            "time": "2022-05-19T01:02:24+00:00"
-        },
-        {
             "name": "league/oauth2-client",
             "version": "2.6.1",
             "source": {
@@ -900,6 +836,63 @@
                 }
             ],
             "time": "2022-01-02T09:53:40+00:00"
+        },
+        {
+            "name": "thenetworg/oauth2-azure",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TheNetworg/oauth2-azure.git",
+                "reference": "56e0776776476da0b2de8cb7c201bfe7dec7aee1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TheNetworg/oauth2-azure/zipball/56e0776776476da0b2de8cb7c201bfe7dec7aee1",
+                "reference": "56e0776776476da0b2de8cb7c201bfe7dec7aee1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "firebase/php-jwt": "~3.0||~4.0||~5.0||~6.0",
+                "league/oauth2-client": "~2.0",
+                "php": "^7.1|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TheNetworg\\OAuth2\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Hajek",
+                    "email": "jan.hajek@thenetw.org",
+                    "homepage": "https://thenetw.org"
+                }
+            ],
+            "description": "Azure Active Directory OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
+            "keywords": [
+                "SSO",
+                "aad",
+                "authorization",
+                "azure",
+                "azure active directory",
+                "client",
+                "microsoft",
+                "oauth",
+                "oauth2",
+                "windows azure"
+            ],
+            "support": {
+                "issues": "https://github.com/TheNetworg/oauth2-azure/issues",
+                "source": "https://github.com/TheNetworg/oauth2-azure/tree/v2.1.0"
+            },
+            "time": "2022-06-02T15:06:54+00:00"
         }
     ],
     "packages-dev": [

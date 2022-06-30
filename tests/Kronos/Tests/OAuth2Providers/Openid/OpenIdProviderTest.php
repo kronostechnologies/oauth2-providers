@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Uri;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
+use Kronos\OAuth2Providers\Openid\OpenIdOAuth2Service;
 use Kronos\OAuth2Providers\Openid\OpenIdProvider;
 use Kronos\OAuth2Providers\Openid\OpenidProviderCollaborators;
 use Kronos\OAuth2Providers\Openid\OpenidProviderOptions;
@@ -147,6 +148,11 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     protected $provider;
 
     /**
+     * @var OpenIdOAuth2Service
+     */
+    protected $service;
+
+    /**
      * @var MockObject&ResponseInterface
      */
     protected $response;
@@ -232,8 +238,9 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->willReturn(self::A_NONCE_STRING);
 
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
+        $this->service = new OpenIdOAuth2Service($this->provider);
 
-        $actual = $this->provider->getAuthorizationUrl();
+        $actual = $this->service->getAuthorizationUrl();
         $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING);
 
         $this->assertUriEquals($expected, $actual);
@@ -257,8 +264,9 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->willReturn(self::A_NONCE_STRING);
 
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
+        $this->service = new OpenIdOAuth2Service($this->provider);
 
-        $actual = $this->provider->getAuthorizationUrl(['scope' => self::CUSTOM_SCOPE]);
+        $actual = $this->service->getAuthorizationUrl(['scope' => self::CUSTOM_SCOPE]);
         $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING, self::CUSTOM_SCOPE);
 
         self::assertUriEquals($expected, $actual);
@@ -277,11 +285,12 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->willReturn($this->response);
 
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
+        $this->service = new OpenIdOAuth2Service($this->provider);
 
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-        $this->provider->getAccessTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE);
+        $this->service->getAccessTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE);
     }
 
     public function test_InvalidCode_getIdTokenByAuthorizationCode_ShouldThrow()
@@ -297,11 +306,12 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->willReturn($this->response);
 
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
+        $this->service = new OpenIdOAuth2Service($this->provider);
 
         $this->expectException(IdentityProviderException::class);
         $this->expectExceptionMessage(self::AN_ERROR_RESPONSE_ARRAY['error']['message']);
 
-        $this->provider->getAccessTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
+        $this->service->getAccessTokenByAuthorizationCode(self::AN_AUTHORIZATION_CODE_ARRAY['code']);
     }
 
     public function test_ValidState_validateState_ShouldReturnTrue()
@@ -318,8 +328,9 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->willReturn(true);
 
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
+        $this->service = new OpenIdOAuth2Service($this->provider);
 
-        $this->assertTrue($this->provider->validateSate(self::A_STATE_STRING));
+        $this->assertTrue($this->service->validateState(self::A_STATE_STRING));
     }
 
     public function test_InvalidState_validateState_ShouldReturnFalse()
@@ -336,8 +347,9 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->willReturn(false);
 
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
+        $this->service = new OpenIdOAuth2Service($this->provider);
 
-        $this->assertFalse($this->provider->validateSate(self::A_STATE_STRING));
+        $this->assertFalse($this->service->validateState(self::A_STATE_STRING));
     }
 
     private static function assertUriEquals($expected, $actual)

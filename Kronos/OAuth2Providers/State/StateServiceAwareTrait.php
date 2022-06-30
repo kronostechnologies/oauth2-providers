@@ -4,21 +4,24 @@ namespace Kronos\OAuth2Providers\State;
 
 trait StateServiceAwareTrait
 {
-    /**
-     * @return StateServiceInterface
-     */
-    abstract protected function getStateService(): StateServiceInterface;
+    protected StateServiceInterface $stateService;
+
+    public function getStateService(): StateServiceInterface
+    {
+        return $this->stateService;
+    }
+
+    public function setStateService(StateServiceInterface $stateService): void
+    {
+        $this->stateService = $stateService;
+    }
 
     protected function getRandomState($length = 32): string
     {
         return $this->getStateService()->generateState();
     }
 
-    /**
-     * @param string $state
-     * @return bool
-     */
-    public function validateSate($state): bool
+    public function validateState(string $state): bool
     {
         return $this->getStateService()->validateState($state);
     }

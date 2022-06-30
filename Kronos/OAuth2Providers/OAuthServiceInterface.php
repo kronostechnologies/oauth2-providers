@@ -6,31 +6,19 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 
+/**
+ * @template R of ResourceOwnerInterface
+ */
 interface OAuthServiceInterface
 {
     /**
-     * Be careful, interface shared with AbstractProvider
-     * @param AccessToken $access_token
-     * @return ResourceOwnerInterface
+     * @return R
      */
-    public function getResourceOwner(AccessToken $access_token);
+    public function getResourceOwner(AccessToken $accessToken): ResourceOwnerInterface;
 
-    /**
-     * @param string $code
-     * @param array $options Additional options to pass getAccessToken()
-     * @return AccessTokenInterface
-     */
-    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface;
+    public function getAccessTokenByAuthorizationCode(string $code, array $options = []): AccessTokenInterface;
 
-    /**
-     * @param array $options Additional options
-     * @return string url for handshake
-     */
-    public function getAuthorizationUrl(array $options = []);
+    public function getAuthorizationUrl(array $options = []): string;
 
-    /**
-     * @param string $state
-     * @return bool
-     */
-    public function validateSate($state): bool;
+    public function validateState(string $state): bool;
 }
