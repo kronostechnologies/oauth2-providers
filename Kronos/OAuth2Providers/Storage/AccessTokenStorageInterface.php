@@ -6,15 +6,7 @@ use League\OAuth2\Client\Token\AccessToken;
 
 interface AccessTokenStorageInterface
 {
+    public function retrieveAccessToken(string $refreshToken): AccessToken;
 
-    /**
-     * @param string $refresh_token
-     * @return AccessToken
-     */
-    public function retrieveAccessToken($refresh_token);
-
-    /**
-     * @param AccessToken $accessToken
-     */
-    public function storeAccessToken(AccessToken $accessToken);
+    public function storeAccessToken(AccessToken $accessToken): void;
 }

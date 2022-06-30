@@ -8,7 +8,6 @@ use RuntimeException;
 
 class IdTokenValidator
 {
-
     /**
      * @var NonceServiceInterface
      */

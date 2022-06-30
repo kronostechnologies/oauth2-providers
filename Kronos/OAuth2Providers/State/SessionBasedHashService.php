@@ -4,7 +4,6 @@ namespace Kronos\OAuth2Providers\State;
 
 class SessionBasedHashService implements StateServiceInterface, NonceServiceInterface
 {
-
     /**
      * @var positive-int
      */
@@ -38,14 +37,12 @@ class SessionBasedHashService implements StateServiceInterface, NonceServiceInte
         return $this->validateHash($state);
     }
 
-
     protected function generateHash(): string
     {
         $session_id = session_id();
         $salt = bin2hex(random_bytes($this->saltLength));
         return $salt . '_' . sha1($session_id . $salt);
     }
-
 
     protected function validateHash($state): bool
     {

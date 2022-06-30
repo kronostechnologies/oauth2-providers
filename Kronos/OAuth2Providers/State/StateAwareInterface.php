@@ -2,9 +2,7 @@
 
 namespace Kronos\OAuth2Providers\State;
 
-interface StateServiceInterface
+interface StateAwareInterface
 {
-    public function generateState(): string;
-
     public function validateState(string $state): bool;
 }

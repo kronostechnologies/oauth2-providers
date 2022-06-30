@@ -8,7 +8,6 @@ use RuntimeException;
 
 class IdTokenParser
 {
-
     /**
      * Returns the array of claims parsed from a raw JWT id token.
      *

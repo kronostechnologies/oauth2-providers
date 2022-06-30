@@ -3,17 +3,19 @@
 namespace Kronos\OAuth2Providers\Openid;
 
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenInterface;
-use Kronos\OAuth2Providers\OpenidServiceInterface;
+use Kronos\OAuth2Providers\State\StateAwareInterface;
+use Kronos\OAuth2Providers\State\StateServiceAwareTrait;
+use Kronos\OAuth2Providers\State\StateServiceInterface;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
-use League\OAuth2\Client\Token\AccessTokenInterface;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
+class OpenIdProvider extends AbstractProvider implements StateAwareInterface
 {
     use BearerAuthorizationTrait;
+    use StateServiceAwareTrait;
 
     /**
      * @var OpenidProviderOptions
@@ -42,7 +44,7 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
     public function __construct(OpenidProviderOptions $options, OpenidProviderCollaborators $collaborators)
     {
         $this->collaborators = $collaborators;
-        $this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer);
+        $this->collaborators->getGrantFactory()->setGrant('jwt_bearer', new JwtBearer());
         $this->options = $options;
         $this->jwksResponseParser = new JwksResponseParser();
 
@@ -124,20 +126,6 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
     }
 
     /**
-     * Requests an access token using an 'authorization_code' grant.
-     * @param string $code
-     * @param array $options
-     * @return AccessTokenInterface
-     * @throws IdentityProviderException
-     */
-    public function getAccessTokenByAuthorizationCode($code, array $options = []): AccessTokenInterface
-    {
-        return $this->getAccessToken('authorization_code', array_merge([
-            'code' => $code
-        ], $options));
-    }
-
-    /**
      * Requests and creates an id token.
      *
      * @param string $idTokenJWT id token received from authorization code exchange
@@ -161,26 +149,17 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
      */
     protected function createIdToken(string $idTokenJWT): IdTokenInterface
     {
-        return $this->collaborators->getIdTokenFactory()->createIdToken($idTokenJWT, $this->getJwtVerificationKeys(),
-            $this->options->getClientId(), $this->openidConfiguration['issuer']);
+        return $this->collaborators->getIdTokenFactory()->createIdToken(
+            $idTokenJWT,
+            $this->getJwtVerificationKeys(),
+            $this->options->getClientId(),
+            $this->openidConfiguration['issuer']
+        );
     }
 
-    /**
-     * @param string $state
-     * @return bool
-     */
-    public function validateSate($state): bool
+    public function getStateService(): StateServiceInterface
     {
-        return $this->collaborators->getStateService()->validateState($state);
-    }
-
-    /**
-     * @param string $nonce
-     * @return bool
-     */
-    public function validateNonce($nonce): bool
-    {
-        return $this->collaborators->getNonceService()->validateNonce($nonce);
+        return $this->collaborators->getStateService();
     }
 
     /**
@@ -191,8 +170,9 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
      */
     protected function fetchOpenidConfiguration(): array
     {
-        $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get',
-            $this->options->getOpenidConfigurationUrl(), []);
+        $url = $this->options->getOpenidConfigurationUrl();
+        $request = $this->collaborators->getRequestFactory()->getRequestWithOptions('get', $url, []);
+
         return $this->getParsedResponse($request);
     }
 
@@ -208,6 +188,7 @@ class OpenIdProvider extends AbstractProvider implements OpenidServiceInterface
             ->getRequestFactory()
             ->getRequestWithOptions('GET', $this->openidConfiguration['jwks_uri']);
         $response = $this->getParsedResponse($request);
+
         return $this->jwksResponseParser->getVerificationKeys($response);
     }
 

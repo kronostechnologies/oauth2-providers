@@ -6,7 +6,6 @@ use Firebase\JWT\Key;
 
 class IdTokenFactory implements IdTokenFactoryInterface
 {
-
     public const DEFAULT_USER_ID_KEY = 'sub';
 
     /**
