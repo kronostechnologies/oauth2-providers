@@ -16,12 +16,6 @@
       "Kronos\\Tests\\OAuth2Providers\\": "tests/Kronos/Tests/OAuth2Providers"
     }
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/kronostechnologies/oauth2-microsoft-graph.git"
-    }
-  ],
   "require": {
     "php": "^7.4 || ^8.1",
     "league/oauth2-client": "^2.6.1",
