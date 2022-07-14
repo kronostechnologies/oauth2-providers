@@ -12,6 +12,9 @@ class MicrosoftProvider extends Azure implements StateAwareInterface
 {
     use StateServiceAwareTrait;
 
+    public const VERSION_1_0 = parent::ENDPOINT_VERSION_1_0;
+    public const VERSION_2_0 = parent::ENDPOINT_VERSION_2_0;
+
     protected const DEFAULT_SCOPES = [
         'openid',
         'profile',
@@ -21,6 +24,10 @@ class MicrosoftProvider extends Azure implements StateAwareInterface
 
     public function __construct(array $options = [], array $collaborators = [])
     {
+        if (isset($options['version'])) {
+            $options['defaultEndPointVersion'] = $options['version'];
+        }
+
         parent::__construct($options, $collaborators);
 
         if (empty($collaborators['stateService'])) {
