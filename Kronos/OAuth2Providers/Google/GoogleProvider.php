@@ -11,18 +11,8 @@ class GoogleProvider extends Google implements StateAwareInterface
 {
     use StateServiceAwareTrait;
 
-    protected const DEFAULT_SCOPES = [
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://mail.google.com/',
-    ];
-
     protected const DEFAULT_OPTIONS = [
         'accessType' => 'offline',
-    ];
-
-    protected const DEFAULT_AUTH_OPTIONS = [
-        'prompt' => 'consent',
     ];
 
     public function __construct(array $options = [], array $collaborators = [])
@@ -36,20 +26,5 @@ class GoogleProvider extends Google implements StateAwareInterface
             $collaborators['stateService'] = new SessionBasedHashService();
         }
         $this->setStateService($collaborators['stateService']);
-    }
-
-    /**
-     * @return string[]
-     */
-    protected function getDefaultScopes(): array
-    {
-        return self::DEFAULT_SCOPES;
-    }
-
-    public function getAuthorizationUrl(array $options = []): string
-    {
-        return parent::getAuthorizationUrl(
-            array_merge(self::DEFAULT_AUTH_OPTIONS, $options)
-        );
     }
 }

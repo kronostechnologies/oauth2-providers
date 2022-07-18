@@ -20,5 +20,7 @@ interface OAuthServiceInterface
 
     public function getAuthorizationUrl(array $options = []): string;
 
+    public function getState(): string;
+
     public function validateState(string $state): bool;
 }

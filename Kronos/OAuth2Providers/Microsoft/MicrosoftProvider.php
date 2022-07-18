@@ -12,12 +12,22 @@ class MicrosoftProvider extends Azure implements StateAwareInterface
 {
     use StateServiceAwareTrait;
 
-    protected const DEFAULT_AUTH_OPTIONS = [
-        'prompt' => 'consent',
+    public const VERSION_1_0 = parent::ENDPOINT_VERSION_1_0;
+    public const VERSION_2_0 = parent::ENDPOINT_VERSION_2_0;
+
+    protected const DEFAULT_SCOPES = [
+        'openid',
+        'profile',
+        'email',
+        'offline_access',
     ];
 
     public function __construct(array $options = [], array $collaborators = [])
     {
+        if (isset($options['version'])) {
+            $options['defaultEndPointVersion'] = $options['version'];
+        }
+
         parent::__construct($options, $collaborators);
 
         if (empty($collaborators['stateService'])) {
@@ -26,15 +36,13 @@ class MicrosoftProvider extends Azure implements StateAwareInterface
         $this->setStateService($collaborators['stateService']);
     }
 
-    public function getAuthorizationUrl(array $options = []): string
-    {
-        return parent::getAuthorizationUrl(
-            array_merge(self::DEFAULT_AUTH_OPTIONS, $options)
-        );
-    }
-
     protected function createResourceOwner(array $response, AccessToken $token): MicrosoftUser
     {
         return new MicrosoftUser($response);
+    }
+
+    protected function getDefaultScopes(): array
+    {
+        return array_merge(parent::getDefaultScopes(), self::DEFAULT_SCOPES);
     }
 }

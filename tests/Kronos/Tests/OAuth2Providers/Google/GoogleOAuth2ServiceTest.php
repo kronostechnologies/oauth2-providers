@@ -61,13 +61,6 @@ class GoogleOAuth2ServiceTest extends TestCase
         $this->googleOAuth2Service = new RefreshableOAuth2Service($provider);
     }
 
-    public function test_askingForAuthorizationUrl_getAuthorizationUrl_ShouldContainsDefaultOption()
-    {
-        $url = $this->googleOAuth2Service->getAuthorizationUrl();
-
-        $this->assertStringContainsString('prompt=consent', $url);
-    }
-
     public function test_askingForAuthorizationUrl_getAuthorizationUrl_ShouldContainsStateParameterWithValidSalt()
     {
         $url = $this->googleOAuth2Service->getAuthorizationUrl();

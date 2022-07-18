@@ -42,6 +42,17 @@ class OAuth2Service implements OAuthServiceInterface
         return $this->provider->getAuthorizationUrl($options);
     }
 
+    public function getState(): string
+    {
+        $state = $this->provider->getState();
+
+        if (empty($state)) {
+            throw new \RuntimeException("Tried to access state before it was generated.");
+        }
+
+        return $state;
+    }
+
     public function validateState(string $state): bool
     {
         if ($this->provider instanceof StateAwareInterface) {
