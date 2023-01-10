@@ -3,7 +3,11 @@
 namespace Kronos\OAuth2Providers;
 
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenInterface;
+use Kronos\OAuth2Providers\Openid\OpenIdUser;
 
+/**
+ * @template-extends OAuthServiceInterface<OpenIdUser>
+ */
 interface OpenidServiceInterface extends OAuthServiceInterface
 {
     /**
