@@ -12,7 +12,7 @@ jobs:
   php-library:
     uses: equisoft-actions/php-workflows/.github/workflows/php-library.yml@v3
     with:
-      checks: phpunit,phpcs,psalm,qodana
+      checks: phpunit,phpcs,psalm
       php-version: '8.1'
       extensions: gearman,pcov
     secrets:
