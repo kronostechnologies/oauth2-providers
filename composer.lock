@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e6fb464adfdf826a233a01f413556f0",
+    "content-hash": "1a5ac83cb180c4bec996a14d6bc09c7e",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -1066,79 +1066,6 @@
             "time": "2021-03-30T17:13:30+00:00"
         },
         {
-            "name": "composer/package-versions-deprecated",
-            "version": "1.11.99.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/composer/package-versions-deprecated.git",
-                "reference": "b4f54f74ef3453349c24a845d22392cd31e65f1d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/b4f54f74ef3453349c24a845d22392cd31e65f1d",
-                "reference": "b4f54f74ef3453349c24a845d22392cd31e65f1d",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.1.0 || ^2.0",
-                "php": "^7 || ^8"
-            },
-            "replace": {
-                "ocramius/package-versions": "1.11.99"
-            },
-            "require-dev": {
-                "composer/composer": "^1.9.3 || ^2.0@dev",
-                "ext-zip": "^1.13",
-                "phpunit/phpunit": "^6.5 || ^7"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "PackageVersions\\Installer",
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "PackageVersions\\": "src/PackageVersions"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com"
-                },
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be"
-                }
-            ],
-            "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
-            "support": {
-                "issues": "https://github.com/composer/package-versions-deprecated/issues",
-                "source": "https://github.com/composer/package-versions-deprecated/tree/1.11.99.5"
-            },
-            "funding": [
-                {
-                    "url": "https://packagist.com",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/composer",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-01-17T14:14:24+00:00"
-        },
-        {
             "name": "composer/pcre",
             "version": "3.1.0",
             "source": {
@@ -1291,6 +1218,86 @@
             "time": "2022-04-01T19:23:25+00:00"
         },
         {
+            "name": "composer/spdx-licenses",
+            "version": "1.5.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/spdx-licenses.git",
+                "reference": "c848241796da2abf65837d51dce1fae55a960149"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/spdx-licenses/zipball/c848241796da2abf65837d51dce1fae55a960149",
+                "reference": "c848241796da2abf65837d51dce1fae55a960149",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.2 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.12.55",
+                "symfony/phpunit-bridge": "^4.2 || ^5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Spdx\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nils Adermann",
+                    "email": "naderman@naderman.de",
+                    "homepage": "http://www.naderman.de"
+                },
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                },
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com",
+                    "homepage": "http://robbast.nl"
+                }
+            ],
+            "description": "SPDX licenses list and validation library.",
+            "keywords": [
+                "license",
+                "spdx",
+                "validator"
+            ],
+            "support": {
+                "irc": "irc://irc.freenode.org/composer",
+                "issues": "https://github.com/composer/spdx-licenses/issues",
+                "source": "https://github.com/composer/spdx-licenses/tree/1.5.7"
+            },
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-05-23T07:37:50+00:00"
+        },
+        {
             "name": "composer/xdebug-handler",
             "version": "3.0.3",
             "source": {
@@ -1358,35 +1365,35 @@
         },
         {
             "name": "cyclonedx/cyclonedx-library",
-            "version": "v1.6.3",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CycloneDX/cyclonedx-php-library.git",
-                "reference": "a3087075d36bb70ec6d246a503bc350519feb1e4"
+                "reference": "deb45afe500ca71b9af1acec51594cf8fff38f6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-library/zipball/a3087075d36bb70ec6d246a503bc350519feb1e4",
-                "reference": "a3087075d36bb70ec6d246a503bc350519feb1e4",
+                "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-library/zipball/deb45afe500ca71b9af1acec51594cf8fff38f6d",
+                "reference": "deb45afe500ca71b9af1acec51594cf8fff38f6d",
                 "shasum": ""
             },
             "require": {
+                "composer/spdx-licenses": "^1.5",
                 "ext-dom": "*",
                 "ext-json": "*",
                 "ext-libxml": "*",
+                "opis/json-schema": "^2.0",
                 "package-url/packageurl-php": "^1.0",
-                "php": "^7.3 || ^8.0",
-                "swaggest/json-schema": "^0.12.35"
+                "php": "^8.1"
             },
             "require-dev": {
                 "ext-simplexml": "*",
-                "phpunit/phpunit": "9.5.24",
                 "roave/security-advisories": "dev-latest"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.x-dev"
+                    "dev-master": "2.x-dev"
                 },
                 "composer-normalize": {
                     "indent-size": 4,
@@ -1404,62 +1411,76 @@
             ],
             "authors": [
                 {
-                    "name": "nscuro",
-                    "email": "nscuro@protonmail.com",
-                    "role": "Developer"
-                },
-                {
                     "name": "Jan Kowalleck",
                     "email": "jan.kowalleck@gmail.com",
-                    "role": "Developer"
+                    "homepage": "https://github.com/jkowalleck"
                 }
             ],
-            "description": "Work with CycloneDX Software Bill-of-Materials (SBOM)",
+            "description": "Work with Bill-of-Materials (BOM) in CycloneDX format.",
             "homepage": "https://github.com/CycloneDX/cyclonedx-php-library/#readme",
             "keywords": [
                 "CycloneDX",
+                "MBOM",
+                "OBOM",
                 "SBOM",
+                "SaaSBOM",
                 "bill-of-materials",
                 "bom",
+                "models",
+                "normalizer",
+                "owasp",
                 "package-url",
                 "purl",
-                "software-bill-of-materials"
+                "serializer",
+                "software-bill-of-materials",
+                "spdx",
+                "validator",
+                "vex"
             ],
             "support": {
                 "issues": "https://github.com/CycloneDX/cyclonedx-php-library/issues",
                 "source": "https://github.com/CycloneDX/cyclonedx-php-library/"
             },
-            "time": "2022-09-15T14:21:01+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/jkowalleck",
+                    "type": "github"
+                },
+                {
+                    "url": "https://owasp.org/donate/?reponame=www-project-cyclonedx&title=OWASP+CycloneDX",
+                    "type": "other"
+                }
+            ],
+            "time": "2023-06-02T06:16:01+00:00"
         },
         {
             "name": "cyclonedx/cyclonedx-php-composer",
-            "version": "v3.11.0",
+            "version": "v4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CycloneDX/cyclonedx-php-composer.git",
-                "reference": "9d223d368aa2d0346266ec90e8bb3d53e5643165"
+                "reference": "a491733b934bd94a2cc713fde7840e18839eb170"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-composer/zipball/9d223d368aa2d0346266ec90e8bb3d53e5643165",
-                "reference": "9d223d368aa2d0346266ec90e8bb3d53e5643165",
+                "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-composer/zipball/a491733b934bd94a2cc713fde7840e18839eb170",
+                "reference": "a491733b934bd94a2cc713fde7840e18839eb170",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^2.0",
-                "cyclonedx/cyclonedx-library": "^1.4.2",
+                "composer-plugin-api": "^2.3",
+                "cyclonedx/cyclonedx-library": "^2.1",
                 "package-url/packageurl-php": "^1.0",
-                "php": "^7.3 || ^8.0"
+                "php": "^8.1"
             },
             "require-dev": {
-                "composer/composer": "^2.0.0",
-                "phpunit/phpunit": "9.5.28",
+                "composer/composer": "^2.3.0",
                 "roave/security-advisories": "dev-latest"
             },
             "type": "composer-plugin",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.x-dev"
+                    "dev-master": "4.x-dev"
                 },
                 "class": "CycloneDX\\Composer\\Plugin",
                 "composer-normalize": {
@@ -1478,14 +1499,9 @@
             ],
             "authors": [
                 {
-                    "name": "nscuro",
-                    "email": "nscuro@protonmail.com",
-                    "role": "Developer"
-                },
-                {
                     "name": "Jan Kowalleck",
                     "email": "jan.kowalleck@gmail.com",
-                    "role": "Developer"
+                    "homepage": "https://github.com/jkowalleck"
                 }
             ],
             "description": "Creates CycloneDX Software Bill-of-Materials (SBOM) from PHP Composer projects",
@@ -1495,15 +1511,27 @@
                 "SBOM",
                 "bill-of-materials",
                 "bom",
+                "composer",
                 "package-url",
                 "purl",
-                "software-bill-of-materials"
+                "software-bill-of-materials",
+                "spdx"
             ],
             "support": {
                 "issues": "https://github.com/CycloneDX/cyclonedx-php-composer/issues",
                 "source": "https://github.com/CycloneDX/cyclonedx-php-composer/"
             },
-            "time": "2023-02-11T11:09:27+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/jkowalleck",
+                    "type": "github"
+                },
+                {
+                    "url": "https://owasp.org/donate/?reponame=www-project-cyclonedx&title=OWASP+CycloneDX",
+                    "type": "other"
+                }
+            ],
+            "time": "2023-04-30T14:48:25+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1943,6 +1971,196 @@
             "time": "2023-05-19T20:20:00+00:00"
         },
         {
+            "name": "opis/json-schema",
+            "version": "2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opis/json-schema.git",
+                "reference": "c48df6d7089a45f01e1c82432348f2d5976f9bfb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opis/json-schema/zipball/c48df6d7089a45f01e1c82432348f2d5976f9bfb",
+                "reference": "c48df6d7089a45f01e1c82432348f2d5976f9bfb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "opis/string": "^2.0",
+                "opis/uri": "^1.0",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "ext-bcmath": "*",
+                "ext-intl": "*",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Opis\\JsonSchema\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Sorin Sarca",
+                    "email": "sarca_sorin@hotmail.com"
+                },
+                {
+                    "name": "Marius Sarca",
+                    "email": "marius.sarca@gmail.com"
+                }
+            ],
+            "description": "Json Schema Validator for PHP",
+            "homepage": "https://opis.io/json-schema",
+            "keywords": [
+                "json",
+                "json-schema",
+                "schema",
+                "validation",
+                "validator"
+            ],
+            "support": {
+                "issues": "https://github.com/opis/json-schema/issues",
+                "source": "https://github.com/opis/json-schema/tree/2.3.0"
+            },
+            "time": "2022-01-08T20:38:03+00:00"
+        },
+        {
+            "name": "opis/string",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opis/string.git",
+                "reference": "9ebf1a1f873f502f6859d11210b25a4bf5d141e7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opis/string/zipball/9ebf1a1f873f502f6859d11210b25a4bf5d141e7",
+                "reference": "9ebf1a1f873f502f6859d11210b25a4bf5d141e7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "ext-json": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Opis\\String\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Marius Sarca",
+                    "email": "marius.sarca@gmail.com"
+                },
+                {
+                    "name": "Sorin Sarca",
+                    "email": "sarca_sorin@hotmail.com"
+                }
+            ],
+            "description": "Multibyte strings as objects",
+            "homepage": "https://opis.io/string",
+            "keywords": [
+                "multi-byte",
+                "opis",
+                "string",
+                "string manipulation",
+                "utf-8"
+            ],
+            "support": {
+                "issues": "https://github.com/opis/string/issues",
+                "source": "https://github.com/opis/string/tree/2.0.1"
+            },
+            "time": "2022-01-14T15:42:23+00:00"
+        },
+        {
+            "name": "opis/uri",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/opis/uri.git",
+                "reference": "0f3ca49ab1a5e4a6681c286e0b2cc081b93a7d5a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/opis/uri/zipball/0f3ca49ab1a5e4a6681c286e0b2cc081b93a7d5a",
+                "reference": "0f3ca49ab1a5e4a6681c286e0b2cc081b93a7d5a",
+                "shasum": ""
+            },
+            "require": {
+                "opis/string": "^2.0",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Opis\\Uri\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Marius Sarca",
+                    "email": "marius.sarca@gmail.com"
+                },
+                {
+                    "name": "Sorin Sarca",
+                    "email": "sarca_sorin@hotmail.com"
+                }
+            ],
+            "description": "Build, parse and validate URIs and URI-templates",
+            "homepage": "https://opis.io",
+            "keywords": [
+                "URI Template",
+                "parse url",
+                "punycode",
+                "uri",
+                "uri components",
+                "url",
+                "validate uri"
+            ],
+            "support": {
+                "issues": "https://github.com/opis/uri/issues",
+                "source": "https://github.com/opis/uri/tree/1.1.0"
+            },
+            "time": "2021-05-22T15:57:08+00:00"
+        },
+        {
             "name": "package-url/packageurl-php",
             "version": "1.0.6",
             "source": {
@@ -2286,54 +2504,6 @@
                 "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.7.1"
             },
             "time": "2023-03-27T19:02:04+00:00"
-        },
-        {
-            "name": "phplang/scope-exit",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phplang/scope-exit.git",
-                "reference": "239b73abe89f9414aa85a7ca075ec9445629192b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phplang/scope-exit/zipball/239b73abe89f9414aa85a7ca075ec9445629192b",
-                "reference": "239b73abe89f9414aa85a7ca075ec9445629192b",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "PhpLang\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD"
-            ],
-            "authors": [
-                {
-                    "name": "Sara Golemon",
-                    "email": "pollita@php.net",
-                    "homepage": "https://twitter.com/SaraMG",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Emulation of SCOPE_EXIT construct from C++",
-            "homepage": "https://github.com/phplang/scope-exit",
-            "keywords": [
-                "cleanup",
-                "exit",
-                "scope"
-            ],
-            "support": {
-                "issues": "https://github.com/phplang/scope-exit/issues",
-                "source": "https://github.com/phplang/scope-exit/tree/master"
-            },
-            "time": "2016-09-17T00:15:18+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
@@ -2703,16 +2873,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.0.11",
+            "version": "10.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d18a18b07e7a9ad52d994b1785f9e301fc84b616"
+                "reference": "2379ebafc1737e71cdc84f402acb6b7f04198b9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d18a18b07e7a9ad52d994b1785f9e301fc84b616",
-                "reference": "d18a18b07e7a9ad52d994b1785f9e301fc84b616",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2379ebafc1737e71cdc84f402acb6b7f04198b9d",
+                "reference": "2379ebafc1737e71cdc84f402acb6b7f04198b9d",
                 "shasum": ""
             },
             "require": {
@@ -2726,7 +2896,7 @@
                 "phar-io/manifest": "^2.0.3",
                 "phar-io/version": "^3.0.2",
                 "php": ">=8.1",
-                "phpunit/php-code-coverage": "^10.0",
+                "phpunit/php-code-coverage": "^10.1.1",
                 "phpunit/php-file-iterator": "^4.0",
                 "phpunit/php-invoker": "^4.0",
                 "phpunit/php-text-template": "^3.0",
@@ -2744,7 +2914,7 @@
                 "sebastian/version": "^4.0"
             },
             "suggest": {
-                "ext-soap": "*"
+                "ext-soap": "To be able to generate mocks based on WSDL files"
             },
             "bin": [
                 "phpunit"
@@ -2752,7 +2922,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "10.0-dev"
+                    "dev-main": "10.1-dev"
                 }
             },
             "autoload": {
@@ -2783,7 +2953,8 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.0.11"
+                "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.1.3"
             },
             "funding": [
                 {
@@ -2799,7 +2970,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-20T16:39:36+00:00"
+            "time": "2023-05-11T05:16:22+00:00"
         },
         {
             "name": "psr/container",
@@ -3935,100 +4106,6 @@
             "time": "2023-02-22T23:07:41+00:00"
         },
         {
-            "name": "swaggest/json-diff",
-            "version": "v3.10.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swaggest/json-diff.git",
-                "reference": "f4e511708060ff7511a3743fab4aa484a062bcfb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swaggest/json-diff/zipball/f4e511708060ff7511a3743fab4aa484a062bcfb",
-                "reference": "f4e511708060ff7511a3743fab4aa484a062bcfb",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*"
-            },
-            "require-dev": {
-                "phperf/phpunit": "4.8.37"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Swaggest\\JsonDiff\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Viacheslav Poturaev",
-                    "email": "vearutop@gmail.com"
-                }
-            ],
-            "description": "JSON diff/rearrange/patch/pointer library for PHP",
-            "support": {
-                "issues": "https://github.com/swaggest/json-diff/issues",
-                "source": "https://github.com/swaggest/json-diff/tree/v3.10.4"
-            },
-            "time": "2022-11-09T13:21:05+00:00"
-        },
-        {
-            "name": "swaggest/json-schema",
-            "version": "v0.12.41",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swaggest/php-json-schema.git",
-                "reference": "1bb97901314f828774dd8c5b21bff889ce0b34bb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swaggest/php-json-schema/zipball/1bb97901314f828774dd8c5b21bff889ce0b34bb",
-                "reference": "1bb97901314f828774dd8c5b21bff889ce0b34bb",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": ">=5.4",
-                "phplang/scope-exit": "^1.0",
-                "swaggest/json-diff": "^3.8.2",
-                "symfony/polyfill-mbstring": "^1.19"
-            },
-            "require-dev": {
-                "phperf/phpunit": "4.8.37"
-            },
-            "suggest": {
-                "ext-mbstring": "For better performance"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Swaggest\\JsonSchema\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Viacheslav Poturaev",
-                    "email": "vearutop@gmail.com"
-                }
-            ],
-            "description": "High definition PHP structures with JSON-schema based validation",
-            "support": {
-                "email": "vearutop@gmail.com",
-                "issues": "https://github.com/swaggest/php-json-schema/issues",
-                "source": "https://github.com/swaggest/php-json-schema/tree/v0.12.41"
-            },
-            "time": "2022-08-17T11:21:43+00:00"
-        },
-        {
             "name": "symfony/console",
             "version": "v6.2.11",
             "source": {
@@ -4740,22 +4817,22 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "5.7.3",
+            "version": "5.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "471a8c6a1d4f0dcf91fdb34a3109adb204012fb3"
+                "reference": "f90118cdeacd0088e7215e64c0c99ceca819e176"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/471a8c6a1d4f0dcf91fdb34a3109adb204012fb3",
-                "reference": "471a8c6a1d4f0dcf91fdb34a3109adb204012fb3",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/f90118cdeacd0088e7215e64c0c99ceca819e176",
+                "reference": "f90118cdeacd0088e7215e64c0c99ceca819e176",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^2.4.2",
                 "amphp/byte-stream": "^1.5",
-                "composer/package-versions-deprecated": "^1.10.0",
+                "composer-runtime-api": "^2",
                 "composer/semver": "^1.4 || ^2.0 || ^3.0",
                 "composer/xdebug-handler": "^2.0 || ^3.0",
                 "dnoegel/php-xdg-base-dir": "^0.1.1",
@@ -4770,7 +4847,7 @@
                 "felixfbecker/language-server-protocol": "^1.5.2",
                 "fidry/cpu-core-counter": "^0.4.1 || ^0.5.1",
                 "netresearch/jsonmapper": "^1.0 || ^2.0 || ^3.0 || ^4.0",
-                "nikic/php-parser": "^4.13",
+                "nikic/php-parser": "^4.14",
                 "php": "^7.4 || ~8.0.0 || ~8.1.0 || ~8.2.0",
                 "sebastian/diff": "^4.0 || ^5.0",
                 "spatie/array-to-xml": "^2.17.0 || ^3.0",
@@ -4781,6 +4858,7 @@
                 "psalm/psalm": "self.version"
             },
             "require-dev": {
+                "amphp/phpunit-util": "^2.0",
                 "bamarni/composer-bin-plugin": "^1.4",
                 "brianium/paratest": "^6.9",
                 "ext-curl": "*",
@@ -4839,9 +4917,9 @@
             ],
             "support": {
                 "issues": "https://github.com/vimeo/psalm/issues",
-                "source": "https://github.com/vimeo/psalm/tree/5.7.3"
+                "source": "https://github.com/vimeo/psalm/tree/5.12.0"
             },
-            "time": "2023-02-20T22:34:36+00:00"
+            "time": "2023-05-22T21:19:03+00:00"
         },
         {
             "name": "webmozart/assert",
