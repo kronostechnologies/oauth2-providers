@@ -5,6 +5,7 @@ namespace Kronos\Tests\OAuth2Providers\Openid;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Query;
+use GuzzleHttp\Psr7\Stream;
 use GuzzleHttp\Psr7\Uri;
 use Kronos\OAuth2Providers\Openid\IdToken\IdTokenFactory;
 use Kronos\OAuth2Providers\Openid\OpenIdOAuth2Service;
@@ -208,7 +209,10 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     {
         $this->response
             ->method('getBody')
-            ->willReturn(self::OPENID_CONFIG_RESPONSE_BODY);
+            ->willReturn(new Stream(
+                fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb')
+            ));
+
         $this->httpClient
             ->method('send')
             ->willReturn($this->response);
@@ -224,7 +228,10 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     {
         $this->response
             ->method('getBody')
-            ->willReturn(self::OPENID_CONFIG_RESPONSE_BODY);
+            ->willReturn(
+                new Stream(
+                    fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb')
+                ));
         $this->httpClient
             ->method('send')
             ->willReturn($this->response);
@@ -250,7 +257,10 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     {
         $this->response
             ->method('getBody')
-            ->willReturn(self::OPENID_CONFIG_RESPONSE_BODY);
+            ->willReturn(
+                new Stream(
+                    fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb')
+                ));
         $this->httpClient
             ->method('send')
             ->willReturn($this->response);
@@ -276,10 +286,13 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     {
         $this->response
             ->method('getBody')
-            ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY, self::AN_ERROR_RESPONSE_BODY);
+            ->willReturnOnConsecutiveCalls(
+                new Stream(fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb')),
+                new Stream(fopen('data://text/plain,' . self::AN_ERROR_RESPONSE_BODY ,'rb')),
+            );
         $this->response
             ->method('getStatusCode')
-            ->willReturn(self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
+            ->willReturn((int) self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
         $this->httpClient
             ->method('send')
             ->willReturn($this->response);
@@ -300,7 +313,7 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY, self::AN_ERROR_RESPONSE_BODY);
         $this->response
             ->method('getStatusCode')
-            ->willReturn(self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
+            ->willReturn((int) self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
         $this->httpClient
             ->method('send')
             ->willReturn($this->response);
@@ -318,7 +331,9 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     {
         $this->response
             ->method('getBody')
-            ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY);
+            ->willReturnOnConsecutiveCalls(
+                new Stream(fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb'))
+            );
         $this->httpClient
             ->method('send')
             ->willReturn($this->response);
@@ -337,7 +352,9 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     {
         $this->response
             ->method('getBody')
-            ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY);
+            ->willReturnOnConsecutiveCalls(
+                new Stream(fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb'))
+            );
         $this->httpClient
             ->method('send')
             ->willReturn($this->response);
