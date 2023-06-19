@@ -20,7 +20,7 @@ class GoogleOAuth2ServiceTest extends TestCase
     private const A_CUSTOME_OPTION_NAME = 'a_custom_option_name';
     private const A_CUSTOME_OPTION_VALUE = 'a_custom_option_value';
     private const A_REFRESH_TOKEN = 'A_REFRESH_TOKEN';
-    const ACCESS_TOKEN_BODY = '{"access_token":"an_access_token"}';
+    private const ACCESS_TOKEN_BODY = '{"access_token":"an_access_token"}';
 
     /**
      * @var MockObject&Client
@@ -47,9 +47,12 @@ class GoogleOAuth2ServiceTest extends TestCase
         $this->anAccessToken = $this->createMock(AccessToken::class);
 
         $this->httpResponse = $this->createMock(ResponseInterface::class);
-        $this->httpResponse->method('getBody')->willReturn(
-            new Stream(fopen('data://text/plain,' . self::ACCESS_TOKEN_BODY,'rb')
-            ));
+        $accessTokenResponseBody = new Stream(
+            fopen('data://text/plain,' . self::ACCESS_TOKEN_BODY, 'rb')
+        );
+        $this->httpResponse
+            ->method('getBody')
+            ->willReturn($accessTokenResponseBody);
 
         $this->httpClient = $this->createMock(Client::class);
         $this->httpClient->method('send')->willReturn($this->httpResponse);
