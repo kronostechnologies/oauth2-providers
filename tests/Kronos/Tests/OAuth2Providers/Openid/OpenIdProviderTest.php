@@ -154,11 +154,6 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
     protected $service;
 
     /**
-     * @var MockObject&ResponseInterface
-     */
-    protected $response;
-
-    /**
      * @var MockObject&BadResponseException
      */
     protected $badResponseException;
@@ -182,8 +177,6 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
             $this->nonceService,
             $this->idTokenFactory
         );
-
-        $this->response = $this->getMockForAbstractClass(ResponseInterface::class);
     }
 
     private function buildAuthorizationUrl($state, $nonce, $scope = self::DEFAULT_OPENID_SCOPE)
@@ -207,96 +200,67 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_OptionsAndCollaborators_New_ShouldFetchOpenidConfig()
     {
-        $this->response
-            ->method('getBody')
-            ->willReturn(new Stream(
-                fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb')
-            ));
-
+        $openIdResponseBody = $this->givenOpenIdResponseBody();
         $this->httpClient
             ->method('send')
-            ->willReturn($this->response);
-
+            ->willReturn($openIdResponseBody);
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
 
-        $expected = self::OPENID_CONFIG_ARRAY;
         $actual = $this->provider->getOpenidConfiguration();
+
+        $expected = self::OPENID_CONFIG_ARRAY;
         $this->assertEquals($expected, $actual);
     }
 
     public function test__getAuthorizationUrl_ShouldReturnDefaultAuthorizationUrlWithRandomNonceAndStateAndDefaultScope()
     {
-        $this->response
-            ->method('getBody')
-            ->willReturn(
-                new Stream(
-                    fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb')
-                ));
+        $openIdResponseBody = $this->givenOpenIdResponseBody();
         $this->httpClient
             ->method('send')
-            ->willReturn($this->response);
-
+            ->willReturn($openIdResponseBody);
         $this->stateService
             ->method('generateState')
             ->willReturn(self::A_STATE_STRING);
-
         $this->nonceService
             ->method('generateNonce')
             ->willReturn(self::A_NONCE_STRING);
-
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
         $this->service = new OpenIdOAuth2Service($this->provider);
 
         $actual = $this->service->getAuthorizationUrl();
-        $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING);
 
+        $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING);
         $this->assertUriEquals($expected, $actual);
     }
 
     public function test_customScope_getAuthorizationUrl_ShouldReturnDefaultAuthorizationUrlWithRandomNonceAndStateAndCustomScope()
     {
-        $this->response
-            ->method('getBody')
-            ->willReturn(
-                new Stream(
-                    fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb')
-                ));
+        $openIdResponseBody = $this->givenOpenIdResponseBody();
         $this->httpClient
             ->method('send')
-            ->willReturn($this->response);
-
+            ->willReturn($openIdResponseBody);
         $this->stateService
             ->method('generateState')
             ->willReturn(self::A_STATE_STRING);
-
         $this->nonceService
             ->method('generateNonce')
             ->willReturn(self::A_NONCE_STRING);
-
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
         $this->service = new OpenIdOAuth2Service($this->provider);
 
         $actual = $this->service->getAuthorizationUrl(['scope' => self::CUSTOM_SCOPE]);
-        $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING, self::CUSTOM_SCOPE);
 
+        $expected = $this->buildAuthorizationUrl(self::A_STATE_STRING, self::A_NONCE_STRING, self::CUSTOM_SCOPE);
         self::assertUriEquals($expected, $actual);
     }
 
     public function test_InvalidCode_getIdToken_ShouldThrow()
     {
-        $this->response
-            ->method('getBody')
-            ->willReturnOnConsecutiveCalls(
-                new Stream(fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb')),
-                new Stream(fopen('data://text/plain,' . self::AN_ERROR_RESPONSE_BODY ,'rb')),
-            );
-        $this->response
-            ->method('getStatusCode')
-            ->willReturn((int) self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
+        $openIdResponse = $this->givenOpenIdResponseBody();
+        $errorResponse = $this->givenErrorResponseBody();
         $this->httpClient
             ->method('send')
-            ->willReturn($this->response);
-
+            ->willReturnOnConsecutiveCalls($openIdResponse, $errorResponse);
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
         $this->service = new OpenIdOAuth2Service($this->provider);
 
@@ -308,15 +272,11 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_InvalidCode_getIdTokenByAuthorizationCode_ShouldThrow()
     {
-        $this->response
-            ->method('getBody')
-            ->willReturnOnConsecutiveCalls(self::OPENID_CONFIG_RESPONSE_BODY, self::AN_ERROR_RESPONSE_BODY);
-        $this->response
-            ->method('getStatusCode')
-            ->willReturn((int) self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
+        $openIdResponse = $this->givenOpenIdResponseBody();
+        $errorResponse = $this->givenErrorResponseBody();
         $this->httpClient
             ->method('send')
-            ->willReturn($this->response);
+            ->willReturnOnConsecutiveCalls($openIdResponse, $errorResponse);
 
         $this->provider = new OpenIdProvider($this->options, $this->collaborators);
         $this->service = new OpenIdOAuth2Service($this->provider);
@@ -329,14 +289,10 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_ValidState_validateState_ShouldReturnTrue()
     {
-        $this->response
-            ->method('getBody')
-            ->willReturnOnConsecutiveCalls(
-                new Stream(fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb'))
-            );
+        $openIdResponseBody = $this->givenOpenIdResponseBody();
         $this->httpClient
             ->method('send')
-            ->willReturn($this->response);
+            ->willReturn($openIdResponseBody);
         $this->stateService
             ->method('validateState')
             ->with(self::A_STATE_STRING)
@@ -350,14 +306,10 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
 
     public function test_InvalidState_validateState_ShouldReturnFalse()
     {
-        $this->response
-            ->method('getBody')
-            ->willReturnOnConsecutiveCalls(
-                new Stream(fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY ,'rb'))
-            );
+        $openIdResponseBody = $this->givenOpenIdResponseBody();
         $this->httpClient
             ->method('send')
-            ->willReturn($this->response);
+            ->willReturn($openIdResponseBody);
         $this->stateService
             ->method('validateState')
             ->with(self::A_STATE_STRING)
@@ -378,5 +330,28 @@ EXeVbAKdk+E8cHbPObQovAff4q3rbEoBEXT1HO1VhNYN6FuLiR3/ESycgpOkpjkg\r
         $expectedQuery = Query::parse($expectedUri->getQuery());
         $actualQuery = Query::parse($actualUri->getQuery());
         self::assertEquals($expectedQuery, $actualQuery);
+    }
+
+    private function givenErrorResponseBody(): ResponseInterface|MockObject
+    {
+        $errorStreamResponseBody = new Stream(fopen('data://text/plain,' . self::AN_ERROR_RESPONSE_BODY, 'rb'));
+        $errorResponse = $this->createMock(ResponseInterface::class);
+        $errorResponse
+            ->method('getBody')
+            ->willReturn($errorStreamResponseBody);
+        $errorResponse
+            ->method('getStatusCode')
+            ->willReturn((int)self::AN_ERROR_RESPONSE_ARRAY['error']['code']);
+        return $errorResponse;
+    }
+
+    private function givenOpenIdResponseBody(): ResponseInterface|MockObject
+    {
+        $openIdStreamResponseBody = new Stream(fopen('data://text/plain,' . self::OPENID_CONFIG_RESPONSE_BODY, 'rb'));
+        $openIdResponse = $this->createMock(ResponseInterface::class);
+        $openIdResponse
+            ->method('getBody')
+            ->willReturn($openIdStreamResponseBody);
+        return $openIdResponse;
     }
 }
