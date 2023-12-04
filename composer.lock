@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a90424a83519246708d91db8d82636da",
+    "content-hash": "2ca86394d8ff3232a9ee6dd187524b40",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -1368,16 +1368,16 @@
         },
         {
             "name": "cyclonedx/cyclonedx-library",
-            "version": "v3.0.2",
+            "version": "v3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CycloneDX/cyclonedx-php-library.git",
-                "reference": "02d05eba573809611f03b71a704efd37cbb6e0bc"
+                "reference": "3ce5e917fe76a5843bb47e9c55a95856edd2d5ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-library/zipball/02d05eba573809611f03b71a704efd37cbb6e0bc",
-                "reference": "02d05eba573809611f03b71a704efd37cbb6e0bc",
+                "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-library/zipball/3ce5e917fe76a5843bb47e9c55a95856edd2d5ed",
+                "reference": "3ce5e917fe76a5843bb47e9c55a95856edd2d5ed",
                 "shasum": ""
             },
             "require": {
@@ -1455,31 +1455,32 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-11-27T10:43:21+00:00"
+            "time": "2023-12-02T09:10:05+00:00"
         },
         {
             "name": "cyclonedx/cyclonedx-php-composer",
-            "version": "v4.2.3",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CycloneDX/cyclonedx-php-composer.git",
-                "reference": "5857f1336f83ff5a1ace1c1e41a59ed36f1d7f6b"
+                "reference": "a2a5ee1f3cd3233850137b9f55c222c82072b1a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-composer/zipball/5857f1336f83ff5a1ace1c1e41a59ed36f1d7f6b",
-                "reference": "5857f1336f83ff5a1ace1c1e41a59ed36f1d7f6b",
+                "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-composer/zipball/a2a5ee1f3cd3233850137b9f55c222c82072b1a3",
+                "reference": "a2a5ee1f3cd3233850137b9f55c222c82072b1a3",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^2.3",
-                "cyclonedx/cyclonedx-library": "^2.3 || ^3.0",
+                "cyclonedx/cyclonedx-library": "^3.1",
                 "package-url/packageurl-php": "^1.0",
                 "php": "^8.1"
             },
             "require-dev": {
                 "composer/composer": "^2.3.0",
-                "roave/security-advisories": "dev-latest"
+                "roave/security-advisories": "dev-latest",
+                "symfony/console": "<7"
             },
             "type": "composer-plugin",
             "extra": {
@@ -1535,7 +1536,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-11-27T11:34:46+00:00"
+            "time": "2023-12-03T13:01:06+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
